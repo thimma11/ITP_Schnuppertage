@@ -21,7 +21,7 @@ class LoginRegister extends React.Component{
                 <div className="FormBody">
                     <div className="FormElement">
                         <label htmlFor="userName" className="label">Username</label>
-                        <input id="userName" onChange={(e) => this.onUsernameChange(e)} className="FormInput"></input>
+                        <input id="userName" onChange={(e) => this.onUsernameChange(e)} className="FormInput" ref={(node) => {if(node !== null) node.focus();}}></input>
                     </div>
                     <div className="FormElement">
                         <label htmlFor="password"  className="label">Password</label>
