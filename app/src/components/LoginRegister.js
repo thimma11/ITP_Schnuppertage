@@ -1,9 +1,10 @@
 import React from 'react';
+import { User } from '../classes/User';
 import '../style/LoginRegister.css'
 
 class LoginRegister extends React.Component{
-    constructor(props){
-        super(props);
+    constructor({onClickHandler, hidden}){
+        super({onClickHandler, hidden});
 
         this.state = {
             login: true,
@@ -14,7 +15,7 @@ class LoginRegister extends React.Component{
 
     render(){
         return(
-            <div className="Form">
+            <div className="Form" style={{"visibility": this.props.hidden ? "hidden" : "visible"}}>
                 <div className="FormHeading">
                     {this.state.login == true ? "Login" : "Register"}
                 </div>
@@ -66,6 +67,8 @@ class LoginRegister extends React.Component{
 
     Login() {
         console.log(this.state.username + " : " + this.state.password);
+        var user = new User(this.state.username, this.state.password)
+        this.props.onClickHandler(user);
     }
     
     Register(){
