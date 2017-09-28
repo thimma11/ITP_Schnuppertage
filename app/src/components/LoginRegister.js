@@ -17,7 +17,7 @@ class LoginRegister extends React.Component{
         return(
             <div className="Form" style={{"visibility": this.props.hidden ? "hidden" : "visible"}}>
                 <div className="FormHeading">
-                    {this.state.login == true ? "Login" : "Register"}
+                    {this.state.login ? "Login" : "Register"}
                 </div>
                 <div className="FormBody">
                     <div className="FormElement">
@@ -29,12 +29,12 @@ class LoginRegister extends React.Component{
                         <input type="password" id="password" onChange={(e) => this.onPasswordChange(e)} className="FormInput"></input>
                     </div>
                     <div className="FormElement">
-                        <a href="#" className="FormLink" onClick={() => this.state.login == true ? this.onRegisterLinkClick(): this.onLoginLinkClick()}>
-                            {this.state.login == true ? "Register a new user!" : "Login!"}
+                        <a href="#" className="FormLink" onClick={this.onLinkClick}>
+                            {this.state.login ? "Register a new user!" : "Login!"}
                         </a>
                     </div>
                     <div className="FormElement">
-                        <button className="FormButton" onClick={() => this.state.login == true ? this.Login() : this.Register()}>{this.state.login == true ? "Login" : "Register"}</button>
+                        <button className="FormButton" onClick={() => this.state.login ? this.Login() : this.Register()}>{this.state.login ? "Login" : "Register"}</button>
                     </div>
                 </div>
             </div>
@@ -53,21 +53,20 @@ class LoginRegister extends React.Component{
         });
     }
 
-    onRegisterLinkClick(){
+    onLinkClick(){
         this.setState({
-           login: false 
+           login: !this.state.login 
         });
-    }
-
-    onLoginLinkClick(){
-        this.setState({
-            login: true 
-         });
     }
 
     Login() {
         console.log(this.state.username + " : " + this.state.password);
-        var user = new User(this.state.username, this.state.password)
+        //Nur Test
+        var user;
+        if(this.state.username == "admin")
+            user = new User(this.state.username, this.state.password, true);
+        else
+            user = new User(this.state.username, this.state.password, false);
         this.props.onClickHandler(user);
     }
     
