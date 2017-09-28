@@ -15,5 +15,4 @@ export default class UserView extends React.Component {
         )
     }
 
-
-}
+} 
