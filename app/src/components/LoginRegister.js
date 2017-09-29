@@ -15,7 +15,7 @@ class LoginRegister extends React.Component{
 
     render(){
         return(
-            <div className="Form" style={{"visibility": this.props.hidden ? "hidden" : "visible"}}>
+            <div className="Form">
                 <div className="FormHeading">
                     {this.state.login ? "Login" : "Register"}
                 </div>
