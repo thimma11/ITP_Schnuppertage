@@ -10,9 +10,29 @@ export default class UserView extends React.Component {
     render() {
         return(
             <div style={{"visibility": this.props.hidden ? "hidden" : "visible"}}>
-                <h1>Hello, {this.props.user ? this.props.user.Vorname: ""}</h1>
+                {this.renderForUser()}
             </div>
         )
     }
 
+<<<<<<< HEAD
 } 
+=======
+    renderForUser() {
+        if(this.state.user.Admin)
+            return (
+                <div>
+                    Hello, Admin!
+                </div>
+            );
+        else
+            return (
+                <div>
+                    Hello, User!
+                </div>
+            );
+    }
+
+
+}
+>>>>>>> 7fe6f902f90fae5a177a610d34572564bb1a14b1
