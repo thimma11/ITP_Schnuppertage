@@ -1,0 +1,37 @@
+.timetable {
+	margin-top: 50px;
+	max-width: 330px;
+}
+.timetable h2 {
+	margin: 0;
+	margin-bottom: 10px;
+	text-align: center;
+	color: #212529;
+	font-size: 2em;
+}
+.timetable h4 {
+	margin: 0;
+	margin-bottom: 5px;
+	text-align: center;
+	font-size: 0.8em;
+	color: #666666;
+	font-weight: 400;
+}
+.lesson {
+	padding: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	line-height: 1.25;
+	background-color: #ffffff;
+	font-size: 1em;
+	color: #495057;
+	margin-bottom: -1px;
+}
+.lesson:hover {
+	cursor: pointer;
+}
+.lesson-description {
+	border-top: 1px solid #f2f2f2;
+	text-align: center;
+	margin-top: 5px;
+	padding-top: 5px;
+}
