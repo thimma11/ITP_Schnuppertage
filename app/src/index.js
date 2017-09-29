@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import App from './components/App';
+import App from './components/App';
 import Timetable from './components/Timetable';
 import registerServiceWorker from './registerServiceWorker';
 
@@ -11,6 +11,6 @@ const lessons = [
 	{id:4, teacher:"Birnzain", subject:"SYTD", description:"Dezentrale Systeme", beginDate:"11:00", endDate:"11:15"}
 ];
 
-//ReactDOM.render(<App />, document.getElementById('root'));
-ReactDOM.render(<Timetable  lessons={lessons}/>, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('root'));
+//ReactDOM.render(<Timetable  lessons={lessons}/>, document.getElementById('root'));
 registerServiceWorker();

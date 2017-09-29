@@ -18,7 +18,7 @@ class App extends React.Component{
         return (
             <div className="App">
                 <LoginRegister onClickHandler={this.RegisterSession} hidden={this.state.user ? true : false} />
-                <UserView hidden={this.state.user ? false : true} user={this.state.user} />
+                {this.RenderUserView()}
             </div>
         )
     }
@@ -28,6 +28,14 @@ class App extends React.Component{
         this.setState({
             user: user
         });
+        console.log(user);
+    }
+
+    RenderUserView() {
+        if(this.state.user)
+            return (
+                <UserView hidden={this.state.user ? false : true} user={this.state.user} />
+            );
     }
 
 }
