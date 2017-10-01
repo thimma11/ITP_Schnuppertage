@@ -14,9 +14,12 @@ export default class Timetable extends React.Component {
 		return (
 			<div className="container timetable">
 				<h2><i>Timetable</i>  - {this.state.title}</h2>
-				<h4>Click a box for more information!</h4>
+				<h4>Click a box to edit the information!</h4>
 				<div>
 					{ this.state.lessons.map((lesson)=>lesson) }
+					<div className="lesson">
+						<button className="btn btn-md btn-success btn-block">Add Lesson</button>
+					</div>
 				</div>
 			</div>
 		);
