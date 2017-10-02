@@ -15,9 +15,6 @@ export default class UserView extends React.Component {
         )
     }
 
-<<<<<<< HEAD
-} 
-=======
     renderForUser() {
         if(this.state.user.Admin)
             return (
@@ -33,6 +30,4 @@ export default class UserView extends React.Component {
             );
     }
 
-
 }
->>>>>>> 7fe6f902f90fae5a177a610d34572564bb1a14b1
