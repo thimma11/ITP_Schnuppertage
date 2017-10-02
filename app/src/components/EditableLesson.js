@@ -10,7 +10,8 @@ export default class EditableLesson extends React.Component {
 			description: props.description,
 			beginDate: props.beginDate,
 			endDate: props.endDate,
-			editing: false
+			editing: props.editing,
+			deleteLesson: props.deleteLesson.bind(this)
 		};
 	}
 
@@ -44,8 +45,8 @@ export default class EditableLesson extends React.Component {
 			editing: !this.state.editing
 		});
 	}
-	saveLesson() {
-		console.log("Lesson saved...");
+	save() {
+		console.log("Saving lesson...");
 
 		this.setState({
 			editing: !this.state.editing
@@ -85,7 +86,8 @@ export default class EditableLesson extends React.Component {
 							<input className="form-control" spellCheck="false" value={this.state.endDate} onChange={ (event)=>this.onEndDateChange(event) }/>
 						</div>
 					</div>
-					<button className="btn btn-md btn-primary btn-block" onClick={ ()=>this.saveLesson() }>Save</button>
+					<button className="btn btn-md btn-primary btn-block" onClick={ ()=>this.save() }>Save</button>
+					<button className="btn btn-md btn-outline-danger btn-block" onClick={ this.state.deleteLesson }>Delete</button>
 				</div>
 			);
 		}
