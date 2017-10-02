@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDom from 'react-dom';
 import Authentication from './Authentication/Authentication';
 import UserView from './UserView';
 
