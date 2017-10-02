@@ -3,8 +3,8 @@ import { User } from '../classes/User';
 import '../style/LoginRegister.css'
 
 class LoginRegister extends React.Component{
-    constructor({onClickHandler, hidden}){
-        super({onClickHandler, hidden});
+    constructor(props){
+        super(props);
 
         this.state = {
             login: true,
@@ -15,7 +15,7 @@ class LoginRegister extends React.Component{
 
     render(){
         return(
-            <div className="Form" style={{"visibility": this.props.hidden ? "hidden" : "visible"}}>
+            <div className="Form">
                 <div className="FormHeading">
                     {this.state.login ? "Login" : "Register"}
                 </div>

@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import LoginRegister from './LoginRegister';
+import Authentication from './Authentication/Authentication';
 import UserView from './UserView';
 
 
 class App extends React.Component{
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             user: null,
@@ -17,8 +17,8 @@ class App extends React.Component{
     render(){
         return (
             <div className="App">
-                <LoginRegister onClickHandler={this.RegisterSession} hidden={this.state.user ? true : false} />
-                <UserView hidden={this.state.user ? false : true} user={this.state.user} />
+                {this.RenderAuthentication()}
+                {this.RenderUserView()}
             </div>
         )
     }
@@ -28,6 +28,21 @@ class App extends React.Component{
         this.setState({
             user: user
         });
+        console.log(user);
+    }
+
+    RenderUserView() {
+        if(this.state.user)
+            return (
+                <UserView user={this.state.user} />
+            );
+    }
+
+    RenderAuthentication() {
+        if(!this.state.user)
+            return (
+                <Authentication />
+            );
     }
 
 }
