@@ -2,8 +2,6 @@ import React from 'react';
 import Login from './Login';
 import Register from './Register';
 
-import '../../style/Authentication.css';
-
 
 export default class Authentication extends React.Component {
     constructor(props) {

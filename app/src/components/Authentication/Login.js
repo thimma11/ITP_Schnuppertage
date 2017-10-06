@@ -16,18 +16,22 @@ export default class Login extends React.Component {
         return (
             <div className="form">
                 <div className="form-group row">
-                    <label htmlFor="username" className="col" >Username</label>
-                    <input type="text" id="username" className="col" onChange={(e) => this.onUsernameChange(e)} /> 
+                    <label htmlFor="username" className="col-sm-4 col-form-label" >Username</label>
+                    <div className="col">
+                        <input type="text" id="username" className="form-control" onChange={(e) => this.onUsernameChange(e)} /> 
+                    </div>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="password" className="col" >Password</label>
-                    <input type="password" id="password" className="col" onChange={(e) => this.onPasswordChange(e)} /> 
+                    <label htmlFor="password" className="col-sm-4 col-form-label" >Password</label>
+                    <div className="col">
+                        <input type="password" id="password"  className="form-control" onChange={(e) => this.onPasswordChange(e)} /> 
+                    </div>
                 </div>
                 <div className="form-group row">
-                    <a href="#" className="col" onClick={() => this.onRegisterClick()}>Register now!</a>
+                    <a href="#" className="col text-muted" onClick={() => this.onRegisterClick()}>Register now!</a>
                 </div>
-                <div className="form-group row">
-                    <button onClick={() => this.LoginEvent()}>Login</button>
+                <div className="form-group row col">
+                    <button  className="form-control" onClick={() => this.LoginEvent()}>Login</button>
                 </div>
             </div>
         );
