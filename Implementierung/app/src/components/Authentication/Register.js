@@ -10,6 +10,11 @@ export default class Register extends React.Component {
             password: ""
         }
 
+        this.onRegisterClick = this.onRegisterClick.bind(this);
+        this.RegisterEvent = this.RegisterEvent.bind(this);
+        this.onUsernameChange = this.onUsernameChange.bind(this);
+        this.onPasswordChange = this.onPasswordChange.bind(this);
+
     }
 
     render() {
@@ -18,20 +23,20 @@ export default class Register extends React.Component {
                 <div className="form-group row">
                     <label htmlFor="username" className="col-sm-4 col-form-label" >Username</label>
                     <div className="col">
-                        <input type="text" id="username" className="form-control" onChange={(e) => this.onUsernameChange(e)} /> 
+                        <input type="text" id="username" className="form-control" onChange={this.onUsernameChange} /> 
                     </div>
                 </div>
                 <div className="form-group row">
                     <label htmlFor="password" className="col-sm-4 col-form-label" >Password</label>
                     <div className="col">
-                        <input type="password" id="password"  className="form-control" onChange={(e) => this.onPasswordChange(e)} /> 
+                        <input type="password" id="password"  className="form-control" onChange={this.onPasswordChange} /> 
                     </div>
                 </div>
                 <div className="form-group row">
-                    <a href="#" className="col text-muted" onClick={() => this.onRegisterClick()}>Login!</a>
+                    <a href="#" className="col text-muted" onClick={this.onRegisterClick}>Login!</a>
                 </div>
                 <div className="form-group row col">
-                    <button className="form-control" onClick={() => this.RegisterEvent()}>Register</button>
+                    <button className="form-control" onClick={this.RegisterEvent}>Register</button>
                 </div>
             </div>
         );
