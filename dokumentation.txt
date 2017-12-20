@@ -1,0 +1,30 @@
+Anforderungen:
+- Schnuppertag mt max Personen, Standort und Woche
+	falls eine Usergrenze überschritten wird, eine neue Gruppe erstellt (max Gruppen werden angebenen, sonst default wert = 1)
+- Angaben bei einer Anmeldung
+	Zuname*, Vorname*, Telefon*(oder eMail), eMail, Schultyp (von wo kommen diese Gymnasium), Schulort, Standortinteresse (bsp.: IT Krems), angemeldet (bool)
+* (muss) wird bei Schnuppertaganmeldung eingegeben
+Wiederverwendbare Musterstundenpläne für jeden Wochentag
+Pro Wochentag 1 STundenplan
+	Zwettl = max 2 Gruppen
+		2 Stundenpläne pro Gruppe = 1
+	Krems = 1 Stundenplan
+Stundenplan
+	- Tag, Stunde (1...), Zeit, Jahrgang(Bsp.: 4CHIT), Fach, LehrerIn
+Formalare sind in zwettl und krems unterschiedlich (Standortinteresse nur in Informationstechnologie)
+Email senden bevor dem Schnuppertag, falls Schnupperschüler für diesen Tag angemeldet (Zweitinterval variabel)
+Die im Formalur eingetragenen Lehrer bekommen mit der ihnen zugewiesenen Email eine Erinnerung (Emila adressen kopierbar)
+Für jeden Schüler, die an einem Schnuppertag teilnahmen, soll der Administrator ein Bestätigungsformular ausgedruckt werden können
+Statistik ->
+	Datum, Vorname, Zuname, Schultyp, Schulort, Standortinteresse(CSV)
+	Bsp.: Wie viele kommen im Januar...
+Benutzer geht auf Website
+	Bekommt eine Überischt Abteilungen
+-> Datum auswählen (Datepicker) Verfügbare Schnuppertage anzeigen (mit Abteilungsfarben markieren), volle nicht! (Anzahl anzeigen z.B.: 2/4)
+-> Anmelden -> Daten eingeben -> Bestätigungsmail, falls nicht bestätigt Schnupperschüler löschen, Falls nicht nach einem variable Interval bestätigt -> löschen
+Administratorfunktion:
+	Schüler löschen (falls nicht erscheint)
+	Schüler verschieben
+Check if Schüler war schon mal anwesend, Überlegung, wie man dies erkennt. (Datenbankschema)
+Wie oft kann ein Schnupperschüler teilnehmen (unsere Logik)
+Gliederung von Stundenplänen in Gruppen und "Einmalige Stundenpläne", falls ein Lehrer ausfällt
