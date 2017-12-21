@@ -17,6 +17,7 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     let token = req.query.token;
+    console.log(token);
     if (database_config.verify_request(token)) {
 
     }
@@ -26,14 +27,14 @@ router.post('/', (req, res) => {
     }
 });
 
-router.get('/:id?', (req, res) => {
+router.get('/:id', (req, res) => {
     let id = req.params.id;
 });
 router.put('/:id', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
         let id = req.params.id;
-        res.send(
+        res.send(id);
     }
     else {
         res.sendStatus(401);
