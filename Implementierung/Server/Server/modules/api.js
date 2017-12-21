@@ -1,13 +1,21 @@
 ﻿var express = require('express');
-var router = express.Router;
+var router = express.Router();
+var gegenstand = require('./gegenstand');
+var lehrer = require('./lehrer');
+var fach = require('./fach');
 
 
-router.get('/', (request, response) => {
-    response.write("hello");
+router.use('/gegenstand', gegenstand);
+router.use('/lehrer', lehrer);
+router.use('/fach', fach);
+
+router.get('/', (req, res) => {
+    res.send("asd");
 });
 
 
-exports.default = router;
+
+module.exports = router;
 
 
 
