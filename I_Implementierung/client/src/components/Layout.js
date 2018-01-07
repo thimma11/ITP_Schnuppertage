@@ -1,5 +1,7 @@
 import React from 'react';
 import axios from 'axios';
+import Admin from './Admin';
+import User from './User';
 import * as Globals from '../Globals';
 
 
@@ -7,10 +9,7 @@ class Layout extends React.Component {
 
 	constructor() {
 		super();
-		this.state = { key: 0 }
-
-		this.Login.bind(this);
-		this.Logout.bind(this);
+		this.state = { key: 0 };
 	}
 
 
@@ -21,25 +20,29 @@ class Layout extends React.Component {
 	}
 
 	/* Check if token is saved in cookie */
-	IsTokenAvailable() {
-		return !(
-			document.cookie.split('=')[1] === ''
-			|| document.cookie === ''
-		);
+	GetCookie() {
+		let cookie = '; ' + document.cookie;
+		let parts = cookie.split('; ' + Globals.COOKIE_KEY + '=');
+		if (parts.length === 2) {
+			let value = parts.pop().split(';').shift();
+			if (value === '')
+				return undefined;
+			return value;
+		}
 	}
 
 	/* Get the role of the current visiter */
 	GetVisiterRole() {
-		if (this.IsTokenAvailable()) {
-			let token = document.cookie.split('=')[1];
+		let token = this.GetCookie();
+		if (token !== undefined) {
 			axios.get(Globals.BASE_PATH + 'user?token=' + token)
 			.then(response => {
-				this.page = 'ADMIN';
+				this.role = 'ADMIN';
 				this.setState({ key: Math.random() });
 			})
 			.catch(error => this.Logout());
 		} else {
-			this.page = 'USER';
+			this.role = 'USER';
 			this.setState({ key: Math.random() });
 		}
 	}
@@ -51,26 +54,33 @@ class Layout extends React.Component {
 			username: username,
 			password: password
 		}).then(response => {
-			document.cookie = Globals.COOKIE_KEY + "=" + response.data.token;
+			document.cookie = Globals.COOKIE_KEY + '=' + response.data.token;
+			this.role = 'ADMIN';
+			this.setState({ key: Math.random() });
 			return true;
-		}).catch(error => { return false; });
+		}).catch(error => {
+			if (!error.response || error.response.status !== 422)
+				console.log(error);
+			return false;
+		});
 		return response;
 	}
 
 	Logout() {
 		document.cookie = Globals.COOKIE_KEY + '=';
-		this.page = 'USER';
+		this.role = 'USER';
 		this.setState({ key: Math.random() });
 	}
 	//#endregion
 
 
     render(){
-		if (this.page) {
-			if (this.page === 'ADMIN')
-				return 'Admin';
-			if (this.page === 'USER')
-				return 'User';
+		if (this.role) {
+			if (this.role === 'ADMIN')
+				return <Admin GetCookie={ this.GetCookie.bind(this) } SendLogoutRequest={ this.Logout.bind(this) } />;
+			if (this.role === 'USER')
+				return <Admin GetCookie={ this.GetCookie.bind(this) } SendLogoutRequest={ this.Logout.bind(this) } />;
+			//return <User SendLoginRequest={ this.Login.bind(this) } />;
 		} else {
 			return 'Loading...';
 		}
