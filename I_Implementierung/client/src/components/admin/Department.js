@@ -253,45 +253,45 @@ class Department extends React.Component {
                             return (
                                 location.timetables.map((timetable, index) => {
                                     return (
-                                        <div>
-                                            <h4>Gruppe { index }</h4>
+                                        <div key={ index } >
+                                            <h4>Gruppe { index + 1 }</h4>
                                             <div>
                                                 <label><u>Montag</u></label>
                                                 {
-                                                    timetable.monday.map(block => {
-                                                        return <p>{ block.start } - { block.end }: { block.subject } - { block.teacher }</p>;
+                                                    timetable.monday.map((block, index) => {
+                                                        return <p key={index} >{ block.start } - { block.end }: { block.subject } - { block.teacher }</p>;
                                                     })
                                                 }
                                             </div>
                                             <div>
                                                 <label><u>Dienstag</u></label>
                                                 {
-                                                    timetable.tuesday.map(block => {
-                                                        return <p>{ block.start } - { block.end }: { block.subject } - { block.teacher }</p>;
+                                                    timetable.tuesday.map((block, index) => {
+                                                        return <p key={index} >{ block.start } - { block.end }: { block.subject } - { block.teacher }</p>;
                                                     })
                                                 }
                                             </div>
                                             <div>
                                                 <label><u>Mittwoch</u></label>
                                                 {
-                                                    timetable.wednesday.map(block => {
-                                                        return <p>{ block.start } - { block.end }: { block.subject } - { block.teacher }</p>;
+                                                    timetable.wednesday.map((block, index) => {
+                                                        return <p key={index} >{ block.start } - { block.end }: { block.subject } - { block.teacher }</p>;
                                                     })
                                                 }
                                             </div>
                                             <div>
                                                 <label><u>Donnerstag</u></label>
                                                 {
-                                                    timetable.thursday.map(block => {
-                                                        return <p>{ block.start } - { block.end }: { block.subject } - { block.teacher }</p>;
+                                                    timetable.thursday.map((block, index) => {
+                                                        return <p key={index} >{ block.start } - { block.end }: { block.subject } - { block.teacher }</p>;
                                                     })
                                                 }
                                             </div>
                                             <div>
                                                 <label><u>Freitag</u></label>
                                                 {
-                                                    timetable.friday.map(block => {
-                                                        return <p>{ block.start } - { block.end }: { block.subject } - { block.teacher }</p>;
+                                                    timetable.friday.map((block, index) => {
+                                                        return <p key={index} >{ block.start } - { block.end }: { block.subject } - { block.teacher }</p>;
                                                     })
                                                 }
                                             </div>
@@ -311,7 +311,7 @@ class Department extends React.Component {
                 {
                     this.state.locations.map(location => {
                         return (
-                            <div>
+                            <div key={ location.id } >
                                 <button onClick={ () => this.ChangeSelectedLocation(location.id) }>Stundenpläne für { location.name }</button>
                             </div>
                         );
@@ -362,7 +362,7 @@ class Department extends React.Component {
                         {
                             this.state.events.map(event => {
                                 return (
-                                    <tr>
+                                    <tr key={ event.id }>
                                         <td>{ event.date }</td>
                                         <td>{ event.start }</td>
                                         <td>{ event.end }</td>
