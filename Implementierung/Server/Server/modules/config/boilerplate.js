@@ -33,7 +33,7 @@ router.put('/:id', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
         let id = req.params.id;
-        res.send("asd");
+        res.send(
     }
     else {
         res.sendStatus(401);
