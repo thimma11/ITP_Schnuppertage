@@ -1,97 +1,99 @@
+//#region Imports
+//#region Dependencies
 import React from 'react';
 import axios from 'axios';
+//#endregion
+
 import Department from './Department';
 import * as Globals from '../Globals';
+//#endregion
 
 
 class Departments extends React.Component {
 
     constructor() {
         super();
-        this.IDs = [];
         this.state = {
-            names: [],
-            key: 0
+            departments: undefined,
+            viewID: -1
         };
-        this.departmentIndex = undefined;
 
-        this.CloseDepartment.bind(this);
+        this.CloseDepartment = this.CloseDepartment.bind(this);
     }
 
 
-    /* Get all display information on startup */
+    /* Get all display information */
     componentDidMount() {
         this.InitDepartments();
     }
 
     /* Get all departments */
     InitDepartments() {
-        //#region Test Data
-        let departments = [
-            { id: 0, name: "Hochbau"},
-            { id: 1, name: "Tiefbau"},
-            { id: 3, name: "Informationstechnologie"},
-            { id: 2, name: "Holzbau"}
-        ];
-        let names = [];
-        departments.map(department => {
-            this.IDs.push(department.id);
-            names.push(department.name);
-            return null;
+        //#region Delete this later...
+        this.setState({
+            departments: [
+                { id: 0, name: "Hochbau"},
+                { id: 1, name: "Tiefbau"},
+                { id: 3, name: "Informationstechnologie"},
+                { id: 2, name: "Holzbau"}
+            ]
         });
-        this.setState({ names: names });
         //#endregion
         
-        //#region Server Request
-        /*
+        /* Server Request
         axios.get(Globals.BASE_PATH + 'departments')
-        .then(response => {
-            let departments = response.data;
-            let names = [];
-            departments.map(department => {
-                this.IDs.push(department.id);
-                names.push(department.name);
-                return null;
-            });
-            this.setState({ names: names });
-        }).catch(error => console.log(error));
-        */
-        //#endregion
+        .then(response => this.setState({ departments: response.data.departments }))
+        .catch(error => console.log(error)); */
     }
 
-    /* Handle a specific department request */
-    ShowDepartment(index) {
-        this.departmentIndex = index;
-        this.setState({ key: Math.random() });
+    /* Show a detailed department */
+    ShowDepartment(id) {
+        this.setState({ viewID: id });
     }
 
-    /* Show all departments on request */
-    CloseDepartment() {
-        this.departmentIndex = undefined;
-        this.setState({ key: Math.random() });
+    /* Close a detailed department */
+    CloseDepartment(department) {
+        let departments = this.state.departments;
+        departments.push(department);
+        this.setState({
+            departments: departments,
+            viewID: -1
+        });
+    }
+
+    /* Render the departments */
+    GetDepartments() {
+        if (this.state.departments === undefined)
+            return 'Loading departments...';
+        else {
+            return (
+                <ul>
+                    {
+                    this.state.departments.map(department => {
+                        return (
+                            <li key={department.id} >
+                                { department.name }
+                                <button onClick={ () => this.ShowDepartment(department.id) } >Schnuppertage anzeigen</button>
+                            </li>
+                        );
+                    })
+                    }
+                </ul>
+            );
+        }
     }
 
 
     render() {
-        if (this.departmentIndex !== undefined)
-            return <Department id={ this.IDs[this.departmentIndex] } name={ this.state.names[this.departmentIndex] } />;
-        return (
-            <div>
-                <h2>Abteilungen</h2>
-                <ul>
-                {
-                    this.state.names.map((name, index) => {
-                        return (
-                            <li key={index} >
-                                { name }
-                                <button onClick={ () => this.ShowDepartment(index) } >Schnuppertage anzeigen</button>
-                            </li>
-                        );
-                    })
-                }
-                </ul>
-            </div>
-        );
+        if (this.state.viewID < 0) {
+            return (
+                <div>
+                    <h1>Abteilungen</h1>
+                    { this.GetDepartments() }
+                </div>
+            );
+        }
+        return <Department id={ this.viewID } />;
     }
 
 }

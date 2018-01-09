@@ -1,6 +1,11 @@
+//#region Imports
+//#region Dependencies
 import React from 'react';
 import axios from 'axios';
+//#endregion
+
 import * as Globals from '../Globals';
+//#endregion
 
 
 class Registration extends React.Component {
@@ -8,44 +13,17 @@ class Registration extends React.Component {
 	constructor(props) {
 		super(props);
 		this.eventID = this.props.eventID;
-		this.schoolTypes = [];
 		this.state = {
-			date: this.props.date,
 			firstname: '',
 			lastname: '',
 			phone: '',
 			email: '',
 			schoolLocation: '',
 			schoolType: '',
-			errorMessage: '',
-			key: 0
+			errorMessage: ''
 		}
 	}
 
-
-	componentDidMount() {
-		this.schoolTypes = [
-			'Berufsbildende höhere Schule',
-			'Berufsbildende mittlere und höhere Schule',
-			'Berufsbildende mittlere Schule',
-			'Bundesoberstufenrealgymnasium'
-		];
-		this.setState({
-			schoolType: this.schoolTypes[0]
-		});
-
-		/*
-		axios.get(Globals.BASE_PATH + 'schoolTypes')
-		.then(response => {
-			if (response.data.schoolTypes.length > 0) {
-				this.schoolTypes = response.data.schoolTypes;
-				this.setState({
-					schoolType: this.schoolTypes[0]
-				});
-			}
-		}).catch(error => console.log(error));
-		*/
-	}
 
 	ChangeFirstname(event) {
 		this.setState({
@@ -122,7 +100,7 @@ class Registration extends React.Component {
 	}
 
 	CheckSchoolType() {
-		if (this.state.schoolType === '' || this.schoolTypes.indexOf(this.state.schoolType) === -1) {
+		if (this.state.schoolType === '') {
 			this.setState({ errorMessage: 'Sie müssen den Schultyp angeben.' });
 			return false;
 		}
@@ -131,7 +109,7 @@ class Registration extends React.Component {
 
 	RegisterForEvent() {
 		if (this.CheckFirstname() && this.CheckLastname() && this.CheckPhoneAndEmail() && this.CheckSchoolLocation() && this.CheckSchoolType()) {
-			/*
+			/* Server Request
 			axios.post(Globals.BASE_PATH + 'event/' + this.eventID + '/student', {
 				firstname: this.state.firstname,
 				lastname: this.state.lastname,
@@ -156,7 +134,7 @@ class Registration extends React.Component {
     render(){
 		return (
 			<div>
-				<h4>Eintragung am { this.state.date }</h4>
+				<h4>Teilnahmeformular</h4>
 				<div>
 					<label>Vorname:</label>
 					<input value={ this.state.firstname } onChange={ (e) => this.ChangeFirstname(e) } />
@@ -179,13 +157,7 @@ class Registration extends React.Component {
 				</div>
 				<div>
 					<label>Schultyp:</label>
-					<select value={ this.state.schoolType } onChange={ (e) => this.ChangeSchoolType(e) } >
-					{
-						this.schoolTypes.map((type, index) => {
-							return <option key={ index } value={ type } >{ type }</option>;
-						})
-					}
-					</select>
+					<input value={ this.state.schoolType } onChange={ (e) => this.ChangeSchoolType(e) } />
 				</div>
 				{ this.GetErrorMessage() }
 				<button onClick={ () => this.RegisterForEvent() } >Eintragen</button>

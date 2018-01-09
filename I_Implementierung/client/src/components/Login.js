@@ -1,4 +1,8 @@
+//#region Imports
+//#region Dependencies
 import React from 'react';
+//#endregion
+//#endregion
 
 
 class Login extends React.Component {
@@ -8,7 +12,8 @@ class Login extends React.Component {
         this.state = {
             username: '',
             password: '',
-            errorMessage: ''
+            errorMessage: '',
+            loading: false
         };
     }
 
@@ -20,6 +25,14 @@ class Login extends React.Component {
         })
     }
 
+    CheckUsername() {
+        if (this.state.username === '') {
+            this.setState({ errorMessage: "Geben Sie einen Benutzernamen ein." });
+            return false;
+        }
+        return true;
+    }
+
     ChangePassword(event) {
         this.setState({
             password: event.target.value,
@@ -27,14 +40,24 @@ class Login extends React.Component {
         })
     }
 
+    CheckPassword() {
+        if (this.state.password === '') {
+            this.setState({ errorMessage: "Geben Sie ein Passwort ein." });
+            return false;
+        }
+        return true;
+    }
+
     CheckLogin() {
-        if (this.state.username !== '' && this.state.password !== '') {
-            let response = this.props.SendLoginRequest(this.state.username, this.state.password);
+        if (this.CheckUsername() && this.CheckPassword()) {
+            this.setState({ loading: true });
+            let response = this.props.Login(this.state.username, this.state.password);
             response.then(response => {
                 if (response === false)
                     this.setState({ errorMessage: 'Nicht erfolgreich, überprüfen Sie den Benutzernamen und das Passwort.' });
+                this.setState({ loading: false });
             });
-        } else this.setState({ errorMessage: 'Geben Sie Benutzernamen und Passwort ein.' });
+        }
     }
 
     GetErrorMessage() {
@@ -42,11 +65,16 @@ class Login extends React.Component {
             return <p>{ this.state.errorMessage }</p>
     }
 
+    GetLoading() {
+        if (this.state.loading)
+            return <p>Trying to log in...</p>;
+    }
+
 
     render() {
         return (
             <div>
-                <h2>Admin Login</h2>
+                <h1>Admin Login</h1>
                 <div>
                     <label>Benutzername:</label>
                     <input value={ this.state.username } onChange={ (e) => this.ChangeUsername(e) } />
@@ -55,6 +83,7 @@ class Login extends React.Component {
                     <label>Passwort:</label>
                     <input value={ this.state.password } onChange={ (e) => this.ChangePassword(e) } />
                 </div>
+                { this.GetLoading() }
                 { this.GetErrorMessage() }
                 <button onClick={ () => this.CheckLogin() } >Login</button>
             </div>

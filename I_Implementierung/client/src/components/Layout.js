@@ -1,8 +1,13 @@
+//#region Imports
+//#region Dependencies
 import React from 'react';
 import axios from 'axios';
+//#endregion
+
 import Admin from './Admin';
 import User from './User';
 import * as Globals from '../Globals';
+//#endregion
 
 
 class Layout extends React.Component {
@@ -10,16 +15,19 @@ class Layout extends React.Component {
 	constructor() {
 		super();
 		this.state = { key: 0 };
+
+		this.GetCookie = this.GetCookie.bind(this);
+		this.Login = this.Login.bind(this);
+		this.Logout = this.GetCookie.bind(this);
 	}
 
 
-	//#region Startup Routing
 	/* Check if admin is logged in */
 	componentWillMount() {
 		this.GetVisiterRole();
 	}
 
-	/* Check if token is saved in cookie */
+	/* Return the value of the token saved in the cookies */
 	GetCookie() {
 		let cookie = '; ' + document.cookie;
 		let parts = cookie.split('; ' + Globals.COOKIE_KEY + '=');
@@ -33,20 +41,23 @@ class Layout extends React.Component {
 
 	/* Get the role of the current visiter */
 	GetVisiterRole() {
-		let token = this.GetCookie();
-		if (token !== undefined) {
-			axios.get(Globals.BASE_PATH + 'user?token=' + token)
+		let authToken = this.GetCookie();
+		if (authToken !== undefined) {
+			axios.get(Globals.BASE_PATH + 'users?authToken=' + authToken)
 			.then(response => {
-				this.role = 'ADMIN';
-				this.setState({ key: Math.random() });
+				if (response.data.status === 'ACCEPTED') {
+					this.role = 'ADMIN';
+					this.setState({ key: Math.random() });
+				}
+				else if (response.data.status === 'DECLINED')
+					this.Logout();
 			})
-			.catch(error => this.Logout());
+			.catch(error => console.log(error));
 		} else {
 			this.role = 'USER';
 			this.setState({ key: Math.random() });
 		}
 	}
-	//#endregion
 
 	//#region Authentification System
 	Login(username, password) {
@@ -58,11 +69,7 @@ class Layout extends React.Component {
 			this.role = 'ADMIN';
 			this.setState({ key: Math.random() });
 			return true;
-		}).catch(error => {
-			if (!error.response || error.response.status !== 422)
-				console.log(error);
-			return false;
-		});
+		}).catch(error => { return false; });
 		return response;
 	}
 
@@ -77,10 +84,10 @@ class Layout extends React.Component {
     render(){
 		if (this.role) {
 			if (this.role === 'ADMIN')
-				return <Admin GetCookie={ this.GetCookie.bind(this) } SendLogoutRequest={ this.Logout.bind(this) } />;
+				return <Admin GetCookie={ this.GetCookie } Logout={ this.Logout } />;
 			if (this.role === 'USER')
-				return <Admin GetCookie={ this.GetCookie.bind(this) } SendLogoutRequest={ this.Logout.bind(this) } />;
-			//return <User SendLoginRequest={ this.Login.bind(this) } />;
+				return <User Login={ this.Login } />;
+			//return <User Login={ this.Login } />;
 		} else {
 			return 'Loading...';
 		}

@@ -1,6 +1,11 @@
+//#region Imports
+//#region Dependencies
 import React from 'react';
+//#endregion
+
 import Departments from './Departments';
 import Login from './Login';
+//#endregion
 
 
 class User extends React.Component {
@@ -12,7 +17,6 @@ class User extends React.Component {
     }
 
 
-    //#region Routing and Navigating
     /* Navigate to the given page */
     Navigate(page) {
         this.page = page;
@@ -24,10 +28,8 @@ class User extends React.Component {
         if (this.page === 'DEPARTMENTS')
             return <Departments key={ this.state.key } />;
         if (this.page === 'LOGIN')
-            return <Login key={ this.state.key } SendLoginRequest={ this.props.SendLoginRequest } />;
-        return 'Routing failed...';
+            return <Login key={ this.state.key } Login={ this.props.Login } />;
     }
-    //#endregion
 
 
     render() {

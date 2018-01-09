@@ -1,10 +1,12 @@
+//#region Imports
+//#region Dependencies
 import React from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import moment from 'moment';
 import axios from 'axios';
-import Registration from './Registration';
+//#endregion
+
+import Location from './Location';
 import * as Globals from '../Globals';
+//#endregion
 
 
 class Department extends React.Component {
@@ -12,114 +14,70 @@ class Department extends React.Component {
     constructor(props) {
         super(props);
         this.id = this.props.id;
-        this.eventID = undefined;
         this.state = {
-            name: this.props.name,
-            selectedDate: undefined,
-            openEvents: [],
-            closedEvents: [],
-            registered: false
+            name: "",
+            locations: undefined,
+            locationID: -1
         };
+
+        this.CloseLocation = this.CloseLocation.bind(this);
     }
 
 
-    /* Initialize startup */
+    /* Get all display information */
     componentDidMount() {
         this.InitEvents();
     }
 
-    /* Get all events for this department */
+    /* Get all department information with all locations */
     InitEvents() {
-        //#region Test Data
-        let events = [
-            { date: '2018-01-08', status: 'REGISTER'},
-            { date: '2018-02-01', status: 'CLOSED'},
-            { date: '2018-01-18', status: 'CLOSED'},
-            { date: '2018-01-10', status: 'CLOSED'}
-        ];
-        let openEvents = [];
-        let closedEvents = [];
-        events.map(event => {
-            if (event.status === 'REGISTER')
-                openEvents.push(moment(event.date, 'YYYY-MM-DD'));
-            else if (event.status === 'CLOSED')
-                closedEvents.push(moment(event.date, 'YYYY-MM-DD'));
-            return null;
-        });
+        //#region Delete this later...
         this.setState({
-            openEvents: openEvents,
-            closedEvents: closedEvents
+            name: 'Hochbau',
+            locations: [
+                { id: 0, name: 'Zwettl' },
+                { id: 1, name: 'Krems' }
+            ]
         });
         //#endregion
 
-        //#region Server Request
-        /*
-        axios.get(Globals.BASE_PATH + 'departments/' + this.id + '/events')
-        .then(response => {
-            let events = response.data;
-            let openEvents = [];
-            let closedEvents = [];
-            events.map(event => {
-                if (event.status === 'REGISTER')
-                    openEvents.push(moment(event.date, 'YYYY-MM-DD'));
-                else if (event.status === 'CLOSED')
-                    closedEvents.push(moment(event.date, 'YYYY-MM-DD'));
-                return null;
-            });
-            this.setState({
-                openEvents: openEvents,
-                closedEvents: closedEvents
-            });
-        }).catch(error => console.log(error));
-        */
-        //#endregion
-    }
-
-    /* Open the register component if a event exists on the selected day */
-    OpenRegister(moment) {
-        //#region Test Data
-        this.setState({
-            selectedDate: moment,
-            registered: false
-        });
-        if (this.eventID === undefined)
-            this.eventID = 1;
-        else
-            this.eventID = this.eventID + 1;
-        //#endregion
-
-        //#region Server Request
-        /*
-        let date = moment.utc(1).toISOString().split('T')[0];
-        this.setState({
-            selectedDate: moment,
-            registered: false
-        });
-        axios.get(Globals.BASE_PATH + 'departments/' + this.id + '/event?date=' + date)
-        .then(response => this.eventID = response.data.id)
+        /* Server Request
+        axios.get(Globals.BASE_PATH + 'departments/' + this.id)
+        .then(response => this.setState({ name: response.data.name }))
         .catch(error => console.log(error));
-        */
-        //#endregion
+        axios.get(Globals.BASE_PATH + 'departments/' + this.id + '/locations')
+        .then(response => this.setState({ locations: response.data.locations }))
+        .catch(error => console.log(error)); */
     }
 
-    CloseRegister() {
-        this.setState({
-            selectedDate: undefined,
-            registered: true
-        });
-        this.eventID = undefined;
+    /* Show a detailed location */
+    ShowLocation(id) {
+        this.setState({ locationID: id });
     }
 
-    /* If a valid event is selected show the register form */
-    GetRegister() {
-        if (this.eventID !== undefined) {
-            let date = this.state.selectedDate.utc(1).toISOString().split('T')[0];
-            return <Registration key={ this.eventID } eventID={ this.eventID } date={ date } CloseRegister={ this.CloseRegister.bind(this) } />;
+    /* Close a detailed location */
+    CloseLocation() {
+        this.setState({ locationID: -1 });
+    }
+
+    /* Get the specific location view */
+    GetLocations() {
+        if(this.state.locations === undefined)
+            return 'Loading locations...';
+        else {
+            if (this.state.locationID < 0) {
+                return (
+                    <div>
+                        {
+                        this.state.locations.map(location => {
+                            return <button onClick={ () => this.ShowLocation(location.id) } >Schnuppertage in { location.name }</button>
+                        })
+                        }
+                    </div>
+                );
+            } else
+                return <Location id={ this.locationID } CloseLocation={ this.CloseLocation } />
         }
-        if (this.eventID === undefined && this.state.selectedDate !== undefined)
-            return <p>Keine Schnuppertage für dieses Datum gefunden.</p>
-        if (this.state.registered)
-            return <p>Sie haben sich eingetragen.</p>;
     }
 
 
@@ -127,15 +85,7 @@ class Department extends React.Component {
         return (
             <div>
                 <h2>Schnuppertage für { this.state.name }</h2>
-                <DatePicker
-                    selected={ this.state.selectedDate }
-                    onChange={ this.OpenRegister.bind(this) }
-                    highlightDates={ [
-                        { 'react-datepicker__day--highlighted-custom-1': this.state.openEvents },
-                        { 'react-datepicker__day--highlighted-custom-2': this.state.closedEvents }
-                    ] }
-                    placeholderText='Wählen Sie ein Datum' />
-                { this.GetRegister() }
+                { this.GetLocations() }
             </div>
         );
     }
