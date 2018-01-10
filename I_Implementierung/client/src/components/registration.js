@@ -110,7 +110,7 @@ class Registration extends React.Component {
 	RegisterForEvent() {
 		if (this.CheckFirstname() && this.CheckLastname() && this.CheckPhoneAndEmail() && this.CheckSchoolLocation() && this.CheckSchoolType()) {
 			/* Server Request
-			axios.post(Globals.BASE_PATH + 'event/' + this.eventID + '/student', {
+			axios.post(Globals.BASE_PATH + 'events/' + this.eventID + '/register', {
 				firstname: this.state.firstname,
 				lastname: this.state.lastname,
 				phone: this.state.phone,

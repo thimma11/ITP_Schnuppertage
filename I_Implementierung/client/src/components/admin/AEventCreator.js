@@ -1,6 +1,11 @@
+//#region Imports
+//#region Dependencies
 import React from 'react';
 import axios from 'axios';
+//#endregion
+
 import * as Globals from '../../Globals';
+//#endregion
 
 
 class EventCreator extends React.Component {
@@ -27,12 +32,14 @@ class EventCreator extends React.Component {
 
     /* Get all locations */
     InitLocations() {
+        //#region Delete this later...
         this.setState({
             locations: [
                 { id: 0, name: 'Zwettl' },
                 { id: 1, name: 'Krems' }
             ]
         });
+        //#endregion
 
         //#region Server Request
         /*

@@ -1,5 +1,10 @@
+//#region Imports
+//#region Dependencies
 import React from 'react';
-import Departments from './admin/Departments';
+//#endregion
+
+import Departments from './admin/ADepartments';
+//#endregion
 
 
 class Admin extends React.Component {
@@ -11,7 +16,7 @@ class Admin extends React.Component {
 
 
     /* Navigate to the departments page */
-    Navigate() {
+    NavigateToDepartments() {
         this.setState({ key: Math.random() });
     }
 
@@ -21,12 +26,12 @@ class Admin extends React.Component {
             <div>
                 <nav>
                     <ul>
-                        <li onClick={ () => this.Navigate() } >Abteilungen</li>
-                        <li onClick={ () => this.props.SendLogoutRequest() } >Logout</li>
+                        <li onClick={ () => this.NavigateToDepartments() } >Abteilungen</li>
+                        <li onClick={ () => this.props.Logout() } >Logout</li>
                     </ul>
                 </nav>
                 <main>
-                    <Departments key={ this.state.key } GetCookie={ this.props.GetCookie } SendLogoutRequest={ this.props.SendLogoutRequest } />
+                    <Departments key={ this.state.key } GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } />
                 </main>
             </div>
         );

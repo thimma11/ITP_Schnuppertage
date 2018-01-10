@@ -68,9 +68,10 @@ class Department extends React.Component {
             if (this.state.locationID < 0) {
                 return (
                     <div>
+                        <h3>Standortauswahl</h3>
                         {
                         this.state.locations.map(location => {
-                            return <button onClick={ () => this.ShowLocation(location.id) } >Schnuppertage in { location.name }</button>
+                            return <button onClick={ () => this.ShowLocation(location.id) } >{ location.name }</button>
                         })
                         }
                     </div>

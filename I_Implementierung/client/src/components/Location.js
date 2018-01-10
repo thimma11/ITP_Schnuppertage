@@ -51,7 +51,7 @@ class Location extends React.Component {
         axios.get(Globals.BASE_PATH + 'locations/' + this.id)
         .then(response => this.setState({ name: response.data.name }))
         .catch(error => console.log(error));
-        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/locations/' + this.id + '?status=OPEN')
+        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/locations/' + this.id + '/events?status=OPEN')
         .then(response => this.setState({ events: response.data.events }))
         .catch(error => console.log(error)); */
     }
@@ -109,7 +109,7 @@ class Location extends React.Component {
     render() {
         return (
             <div>
-                <h3>Schnuppertage für { this.state.name }</h3>
+                <h3>Standort { this.state.name }</h3>
                 { this.GetEvents() }
                 <button onClick={ () => this.props.CloseLocation() } >Zurück zur Standortauswahl</button>
             </div>
