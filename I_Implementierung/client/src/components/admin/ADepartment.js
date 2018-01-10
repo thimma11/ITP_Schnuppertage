@@ -5,6 +5,7 @@ import axios from 'axios';
 //#endregion
 
 import EventCreator from './AEventCreator';
+import LocationTimetable from './ALocationTimetable';
 import * as Globals from '../../Globals';
 //#endregion
 
@@ -29,7 +30,7 @@ class Department extends React.Component {
 
     /* Get all display information */
     componentDidMount() {
-        this.InitEvents();
+        this.InitDepartment();
     }
 
     /* Get a detailed department information */
@@ -131,7 +132,7 @@ class Department extends React.Component {
     }
 
     GetTimetables() {
-        if (selectedLocation < 0) {
+        if (this.state.selectedLocation < 0) {
             return (
                 <div>
                     <h3>Stundenpläne</h3>
@@ -141,6 +142,13 @@ class Department extends React.Component {
                     })
                     }
                     <button onClick={ () => this.ShowCostumTimetables } >Benutzerdefinierte</button>
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <LocationTimetable id={ this.state.selectedLocation } departmentID={ this.id } />
+                    <button onClick={ () => this.CloseLocation() } >Zur Standortauswahl</button>
                 </div>
             );
         }
@@ -155,7 +163,7 @@ class Department extends React.Component {
     }
 
     GetEvents() {
-        if (events !== undefined) {
+        if (this.state.events !== undefined) {
             return (
                 <div>
                     <table>
@@ -199,7 +207,7 @@ class Department extends React.Component {
                 { this.GetTimetables() }
                 <div>
                     <h3>Schnuppertage</h3>
-                    { this.GetEventCreator() }
+                    { this.GetEvents() }
                 </div>
             </div>
         );

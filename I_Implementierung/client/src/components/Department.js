@@ -26,11 +26,11 @@ class Department extends React.Component {
 
     /* Get all display information */
     componentDidMount() {
-        this.InitEvents();
+        this.InitAll();
     }
 
     /* Get all department information with all locations */
-    InitEvents() {
+    InitAll() {
         //#region Delete this later...
         this.setState({
             name: 'Hochbau',

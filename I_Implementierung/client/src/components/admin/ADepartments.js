@@ -52,12 +52,12 @@ class Departments extends React.Component {
 
     /* Handle a specific department request */
     ShowDepartment(id) {
-        this.departmentID = id;
+        this.setState({ departmentID: id });
     }
 
     /* Close a specific department view */
     CloseDepartment() {
-        this.departmentID = -1;
+        this.setState({ departmentID: -1 });
     }
 
     /* Set createDepartment to 'true' */
@@ -86,28 +86,42 @@ class Departments extends React.Component {
             return <button onClick={ () => this.OpenDepartmentCreator() } >Abteilung erstellen</button>;
     }
 
+    /* Get departments if not undefined */
+    GetDepartments() {
+        if (this.state.departments !== undefined) {
+            return (
+                <div>
+                    <ul>
+                        {
+                        this.state.departments.map((department, index) => {
+                            return (
+                                <li key={index} >
+                                    { department.name }
+                                    <button onClick={ () => this.ShowDepartment(department.id) } >Abteilung verwalten</button>
+                                </li>
+                            );
+                        })
+                        }
+                    </ul>
+                    { this.GetDepartmentCreator() }
+                </div>
+            );
+        } else
+            return 'Loading departments...';
+    }
+
 
     render() {
-        if (this.departmentID < 0)
-            return <Department id={this.departmentID} GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } CloseDepartment={ this.CloseDepartment } />;
-        return (
-            <div>
-                <h1>Abteilungen</h1>
-                <ul>
-                    {
-                    this.state.departments.map((department, index) => {
-                        return (
-                            <li key={index} >
-                                { department.name }
-                                <button onClick={ () => this.ShowDepartment(department.id) } >Schnuppertage verwalten</button>
-                            </li>
-                        );
-                    })
-                    }
-                </ul>
-                { this.GetDepartmentCreator() }
-            </div>
-        );
+        if (this.state.departmentID < 0) {
+            return (
+                <div>
+                    <h1>Abteilungen</h1>
+                    { this.GetDepartments() }
+                </div>
+            );
+        }
+        return <Department id={this.departmentID} GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } CloseDepartment={ this.CloseDepartment } />;
+        
     }
 
 }
