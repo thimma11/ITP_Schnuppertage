@@ -31,12 +31,22 @@
     <Compile Include="modules\api.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="modules\api\abteilung.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="modules\api\fach.js" />
+    <Compile Include="modules\api\gegenstand.js" />
+    <Compile Include="modules\api\lehrer.js" />
+    <Compile Include="modules\config\boilerplate.js" />
+    <Compile Include="modules\config\database.js" />
     <Compile Include="server.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="modules\" />
+    <Folder Include="modules\api\" />
+    <Folder Include="modules\config\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />

@@ -1,13 +1,15 @@
 ﻿var express = require('express');
 var router = express.Router();
-var gegenstand = require('./gegenstand');
-var lehrer = require('./lehrer');
-var fach = require('./fach');
+var gegenstand = require('./api/gegenstand');
+var lehrer = require('./api/lehrer');
+var fach = require('./api/fach');
+var abteilung = require('./api/abteilung');
 
 
-router.use('./api/gegenstand', gegenstand);
-router.use('./api/lehrer', lehrer);
-router.use('./api/fach', fach);
+router.use('/gegenstand', gegenstand);
+router.use('/lehrer', lehrer);
+router.use('/fach', fach);
+router.use('/abteilung', abteilung);
 
 router.get('/', (req, res) => {
     res.send("asd");
