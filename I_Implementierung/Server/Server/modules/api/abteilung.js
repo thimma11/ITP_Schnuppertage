@@ -20,8 +20,14 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     let token = req.query.authToken;
-    if (database_config.verify_request(token)) {
-        
+    if (database_config.verify_request(token, connection)) {
+        console.log("asd");
+        connection.connect();
+        connection.query(`INSERT INTO abteilung(abteilung.Bezeichnung, abteilung.Kürzel) VALUES (${req.body.name}, ${req.body.contraction});`, function (error, results, fields) {
+            if (error) console.log(error);
+            res.json(results);
+        });
+        connection.end();
     }
     else {
         res.sendStatus(401);
