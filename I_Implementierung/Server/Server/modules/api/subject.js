@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 
 
 router.get('/', (req, res) => {
-    connection.query(`SELECT gegenstand.ID, gegenstand.Name, gegenstand.Kürzel, gegenstand.Beschreibung FROM gegenstand;`, function (error, results, fields) {
+    connection.query(`SELECT s.ID, s.Name FROM subjects s;`, function (error, results, fields) {
         if (error) throw error;
         res.json(results);
     });
