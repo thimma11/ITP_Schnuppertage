@@ -20,7 +20,7 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     let token = req.query.authToken;
-    if (database_config.verify_request(token, connection)) {
+    if (database_config.verify_request(token)) {
         console.log("asd");
         connection.connect();
         connection.query(`INSERT INTO abteilung(abteilung.Bezeichnung, abteilung.Kürzel) VALUES (${req.body.name}, ${req.body.contraction});`, function (error, results, fields) {
