@@ -12,16 +12,22 @@ var connection = mysql.createConnection({
 
 
 router.get('/', (req, res) => {
-    connection.query(`SELECT a.ID, a.Bezeichnung, a.Kürzel FROM abteilung a;`, function (error, results, fields) {
-        if (error) throw error;
-        res.json(results);  
+    connection.query(`SELECT abteilung.ID AS id, abteilung.Bezeichnung AS name, abteilung.Kürzel AS contraction from abteilung;`, function (error, results, fields) {
+        if (error) console.log(error);
+        res.json(results);
     });
 });
 
 router.post('/', (req, res) => {
     let token = req.query.authToken;
-    if (database_config.verify_request(token)) {
-        
+    if (database_config.verify_request(token, connection)) {
+        console.log("asd");
+        connection.connect();
+        connection.query(`INSERT INTO abteilung(abteilung.Bezeichnung, abteilung.Kürzel) VALUES (${req.body.name}, ${req.body.contraction});`, function (error, results, fields) {
+            if (error) console.log(error);
+            res.json(results);
+        });
+        connection.end();
     }
     else {
         res.sendStatus(401);
@@ -31,9 +37,9 @@ router.post('/', (req, res) => {
 
 router.get('/:id?', (req, res) => {
     let id = req.params.id;
-    connection.query(`SELECT a.ID, a.Bezeichnung, a.Kürzel FROM abteilung a WHERE a.id=${req.params.id};`, function (error, results, fields) {
-        if (error) throw error;
-        res.json(results);  
+    connection.query(`SELECT abteilung.ID AS id, abteilung.Bezeichnung AS name, abteilung.Kürzel AS contraction from abteilung WHERE abteilung.ID = ${id};`, function (error, results, fields) {
+        if (error) console.log(error);
+        res.json(results);
     });
 });
 router.put('/:id', (req, res) => {
