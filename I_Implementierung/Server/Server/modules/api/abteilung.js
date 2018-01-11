@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 
 
 router.get('/', (req, res) => {
-    connection.query(`SELECT abteilung.ID AS id, abteilung.Bezeichnung AS name, abteilung.Kürzel AS contraction from abteilung;`, function (error, results, fields) {
+    connection.query(`SELECT a.ID AS id, a.Bezeichnung AS name, a.Kürzel AS contraction from abteilung a;`, function (error, results, fields) {
         if (error) console.log(error);
         res.json(results);
     });
@@ -37,7 +37,7 @@ router.post('/', (req, res) => {
 
 router.get('/:id?', (req, res) => {
     let id = req.params.id;
-    connection.query(`SELECT abteilung.ID AS id, abteilung.Bezeichnung AS name, abteilung.Kürzel AS contraction from abteilung WHERE abteilung.ID = ${id};`, function (error, results, fields) {
+    connection.query(`SELECT a.ID AS id, a.Bezeichnung AS name, a.Kürzel AS contraction from abteilung a WHERE a.ID = ${id};`, function (error, results, fields) {
         if (error) console.log(error);
         res.json(results);
     });
