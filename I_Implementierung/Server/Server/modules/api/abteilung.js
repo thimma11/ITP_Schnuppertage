@@ -12,9 +12,9 @@ var connection = mysql.createConnection({
 
 
 router.get('/', (req, res) => {
-    connection.query(`SELECT abteilung.ID, abteilung.Bezeichnung, abteilung.Kürzel FROM abteilung;`, function (error, results, fields) {
+    connection.query(`SELECT a.ID, a.Bezeichnung, a.Kürzel FROM abteilung a;`, function (error, results, fields) {
         if (error) throw error;
-        res.json(results);
+        res.json(results);  
     });
 });
 
@@ -31,6 +31,10 @@ router.post('/', (req, res) => {
 
 router.get('/:id?', (req, res) => {
     let id = req.params.id;
+    connection.query(`SELECT a.ID, a.Bezeichnung, a.Kürzel FROM abteilung a WHERE a.id=${req.params.id};`, function (error, results, fields) {
+        if (error) throw error;
+        res.json(results);  
+    });
 });
 router.put('/:id', (req, res) => {
     let token = req.query.token;

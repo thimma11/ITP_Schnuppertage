@@ -12,6 +12,12 @@ var connection = mysql.createConnection({
 
 
 router.get('/', (req, res) => {
+    connection.query(`SELECT gegenstand.ID, gegenstand.Name, gegenstand.Kürzel, gegenstand.Beschreibung FROM gegenstand;`, function (error, results, fields) {
+        if (error) throw error;
+        res.json(results);
+    });
+
+    /*
     connection.connect();
     var id, name, beschreibung, kürzel;
 
@@ -38,6 +44,7 @@ router.get('/', (req, res) => {
     res.status(200).json({
         "id": id, "name": name, "kürzel": kürzel, beschreibung: beschreibung
     });
+    */
 });
 
 router.post('/', (req, res) => {
