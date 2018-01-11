@@ -6,6 +6,7 @@ import axios from 'axios';
 
 import EventCreator from './AEventCreator';
 import LocationTimetable from './ALocationTimetable';
+import LocationAdder from './ALocationAdder';
 import * as Globals from '../../Globals';
 //#endregion
 
@@ -19,12 +20,13 @@ class Department extends React.Component {
             name: '',
             events: [],
             locations: [],
+            addLocation: false,
             createEvent: false,
-            selectedLocation: -1,
-            showCostumTimetables: false
+            selectedLocation: -1
         };
 
         this.CloseEventCreator = this.CloseEventCreator.bind(this);
+        this.Reload = this.Reload.bind(this);
     }
 
 
@@ -37,6 +39,7 @@ class Department extends React.Component {
     InitDepartment() {
         //#region Delete this later...
         this.setState({
+            id: 0,
             name: 'Bautechnik',
             events: [
                 {
@@ -44,24 +47,21 @@ class Department extends React.Component {
                     date: '2018-01-20',
                     start: '10:20',
                     end: '16:20',
-                    location: 'Zwettl',
-                    timetable: 'Standart'
+                    location: 'Zwettl'
                 },
                 {
                     id: 2,
                     date: '2018-01-12',
                     start: '08:50',
                     end: '13:40',
-                    location: 'Krems',
-                    timetable: 'Standart'
+                    location: 'Krems'
                 },
                 {
                     id: 1,
                     date: '2018-02-01',
                     start: '09:00',
                     end: '15:55',
-                    location: 'Zwettl',
-                    timetable: 'CostumTimetable1'
+                    location: 'Zwettl'
                 }
             ],
             locations: [
@@ -121,27 +121,22 @@ class Department extends React.Component {
         this.setState({ selectedLocation: -1 });
     }
 
-    /* Set variable showCostumTimetables to 'true' */
-    ShowCostumTimetables() {
-        this.setState({ showCostumTimetables: true });
-    }
-
-    /* Set variable showCostumTimetables to 'false' */
-    CloseCostumTimetables() {
-        this.setState({ showCostumTimetables: false });
-    }
-
     GetTimetables() {
         if (this.state.selectedLocation < 0) {
             return (
                 <div>
-                    <h3>Stundenpläne</h3>
+                    <h3>Standorte</h3>
                     {
                     this.state.locations.map(location => {
-                        return <button key={location.id} onClick={ () => this.OpenLocation(location.id) } >{ location.name }</button>;
+                        return (
+                            <div>
+                                { location.name }
+                                <button key={location.id} onClick={ () => this.OpenLocation(location.id) } >Stundenpläne anzeigen</button>
+                            </div>
+                        );
                     })
                     }
-                    <button onClick={ () => this.ShowCostumTimetables } >Benutzerdefinierte</button>
+                    <LocationAdder Reload={ this.Reload } />
                 </div>
             );
         } else {
@@ -152,6 +147,10 @@ class Department extends React.Component {
                 </div>
             );
         }
+    }
+
+    Reload() {
+        this.InitDepartment();
     }
 
     /* Returns the Create Event Button or shows the form */
@@ -173,7 +172,6 @@ class Department extends React.Component {
                                 <th>Start</th>
                                 <th>Ende</th>
                                 <th>Standort</th>
-                                <th>Stundenplan</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -185,7 +183,6 @@ class Department extends React.Component {
                                         <td>{ event.start }</td>
                                         <td>{ event.end }</td>
                                         <td>{ event.location }</td>
-                                        <td>{ event.timetable }</td>
                                     </tr>
                                 );
                             })

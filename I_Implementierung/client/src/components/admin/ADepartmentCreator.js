@@ -14,6 +14,7 @@ class DepartmentCreator extends React.Component {
         super();
         this.state = {
             name: '',
+            contraction: '',
             errorMessage: ''
         };
     }
@@ -21,9 +22,9 @@ class DepartmentCreator extends React.Component {
 
     /* Check the input and create a department */
     CreateDepartment() {
-        if (this.CheckName()) {
+        if (this.CheckName() && this.CheckContraction()) {
             //#region Delete this later...
-            this.props.CloseDepartmentCreator({ id: 10, name: 'Vermessungstechnik' });
+            this.props.CloseDepartmentCreator({ id: 10, contraction: this.state.contraction, name: this.state.name });
             //#endregion
 
             /* Server Request
@@ -31,7 +32,10 @@ class DepartmentCreator extends React.Component {
             if (authToken = this.props.GetCookie() === undefined)
                 this.props.Logout();
             
-            axios.post(Globals.BASE_PATH + 'departments', { name: this.state.name }, {
+            axios.post(Globals.BASE_PATH + 'departments', {
+                name: this.state.name,
+                contraction: this.state.contraction
+            }, {
                 headers: { Authorization: authToken }
             })
             .then(response => this.props.CloseDepartmentCreator(response))
@@ -52,9 +56,24 @@ class DepartmentCreator extends React.Component {
         });
     }
 
+    ChangeContraction(event) {
+        this.setState({
+            contraction: event.target.value,
+            errorMessage: ''
+        });
+    }
+
     CheckName() {
         if (this.state.name === '') {
             this.setState({ errorMessage: 'Geben Sie bitte ein, wie die Abteilung heißen soll.' });
+            return false;
+        }
+        return true;
+    }
+
+    CheckContraction() {
+        if (this.state.contraction === '') {
+            this.setState({ errorMessage: 'Geben Sie bitte eine Abkürzung für diese Abteilung ein.' });
             return false;
         }
         return true;
@@ -73,6 +92,10 @@ class DepartmentCreator extends React.Component {
                 <div>
                     <label>Abteilungsname:</label>
                     <input value={ this.state.name } onChange={ (e) => this.ChangeName(e) } />
+                </div>
+                <div>
+                    <label>Abkürzung:</label>
+                    <input value={ this.state.contraction } onChange={ (e) => this.ChangeContraction(e) } />
                 </div>
                 { this.GetErrorMessage() }
                 <button onClick={ () => this.props.CloseDepartmentCreator(undefined) }>Abbrechen</button>
