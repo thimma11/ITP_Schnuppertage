@@ -17,8 +17,8 @@ class EventCreator extends React.Component {
             date: '',
             location: 0,
             locations: [],
-            timetable: 0,
-            timetables: [],
+            maxGroups: 0,
+            currentGroupSize: 1,
             errorMessage: ''
         };
     }
@@ -27,7 +27,6 @@ class EventCreator extends React.Component {
     /* Get all display information on startup */
     componentDidMount() {
         this.InitLocations();
-        this.InitTimetables();
     }
 
     /* Get all locations */
@@ -50,25 +49,6 @@ class EventCreator extends React.Component {
         //#endregion
     }
 
-    /* Get all timetables */
-    InitTimetables() {
-        this.setState({
-            timetables: [
-                { id: 0, name: 'Standart' },
-                { id: 1, name: 'Lehrer fehlt' },
-                { id: 2, name: 'Costum Timetable' }
-            ]
-        });
-
-        //#region Server Request
-        /*
-        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/timetableSelections')
-        .then(response => this.setState({ timetables: response.data }))
-        .catch(error => console.log(error));
-        */
-        //#endregion
-    }
-
     /* Check the input and create a event */
     CreateEvent() {
         if (this.state.date === '') {
@@ -79,25 +59,19 @@ class EventCreator extends React.Component {
             this.setState({ errorMessage: 'Sie müssen einen Standort auswählen.' });
             return null;
         }
-        if (this.state.timetable === '') {
-            this.setState({ errorMessage: 'Sie müssen einen Stundenplan auswählen.' });
-            return null;
-        }
         this.props.CloseEventCreator(true);
         
         //#region Server Request
         /*
         axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID + '/events', {
             date: this.state.date,
-            location: this.state.location,
-            timetable: this.state.timetable
+            location: this.state.location
         }).then(response => this.props.CloseEventCreator(true))
         .catch(error => console.log(error));
         */
         //#endregion
     }
 
-    /* Handle date change */
     ChangeDate(event) {
         this.setState({
             date: event.target.value,
@@ -105,18 +79,10 @@ class EventCreator extends React.Component {
         });
     }
 
-    /* Handle location change */
     ChangeLocation(event) {
         this.setState({
             location: parseInt(event.target.value, 10),
-            errorMessage: ''
-        });
-    }
-
-    /* Handle timetable change */
-    ChangeTimetable(event) {
-        this.setState({
-            timetable: parseInt(event.target.value, 10),
+            maxGroups: 2,
             errorMessage: ''
         });
     }
@@ -147,14 +113,8 @@ class EventCreator extends React.Component {
                     </select>
                 </div>
                 <div>
-                    <label>Stundenplan:</label>
-                    <select value={ this.state.timetable } onChange={ (e) => this.ChangeTimetable(e) } >
-                    {
-                        this.state.timetables.map(timetable => {
-                            return <option value={timetable.id} >{ timetable.name }</option>;
-                        })
-                    }
-                    </select>
+                    <label>Gruppen:</label>
+                    <input type='range' min='1' max={ this.state.currentGroupSize } onChange={ (e) => this.ChangeLocation(e) } />
                 </div>
                 { this.GetErrorMessage() }
                 <button onClick={ () => this.props.CloseEventCreator(false) }>Abbrechen</button>

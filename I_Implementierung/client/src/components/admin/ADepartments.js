@@ -35,10 +35,10 @@ class Departments extends React.Component {
         //#region Delete this later...
         this.setState({
             departments: [
-                { id: 0, name: "Hochbau"},
-                { id: 1, name: "Tiefbau"},
-                { id: 3, name: "Informationstechnologie"},
-                { id: 2, name: "Holzbau"}
+                { id: 0, contraction: 'HB', name: "Hochbau"},
+                { id: 1, contraction: 'TB', name: "Tiefbau"},
+                { id: 3, contraction: 'IT', name: "Informationstechnologie"},
+                { id: 2, contraction: 'H', name: "Holzbau"}
             ]
         });
         //#endregion
@@ -96,7 +96,7 @@ class Departments extends React.Component {
                         this.state.departments.map((department, index) => {
                             return (
                                 <li key={index} >
-                                    { department.name }
+                                    <p>{ department.contraction } - { department.name }</p>
                                     <button onClick={ () => this.ShowDepartment(department.id) } >Abteilung verwalten</button>
                                 </li>
                             );

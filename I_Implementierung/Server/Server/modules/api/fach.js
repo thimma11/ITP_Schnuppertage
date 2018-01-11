@@ -12,7 +12,20 @@ var connection = mysql.createConnection({
 
 
 router.get('/', (req, res) => {
+    connection.query(`SELECT fach.ID, fach.Gegenstand_ID, fach.Lehrer_ID FROM fach;`, function (error, results, fields) {
+        if (error) throw error;
+        res.json(results);
+    });
+});
 
+router.get('/lehrer/:id', (req, res) => {
+    connection.query(`
+            SELECT g.ID, g.Name, g.Kürzel, g.Beschreibung FROM fach f
+            JOIN gegenstand g on(f.Gegenstand_ID=g.id)
+            JOIN lehrer l on(f.Lehrer_ID=${req.params.id})`, function (error, results, fields) {
+        if (error) throw error;
+        res.json(results);
+    });
 });
 
 router.post('/', (req, res) => {
