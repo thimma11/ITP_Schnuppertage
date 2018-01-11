@@ -1,7 +1,7 @@
 ﻿var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
-var database_config = require('../config/database');
+var database_config = require('./database');
 
 var connection = mysql.createConnection({
     host: database_config.host,
@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 
 
 router.get('/', (req, res) => {
-    connection.query(`SELECT lehrer.ID, lehrer.Vorname, lehrer.Nachname, lehrer.Kürzel FROM lehrer;`, function (error, results, fields) {
+    connection.query(`SELECT locations.ID, locations.NAME FROM locations;`, function (error, results, fields) {
         if (error) throw error;
         res.json(results);
     });
@@ -20,9 +20,11 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     let token = req.query.token;
-    console.log(token);
     if (database_config.verify_request(token)) {
-
+        connection.query(`INSERT INTO locations(locations.NAME) VALUES (${req.body.name});`, function (error, results, fields) {
+            if (error) throw error;
+            res.json(results);
+        });
     }
     else {
         res.sendStatus(401);
@@ -30,24 +32,21 @@ router.post('/', (req, res) => {
     }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id?', (req, res) => {
     let id = req.params.id;
-});
-router.put('/:id', (req, res) => {
-    let token = req.query.token;
-    if (database_config.verify_request(token)) {
-        let id = req.params.id;
-        res.send(id);
-    }
-    else {
-        res.sendStatus(401);
-        res.end();
-    }
+    connection.query(`SELECT locations.ID, locations.NAME FROM locations WHERE locations.ID = ${id};`, function (error, results, fields) {
+        if (error) throw error;
+        res.json(results);
+    });
 });
 router.delete('/:id', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
         let id = req.params.id;
+        connection.query(`DELETE FROM locations WHERE locations.ID = ${id}`, function (error, results, fields) {
+            if (error) throw error;
+            res.json(results);
+        });
     }
     else {
         res.sendStatus(401);

@@ -10,9 +10,20 @@ var connection = mysql.createConnection({
     database: database_config.database
 });
 
+router.use('/:id/locations', require('./events'));
 
 router.get('/', (req, res) => {
-    connection.query(`SELECT a.ID AS id, a.Bezeichnung AS name, a.Kürzel AS contraction from abteilung a;`, function (error, results, fields) {
+    connection.query(`SELECT d.ID AS id, d.Contraction AS contraction, d.Name AS name from departments d;`, function (error, results, fields) {
+        if (error) console.log(error);
+        res.json(results);
+    });
+});
+
+router.get('/:id/locations', (req, res) => {
+    let id = req.params.id;
+    connection.query(`SELECT l.id, l.name from departments d
+            JOIN locations_departments ld on(ld.departments_id=${id})
+            JOIN locations l on(l.id=ld.locations_id);`, function (error, results, fields) {
         if (error) console.log(error);
         res.json(results);
     });
@@ -23,7 +34,7 @@ router.post('/', (req, res) => {
     if (database_config.verify_request(token, connection)) {
         console.log("asd");
         connection.connect();
-        connection.query(`INSERT INTO abteilung(abteilung.Bezeichnung, abteilung.Kürzel) VALUES (${req.body.name}, ${req.body.contraction});`, function (error, results, fields) {
+        connection.query(`INSERT INTO departments d(d.Name, d.Contraction) VALUES (${req.body.name}, ${req.body.contraction});`, function (error, results, fields) {
             if (error) console.log(error);
             res.json(results);
         });
@@ -37,7 +48,7 @@ router.post('/', (req, res) => {
 
 router.get('/:id?', (req, res) => {
     let id = req.params.id;
-    connection.query(`SELECT a.ID AS id, a.Bezeichnung AS name, a.Kürzel AS contraction from abteilung a WHERE a.ID = ${id};`, function (error, results, fields) {
+    connection.query(`SELECT d.ID AS id, d.Contraction AS contraction, d.Name AS name from departments d WHERE d.ID = ${id};`, function (error, results, fields) {
         if (error) console.log(error);
         res.json(results);
     });
@@ -45,6 +56,10 @@ router.get('/:id?', (req, res) => {
 router.put('/:id', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
+        connection.query(`UPDATE d.ID AS id, d.Contraction AS contraction, d.Name AS name from departments d WHERE d.ID = ${id};`, function (error, results, fields) {
+            if (error) console.log(error);
+            res.json(results);
+        });
         let id = req.params.id;
         res.send();
     }
@@ -56,7 +71,10 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
-        let id = req.params.id;
+        connection.query(`DELETE from departments WHERE ID = ${req.params.id};`, function (error, results, fields) {
+            if (error) console.log(error);
+            res.json(results);
+        });
     }
     else {
         res.sendStatus(401);

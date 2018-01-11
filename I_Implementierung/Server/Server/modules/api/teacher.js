@@ -12,17 +12,7 @@ var connection = mysql.createConnection({
 
 
 router.get('/', (req, res) => {
-    connection.query(`SELECT fach.ID, fach.Gegenstand_ID, fach.Lehrer_ID FROM fach;`, function (error, results, fields) {
-        if (error) throw error;
-        res.json(results);
-    });
-});
-
-router.get('/lehrer/:id', (req, res) => {
-    connection.query(`
-            SELECT g.ID, g.Name, g.Kürzel, g.Beschreibung FROM fach f
-            JOIN gegenstand g on(f.Gegenstand_ID=g.id)
-            JOIN lehrer l on(f.Lehrer_ID=${req.params.id})`, function (error, results, fields) {
+    connection.query(`SELECT teacher.ID AS id, teacher.contraction from teacher;`, function (error, results, fields) {
         if (error) throw error;
         res.json(results);
     });
@@ -32,7 +22,10 @@ router.post('/', (req, res) => {
     let token = req.query.token;
     console.log(token);
     if (database_config.verify_request(token)) {
-
+        connection.query(`INSERT INTO teacher(teachers.contraction) VALUES (${req.body.contraction});`, function (error, results, fields) {
+            if (error) throw error;
+            res.json(results);
+        });
     }
     else {
         res.sendStatus(401);
@@ -42,22 +35,19 @@ router.post('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
     let id = req.params.id;
-});
-router.put('/:id', (req, res) => {
-    let token = req.query.token;
-    if (database_config.verify_request(token)) {
-        let id = req.params.id;
-        res.send(id);
-    }
-    else {
-        res.sendStatus(401);
-        res.end();
-    }
+    connection.query(`SELECT teachers.ID AS id, teachers.contraction from teachers WHERE teachers.ID = ${id};`, function (error, results, fields) {
+        if (error) throw error;
+        res.json(results);
+    });
 });
 router.delete('/:id', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
         let id = req.params.id;
+        connection.query(`DELETE FROM teachers WHERE teachers.ID = ${id};`, function (error, results, fields) {
+            if (error) throw error;
+            res.json(results);
+        });
     }
     else {
         res.sendStatus(401);
