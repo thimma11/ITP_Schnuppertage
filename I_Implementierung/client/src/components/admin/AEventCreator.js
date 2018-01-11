@@ -17,8 +17,8 @@ class EventCreator extends React.Component {
             date: '',
             location: 0,
             locations: [],
-            timetable: 0,
-            timetables: [],
+            maxGroups: 0,
+            currentGroupSize: 1,
             errorMessage: ''
         };
     }
@@ -82,6 +82,7 @@ class EventCreator extends React.Component {
     ChangeLocation(event) {
         this.setState({
             location: parseInt(event.target.value, 10),
+            maxGroups: 2,
             errorMessage: ''
         });
     }
@@ -110,6 +111,10 @@ class EventCreator extends React.Component {
                         })
                     }
                     </select>
+                </div>
+                <div>
+                    <label>Gruppen:</label>
+                    <input type='range' min='1' max={ this.state.currentGroupSize } onChange={ (e) => this.ChangeLocation(e) } />
                 </div>
                 { this.GetErrorMessage() }
                 <button onClick={ () => this.props.CloseEventCreator(false) }>Abbrechen</button>
