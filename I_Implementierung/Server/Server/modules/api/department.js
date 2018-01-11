@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 
 
 router.get('/', (req, res) => {
-    connection.query(`SELECT d.ID AS id, d.Bezeichnung AS name, d.Kürzel AS contraction from departments d;`, function (error, results, fields) {
+    connection.query(`SELECT d.ID AS id, d.Contraction AS contraction, d.Name AS name from departments d;`, function (error, results, fields) {
         if (error) console.log(error);
         res.json(results);
     });
@@ -23,7 +23,7 @@ router.post('/', (req, res) => {
     if (database_config.verify_request(token, connection)) {
         console.log("asd");
         connection.connect();
-        connection.query(`INSERT INTO departments d(d.Bezeichnung, d.Kürzel) VALUES (${req.body.name}, ${req.body.contraction});`, function (error, results, fields) {
+        connection.query(`INSERT INTO departments d(d.Name, d.Contraction) VALUES (${req.body.name}, ${req.body.contraction});`, function (error, results, fields) {
             if (error) console.log(error);
             res.json(results);
         });
@@ -37,7 +37,7 @@ router.post('/', (req, res) => {
 
 router.get('/:id?', (req, res) => {
     let id = req.params.id;
-    connection.query(`SELECT d.ID AS id, d.Bezeichnung AS name, d.Kürzel AS contraction from departments d WHERE d.ID = ${id};`, function (error, results, fields) {
+    connection.query(`SELECT d.ID AS id, d.Contraction AS contraction, d.Name AS name from departments d WHERE d.ID = ${id};`, function (error, results, fields) {
         if (error) console.log(error);
         res.json(results);
     });
