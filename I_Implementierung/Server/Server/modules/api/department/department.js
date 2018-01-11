@@ -19,6 +19,16 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/:id/locations', (req, res) => {
+    let id = req.params.id;
+    connection.query(`SELECT l.id, l.name from departments d
+            JOIN locations_departments ld on(ld.departments_id=${id})
+            JOIN locations l on(l.id=ld.locations_id);`, function (error, results, fields) {
+        if (error) console.log(error);
+        res.json(results);
+    });
+});
+
 router.post('/', (req, res) => {
     let token = req.query.authToken;
     if (database_config.verify_request(token, connection)) {
@@ -61,11 +71,10 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
-        connection.query(`DELETE * from departments WHERE ID = ${req.params.id};`, function (error, results, fields) {
+        connection.query(`DELETE from departments WHERE ID = ${req.params.id};`, function (error, results, fields) {
             if (error) console.log(error);
             res.json(results);
         });
-        let id = req.params.id;
     }
     else {
         res.sendStatus(401);
