@@ -18,6 +18,16 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/:id/locations', (req, res) => {
+    let id = req.params.id;
+    connection.query(`SELECT l.id, l.name from departments d
+            JOIN locations_departments ld on(ld.departments_id=${id})
+            JOIN locations l on(l.id=ld.locations_id);`, function (error, results, fields) {
+        if (error) console.log(error);
+        res.json(results);
+    });
+});
+
 router.post('/', (req, res) => {
     let token = req.query.authToken;
     if (database_config.verify_request(token, connection)) {
