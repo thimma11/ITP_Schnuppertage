@@ -60,11 +60,10 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
-        connection.query(`DELETE * from departments WHERE ID = ${req.params.id};`, function (error, results, fields) {
+        connection.query(`DELETE from departments WHERE ID = ${req.params.id};`, function (error, results, fields) {
             if (error) console.log(error);
             res.json(results);
         });
-        let id = req.params.id;
     }
     else {
         res.sendStatus(401);
