@@ -4,9 +4,8 @@ import React from 'react';
 import axios from 'axios';
 //#endregion
 
+import Locations from './ALocations';
 import EventCreator from './AEventCreator';
-import LocationTimetable from './ALocationTimetable';
-import LocationAdder from './ALocationAdder';
 import * as Globals from '../../Globals';
 //#endregion
 
@@ -19,14 +18,10 @@ class Department extends React.Component {
         this.state = {
             name: '',
             events: [],
-            locations: [],
-            addLocation: false,
-            createEvent: false,
-            selectedLocation: -1
+            createEvent: false
         };
 
         this.CloseEventCreator = this.CloseEventCreator.bind(this);
-        this.Reload = this.Reload.bind(this);
     }
 
 
@@ -39,34 +34,23 @@ class Department extends React.Component {
     InitDepartment() {
         //#region Delete this later...
         this.setState({
-            id: 0,
             name: 'Bautechnik',
             events: [
                 {
                     id: 0,
                     date: '2018-01-20',
-                    start: '10:20',
-                    end: '16:20',
                     location: 'Zwettl'
                 },
                 {
                     id: 2,
                     date: '2018-01-12',
-                    start: '08:50',
-                    end: '13:40',
                     location: 'Krems'
                 },
                 {
                     id: 1,
                     date: '2018-02-01',
-                    start: '09:00',
-                    end: '15:55',
                     location: 'Zwettl'
                 }
-            ],
-            locations: [
-                { id: 0, name: 'Zwettl' },
-                { id: 1, name: 'Krems' }
             ]
         });
         //#endregion
@@ -76,20 +60,18 @@ class Department extends React.Component {
         if (authToken = this.props.GetCookie() === undefined)
             this.props.Logout();
         
-        axios.get(Globals.BASE_PATH + 'department?detailed=true', {
+        axios.get(Globals.BASE_PATH + 'departments/' + this.id)
+        .then(response => this.setState({ name: response.data.name }))
+        .catch(error => console.log(error));
+        axios.get(Globals.BASE_PATH + 'departments/' + this.id + '/events', {
             headers: { Authorization: authToken }
-        }).then(response => {
-            this.setState({
-                name: response.data.name,
-                events: response.data.events,
-                locations: response.data.locations
-            });
-        }).catch(error => {
+        }).then(response => this.setState({ events: response.data.events }))
+        .catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
             else
                 console.log(error);
-        })
+        });
         */
     }
 
@@ -111,46 +93,23 @@ class Department extends React.Component {
             this.setState({ createEvent: false });
     }
 
-    /* Change selected location */
-    OpenLocation(id) {
-        this.setState({ selectedLocation: id });
-    }
-
-    /* Close selected location */
-    CloseLocation() {
-        this.setState({ selectedLocation: -1 });
-    }
-
-    GetTimetables() {
-        if (this.state.selectedLocation < 0) {
-            return (
-                <div>
-                    <h3>Standorte</h3>
-                    {
-                    this.state.locations.map(location => {
-                        return (
-                            <div>
-                                { location.name }
-                                <button key={location.id} onClick={ () => this.OpenLocation(location.id) } >Stundenpläne anzeigen</button>
-                            </div>
-                        );
-                    })
-                    }
-                    <LocationAdder Reload={ this.Reload } />
-                </div>
-            );
-        } else {
-            return (
-                <div>
-                    <LocationTimetable id={ this.state.selectedLocation } departmentID={ this.id } />
-                    <button onClick={ () => this.CloseLocation() } >Zur Standortauswahl</button>
-                </div>
-            );
-        }
-    }
-
-    Reload() {
-        this.InitDepartment();
+    /* Delete an event */
+    DeleteEvent(id) {
+        /* Server Request
+        let authToken;
+        if (authToken = this.props.GetCookie() === undefined)
+            this.props.Logout();
+        
+        axios.delete(Globals.BASE_PATH + 'events/' + id, {
+            headers: { Authorization: authToken }
+        }).then(response => this.InitDepartment())
+        .catch(error => {
+            if (error.response.status === 401)
+                this.props.Logout();
+            else
+                console.log(error);
+        });
+        */
     }
 
     /* Returns the Create Event Button or shows the form */
@@ -169,9 +128,8 @@ class Department extends React.Component {
                         <thead>
                             <tr>
                                 <th>Datum</th>
-                                <th>Start</th>
-                                <th>Ende</th>
                                 <th>Standort</th>
+                                <th>Aktionen</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -180,9 +138,8 @@ class Department extends React.Component {
                                 return (
                                     <tr key={ event.id }>
                                         <td>{ event.date }</td>
-                                        <td>{ event.start }</td>
-                                        <td>{ event.end }</td>
                                         <td>{ event.location }</td>
+                                        <td><button onClick={ () => this.DeleteEvent(event.id) } >Löschen</button></td>
                                     </tr>
                                 );
                             })
@@ -201,7 +158,7 @@ class Department extends React.Component {
         return (
             <div>
                 <h2>Abteilungsverwaltung von { this.state.name }</h2>
-                { this.GetTimetables() }
+                <Locations departmentID={ this.id } />
                 <div>
                     <h3>Schnuppertage</h3>
                     { this.GetEvents() }

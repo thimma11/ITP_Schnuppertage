@@ -15,7 +15,7 @@ class EventCreator extends React.Component {
         this.departmentID = this.props.departmentID;
         this.state = {
             date: '',
-            location: 0,
+            location: undefined,
             locations: [],
             maxGroups: 0,
             currentGroupSize: 1,
