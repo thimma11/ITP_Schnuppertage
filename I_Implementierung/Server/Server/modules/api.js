@@ -6,10 +6,10 @@ var lesson = require('./api/lesson');
 var department = require('./api/department');
 
 
-router.use('/subject', subject);
-router.use('/teacher', teacher);
-router.use('/lesson', lesson);
-router.use('/department', department);
+router.use('/subjects', subject);
+router.use('/teachers', teacher);
+router.use('/lessons', lesson);
+router.use('/departments', department);
 
 router.get('/', (req, res) => {
     res.send("asd");
