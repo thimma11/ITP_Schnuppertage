@@ -10,6 +10,7 @@ var connection = mysql.createConnection({
     database: database_config.database
 });
 
+router.use('/:id/locations', require('./events'));
 
 router.get('/', (req, res) => {
     connection.query(`SELECT d.ID AS id, d.Contraction AS contraction, d.Name AS name from departments d;`, function (error, results, fields) {
