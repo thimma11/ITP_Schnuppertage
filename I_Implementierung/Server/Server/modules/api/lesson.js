@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/lehrer/:id', (req, res) => {
+router.get('/teacher/:id', (req, res) => {
     connection.query(`
             SELECT g.ID, g.Name, g.Kürzel, g.Beschreibung FROM fach f
             JOIN gegenstand g on(f.Gegenstand_ID=g.id)
