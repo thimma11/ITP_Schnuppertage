@@ -5,9 +5,9 @@ var lehrer = require('./lehrer');
 var fach = require('./fach');
 
 
-router.use('/gegenstand', gegenstand);
-router.use('/lehrer', lehrer);
-router.use('/fach', fach);
+router.use('./api/gegenstand', gegenstand);
+router.use('./api/lehrer', lehrer);
+router.use('./api/fach', fach);
 
 router.get('/', (req, res) => {
     res.send("asd");
