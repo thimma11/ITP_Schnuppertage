@@ -41,7 +41,11 @@ class LocationAdder extends React.Component {
 			
 		axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID +'/locations?noRelation=true', {
             headers: { Authorization: authToken }
-		}).then(response => this.setState({ locations: response.data.locations }))
+		}).then(response => {
+            this.setState({ locations: response.data.locations });
+            if (this.state.locations.length !== 0)
+                this.setState({ selectedLocation: this.state.locations[0].id });
+        })
 		.catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
@@ -59,6 +63,7 @@ class LocationAdder extends React.Component {
 
     AddLocation() {
         //#region Delete this later...
+        this.props.InitLocations();
         this.props.Reload();
         //#endregion
 
@@ -70,7 +75,10 @@ class LocationAdder extends React.Component {
 			
 		axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID +'/locations', {
             headers: { Authorization: authToken }
-		}).then(response => this.props.Reload())
+		}).then(response => {
+            this.InitLocations();
+            this.props.Reload();
+        })
 		.catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
@@ -90,7 +98,7 @@ class LocationAdder extends React.Component {
                     <select value={ this.state.selectedLocation } onChange={ (e) => this.ChangeLocation(e) } >
                         {
                         this.state.locations.map(location => {
-                            return <option value={ location.id }>{ location.name }</option>
+                            return <option key={ location.id } value={ location.id }>{ location.name }</option>
                         })
                         }
                     </select>
