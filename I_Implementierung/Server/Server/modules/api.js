@@ -3,7 +3,7 @@ var router = express.Router();
 var subject = require('./api/subject');
 var teacher = require('./api/teacher');
 var lesson = require('./api/lesson');
-var department = require('./api/department');
+var department = require('./api/department/department');
 
 
 router.use('/subjects', subject);
