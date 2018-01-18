@@ -34,9 +34,7 @@ router.post('/:id/events', (req, res) => {
 
 router.get('/:id/locations', (req, res) => {
     let id = req.params.id;
-    connection.query(`SELECT l.id, l.name from departments d
-            JOIN locations_departments ld on(ld.departments_id=${id})
-            JOIN locations l on(l.id=ld.locations_id);`, function (error, results, fields) {
+    connection.query(`SELECT locations.ID, locations.NAME FROM locations JOIN locations_departments ON locations_departments.LOCATIONS_ID = locations.ID JOIN departments ON departments.ID = locations_departments.DEPARTMENTS_ID WHERE departments.ID = ?; `, [id], function (error, results, fields) {
             if (error) console.log(error);
             res.json(results);
         });
@@ -54,6 +52,13 @@ router.post('/:id/locations', (req, res) => {
         res.sendStatus(401);
         res.end();
     }
+});
+router.get('/:id/!locations', (req, res) => {
+    let id = req.params.id;
+    connection.query('SELECT locations.ID, locations.NAME FROM locations JOIN locations_departments ON locations_departments.LOCATIONS_ID = locations.ID JOIN departments ON departments.ID = locations_departments.DEPARTMENTS_ID WHERE NOT departments.ID = ?;', [id], function (error, results, fields) {
+            if (error) console.log(error);
+            res.json(results);
+        });
 });
 
 router.get('/:id/timetables', (req, res) => {

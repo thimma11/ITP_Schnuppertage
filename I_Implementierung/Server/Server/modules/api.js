@@ -4,6 +4,7 @@ var subject = require('./api/subject');
 var teacher = require('./api/teacher');
 var lesson = require('./api/lesson');
 var department = require('./api/department/department');
+var location = require('./api/location/location');
 var participant = require('./api/participant');
 var event = require('./api/event');
 
@@ -14,6 +15,7 @@ router.use('/lessons', lesson);
 router.use('/departments', department);
 router.use('/participants', participant);
 router.use('/events', event);
+router.use('/locations', location);
 
 router.get('/', (req, res) => {
     res.send("asd");
