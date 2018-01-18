@@ -32,6 +32,28 @@ router.post('/:id/events', (req, res) => {
     }
 });
 
+router.get('/:id/locations', (req, res) => {
+    let id = req.params.id;
+    connection.query(`SELECT locations.ID, locations.NAME FROM locations JOIN locations_departments ON locations.ID = locations_departments.LOCATIONS_ID JOIN departments ON locations_departments.DEPARTMENTS_ID = departments.ID WHERE departments.ID = ?;`, [id],function (error, results, fields) {
+        if (error) throw error;
+        res.json(results);
+    });
+});
+router.post('/:id/locations', (req, res) => {
+    let token = req.query.token;
+    if (database_config.verify_request(token)) {
+        let id = req.params.id;
+        connection.query(`INSERT INTO locations_departments (locations_departments.LOCATIONS_ID, locations_departments.DEPARTMENTS_ID) VALUES (?, ?);`, [req.body.location_id, id], function (error, results, fields) {
+            if (error) throw error;
+            res.json(results);
+        });
+    }
+    else {
+        res.sendStatus(401);
+        res.end();
+    }
+});
+
 router.get('/', (req, res) => {
     connection.query(`SELECT d.ID AS id, d.Contraction AS contraction, d.Name AS name from departments d;`, function (error, results, fields) {
         if (error) console.log(error);

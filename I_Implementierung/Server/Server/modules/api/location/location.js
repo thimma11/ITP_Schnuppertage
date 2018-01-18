@@ -42,7 +42,7 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
-        connection.query(`INSERT INTO locations(locations.NAME) VALUES (${req.body.name});`, function (error, results, fields) {
+        connection.query(`INSERT INTO locations(locations.NAME) VALUES (?);`, [req.body.name],function (error, results, fields) {
             if (error) throw error;
             res.json(results);
         });
