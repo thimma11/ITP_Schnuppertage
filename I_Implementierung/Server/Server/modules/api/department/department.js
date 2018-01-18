@@ -34,10 +34,12 @@ router.post('/:id/events', (req, res) => {
 
 router.get('/:id/locations', (req, res) => {
     let id = req.params.id;
-    connection.query(`SELECT locations.ID, locations.NAME FROM locations JOIN locations_departments ON locations.ID = locations_departments.LOCATIONS_ID JOIN departments ON locations_departments.DEPARTMENTS_ID = departments.ID WHERE departments.ID = ?;`, [id],function (error, results, fields) {
-        if (error) throw error;
-        res.json(results);
-    });
+    connection.query(`SELECT l.id, l.name from departments d
+            JOIN locations_departments ld on(ld.departments_id=${id})
+            JOIN locations l on(l.id=ld.locations_id);`, function (error, results, fields) {
+            if (error) console.log(error);
+            res.json(results);
+        });
 });
 router.post('/:id/locations', (req, res) => {
     let token = req.query.token;
@@ -54,9 +56,9 @@ router.post('/:id/locations', (req, res) => {
     }
 });
 
-router.get('/:id/locations', (req, res) => {
+router.get('/:id/timetables', (req, res) => {
     let id = req.params.id;
-    connection.query(``, [id], function (error, results, fields) {
+    connection.query(`SELECT groups.ID FROM groups JOIN timetables ON groups.TIMETABLES_ID = timetables.ID JOIN locations ON timetables.LOCATIONS_ID = locations.ID JOIN departments ON departments.ID = timetables.DEPARTMENTS_ID WHERE departments.ID = ?;`, [id], function (error, results, fields) {
         if (error) throw error;
         res.json(results);
     });
@@ -64,16 +66,6 @@ router.get('/:id/locations', (req, res) => {
 
 router.get('/', (req, res) => {
     connection.query(`SELECT d.ID AS id, d.Contraction AS contraction, d.Name AS name from departments d;`, function (error, results, fields) {
-        if (error) console.log(error);
-        res.json(results);
-    });
-});
-
-router.get('/:id/locations', (req, res) => {
-    let id = req.params.id;
-    connection.query(`SELECT l.id, l.name from departments d
-            JOIN locations_departments ld on(ld.departments_id=${id})
-            JOIN locations l on(l.id=ld.locations_id);`, function (error, results, fields) {
         if (error) console.log(error);
         res.json(results);
     });
