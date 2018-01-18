@@ -13,7 +13,6 @@ var connection = mysql.createConnection({
 
 router.get('/', (req, res) => {
     let id = req.params.id;
-    console.log(req.params);
     connection.query(`SELECT events.ID, events.DATE, locations.NAME FROM events JOIN locations ON locations.ID = events.LOCATIONS_ID WHERE events.DEPARTMENTS_ID = ${id};`, function (error, results, fields) {
         if (error) throw error;
         res.json(results);
