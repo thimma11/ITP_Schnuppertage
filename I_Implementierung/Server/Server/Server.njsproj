@@ -31,14 +31,21 @@
     <Compile Include="modules\api.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="modules\api\daytable\daytable.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="modules\api\department\department.js" />
-    <Compile Include="modules\api\department\events.js">
+    <Compile Include="modules\api\event.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="modules\api\group\group.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="modules\api\lesson.js" />
-    <Compile Include="modules\api\location.js">
+    <Compile Include="modules\api\location\location.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="modules\api\participant.js" />
     <Compile Include="modules\api\subject.js" />
     <Compile Include="modules\api\teacher.js" />
     <Compile Include="modules\config\boilerplate.js" />
@@ -51,6 +58,9 @@
     <Folder Include="modules\" />
     <Folder Include="modules\api\" />
     <Folder Include="modules\api\department\" />
+    <Folder Include="modules\api\location\" />
+    <Folder Include="modules\api\daytable\" />
+    <Folder Include="modules\api\group\" />
     <Folder Include="modules\config\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->

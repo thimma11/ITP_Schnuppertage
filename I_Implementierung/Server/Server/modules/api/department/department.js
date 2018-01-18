@@ -20,7 +20,7 @@ router.get('/:id/events', (req, res) => {
 router.post('/:id/events', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
-        let id = req.params.id;
+        let id = req.params.id; 
         connection.query(`INSERT INTO events (events.DATE, events.DEPARTMENTS_ID, events.LOCATIONS_ID) VALUES (?, ?, ?);`, [req.body.date, id, req.body.location_id],function (error, results, fields) {
             if (error) throw error;
             res.json(results);
