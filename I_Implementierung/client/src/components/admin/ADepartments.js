@@ -32,22 +32,13 @@ class Departments extends React.Component {
 
     /* Get all departments */
     InitDepartments() {
-        //#region Delete this later...
-        this.setState({
-            departments: [
-                { id: 0, contraction: 'HB', name: "Hochbau"},
-                { id: 1, contraction: 'TB', name: "Tiefbau"},
-                { id: 3, contraction: 'IT', name: "Informationstechnologie"},
-                { id: 2, contraction: 'H', name: "Holzbau"}
-            ]
-        });
-        //#endregion
+        let authToken;
+        if (authToken = this.props.GetCookie() === undefined)
+            this.props.Logout();
         
-        /* Server Request
         axios.get(Globals.BASE_PATH + 'departments')
         .then(response => this.setState({ departments: response.data }))
         .catch(error => console.log(error));
-        */
     }
 
     /* Handle a specific department request */
@@ -63,6 +54,21 @@ class Departments extends React.Component {
     /* Set createDepartment to 'true' */
     OpenDepartmentCreator() {
         this.setState({ createDepartment: true });
+    }
+
+    DeleteDepartment(id) {
+        let authToken;
+        if (authToken = this.props.GetCookie() === undefined)
+            this.props.Logout();
+
+        axios.delete(Globals.BASE_PATH + 'departments/' + id + '?authToken=' + authToken)
+        .then(response => this.InitDepartments())
+        .catch(error => {
+            if (error.response.status === 401)
+                this.Logout();
+            else
+                console.log(error)
+        });
     }
 
     /* Set createDepartment to 'false' */
@@ -98,6 +104,7 @@ class Departments extends React.Component {
                                 <li key={index} >
                                     <p>{ department.contraction } - { department.name }</p>
                                     <button onClick={ () => this.ShowDepartment(department.id) } >Abteilung verwalten</button>
+                                    <button onClick={ () => this.DeleteDepartment(department.id) } >Löschen</button>
                                 </li>
                             );
                         })
@@ -120,7 +127,7 @@ class Departments extends React.Component {
                 </div>
             );
         }
-        return <Department id={this.departmentID} GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } CloseDepartment={ this.CloseDepartment } />;
+        return <Department id={this.state.departmentID} GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } CloseDepartment={ this.CloseDepartment } />;
         
     }
 

@@ -33,6 +33,12 @@ class Location extends React.Component {
         });
     }
 
+    GetGroupAdder() {
+        if (this.state.groups !== undefined && this.state.groups.length !== 2) {
+            return <GroupAdder departmentID={ this.departmentID } locationID={ this.id } />;
+        }
+    }
+
 
     render() {
         if (this.state.groups === undefined)
@@ -42,11 +48,16 @@ class Location extends React.Component {
                 <div>
                     <h3>Stundenpläne - { this.state.name }</h3>
                     {
-                    this.state.groups.map(group => {
-                        <Group id={ group.id } />
+                    this.state.groups.map((group, index) => {
+                        return (
+                            <div>
+                                <h4>Gruppe { index + 1 }</h4>
+                                <Group id={ group.id } />
+                            </div>
+                        );
                     })
                     }
-                    <GroupAdder departmentID={ this.departmentID } locationID={ this.id } />
+                    { this.GetGroupAdder() }
                 </div>
             )
         }

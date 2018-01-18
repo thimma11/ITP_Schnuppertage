@@ -73,7 +73,7 @@ class LocationAdder extends React.Component {
         if (authToken = this.props.GetCookie() === undefined)
 			this.props.Logout();
 			
-		axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID +'/locations', {
+		axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID +'/locations', {
             headers: { Authorization: authToken }
 		}).then(response => {
             this.InitLocations();

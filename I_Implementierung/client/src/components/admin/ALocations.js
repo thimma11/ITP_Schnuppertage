@@ -41,7 +41,12 @@ class Locations extends React.Component {
         axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/locations', {
             headers: { Authorization: authToken }
 		}).then(response => this.setState({ locations: response.data.locations }))
-        .catch(error => console.log(error));
+		.catch(error => {
+            if (error.response.status === 401)
+                this.props.Logout();
+            else
+                console.log(error);
+        });
         */
     }
 

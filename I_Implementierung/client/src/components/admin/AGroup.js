@@ -5,6 +5,7 @@ import axios from 'axios';
 //#endregion
 
 import * as Globals from '../../Globals';
+import DayTable from './ADayTable';
 //#endregion
 
 
@@ -12,7 +13,7 @@ class Group extends React.Component {
 
     constructor(props) {
         super(props);
-        this.id = this.state.id;
+        this.id = this.props.id;
         this.state = {
             selectedDay: undefined
         }
@@ -25,9 +26,9 @@ class Group extends React.Component {
 
     GetSelectedDay() {
         if (this.state.selectedDay === undefined)
-            return <p>Keine Abteilung ausgewählt</p>;
-        //else
-            //return <DayTable groupID={ this.id } selectedDay={ this.state.selectedDay } />;
+            return <p>Keinen Tag ausgewählt</p>;
+        else
+            return <DayTable groupID={ this.id } selectedDay={ this.state.selectedDay } />;
     }
 
 

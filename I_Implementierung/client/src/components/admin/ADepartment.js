@@ -28,51 +28,44 @@ class Department extends React.Component {
     /* Get all display information */
     componentDidMount() {
         this.InitDepartment();
+        this.InitEvents();
     }
 
     /* Get a detailed department information */
     InitDepartment() {
-        //#region Delete this later...
-        this.setState({
-            name: 'Bautechnik',
-            events: [
-                {
-                    id: 0,
-                    date: '2018-01-20',
-                    location: 'Zwettl'
-                },
-                {
-                    id: 2,
-                    date: '2018-01-12',
-                    location: 'Krems'
-                },
-                {
-                    id: 1,
-                    date: '2018-02-01',
-                    location: 'Zwettl'
-                }
-            ]
-        });
-        //#endregion
-
-        /* Server Request
         let authToken;
         if (authToken = this.props.GetCookie() === undefined)
             this.props.Logout();
         
         axios.get(Globals.BASE_PATH + 'departments/' + this.id)
-        .then(response => this.setState({ name: response.data.name }))
-        .catch(error => console.log(error));
-        axios.get(Globals.BASE_PATH + 'departments/' + this.id + '/events', {
-            headers: { Authorization: authToken }
-        }).then(response => this.setState({ events: response.data.events }))
+        .then(response => {
+            this.setState({
+                name: response.data[0].name,
+                contraction: response.data[0].contraction
+            });
+        }).catch(error => {
+            if (error.response.status === 401)
+                this.props.Logout();
+            else
+                console.log(error);
+        });
+    }
+
+    InitEvents() {
+        let authToken;
+        if (authToken = this.props.GetCookie() === undefined)
+            this.props.Logout();
+
+        axios.get(Globals.BASE_PATH + 'departments/' + this.id + '/events?authToken=' + authToken)
+        .then(response => {
+            this.setState({ events: response.data });
+        })
         .catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
             else
                 console.log(error);
         });
-        */
     }
 
     /* Set variable createEvent to 'true' */
@@ -82,34 +75,27 @@ class Department extends React.Component {
 
     /* Set variable createEvent to 'false' */
     CloseEventCreator(event) {
-        if (event !== undefined) {
-            let events = this.state.events;
-            events.push(event);
-            this.setState({
-                events: events,
-                createEvent:  false
-            });
+        if (event === true) {
+            this.setState({ createEvent: false });
+            this.InitEvents();
         } else
             this.setState({ createEvent: false });
     }
 
     /* Delete an event */
     DeleteEvent(id) {
-        /* Server Request
         let authToken;
         if (authToken = this.props.GetCookie() === undefined)
             this.props.Logout();
         
-        axios.delete(Globals.BASE_PATH + 'events/' + id, {
-            headers: { Authorization: authToken }
-        }).then(response => this.InitDepartment())
+        axios.delete(Globals.BASE_PATH + 'events/' + id + '?authToken=' + authToken)
+        .then(response => this.InitEvents())
         .catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
             else
                 console.log(error);
         });
-        */
     }
 
     /* Returns the Create Event Button or shows the form */
@@ -136,10 +122,10 @@ class Department extends React.Component {
                             {
                             this.state.events.map(event => {
                                 return (
-                                    <tr key={ event.id }>
-                                        <td>{ event.date }</td>
-                                        <td>{ event.location }</td>
-                                        <td><button onClick={ () => this.DeleteEvent(event.id) } >Löschen</button></td>
+                                    <tr key={ event.ID }>
+                                        <td>{ event.DATE.split('T')[0] }</td>
+                                        <td>{ event.NAME }</td>
+                                        <td><button onClick={ () => this.DeleteEvent(event.ID) } >Löschen</button></td>
                                     </tr>
                                 );
                             })
@@ -157,7 +143,7 @@ class Department extends React.Component {
     render() {
         return (
             <div>
-                <h2>Abteilungsverwaltung von { this.state.name }</h2>
+                <h2>Abteilungsverwaltung für <i>"</i>{ this.state.name }<i>"</i></h2>
                 <Locations departmentID={ this.id } />
                 <div>
                     <h3>Schnuppertage</h3>

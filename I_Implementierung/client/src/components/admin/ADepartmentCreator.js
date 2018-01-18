@@ -23,29 +23,26 @@ class DepartmentCreator extends React.Component {
     /* Check the input and create a department */
     CreateDepartment() {
         if (this.CheckName() && this.CheckContraction()) {
-            //#region Delete this later...
-            this.props.CloseDepartmentCreator({ id: 10, contraction: this.state.contraction, name: this.state.name });
-            //#endregion
-
-            /* Server Request
             let authToken;
             if (authToken = this.props.GetCookie() === undefined)
                 this.props.Logout();
-            
-            axios.post(Globals.BASE_PATH + 'departments', {
-                name: this.state.name,
-                contraction: this.state.contraction
-            }, {
-                headers: { Authorization: authToken }
-            })
-            .then(response => this.props.CloseDepartmentCreator(response))
-            .catch(error => {
+                
+            axios.post(Globals.BASE_PATH + 'departments?authToken=' + authToken, {
+                contraction: this.state.contraction,
+                name: this.state.name
+            }).then(response => {
+                let element = {
+                    id: response.data.insertedId,
+                    contraction: this.state.contraction,
+                    name: this.state.name
+                };
+                this.props.CloseDepartmentCreator(element);
+            }).catch(error => {
                 if (error.response.status === 401)
                     this.Logout();
                 else
                     console.log(error)
             });
-            */
         }
     }
 
