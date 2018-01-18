@@ -85,6 +85,7 @@ router.post('/', (req, res) => {
         connection.query(`INSERT INTO departments (departments.NAME, departments.CONTRACTION) VALUES ('${req.body.name}', '${req.body.contraction}');`, function (error, results, fields) {
             if (error) console.log(error);
             res.json(results);
+            res.end();
         });
     }
     else {
