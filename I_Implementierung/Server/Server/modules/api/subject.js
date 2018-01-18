@@ -69,22 +69,11 @@ router.get('/:id', (req, res) => {
         res.json(results);
     });
 });
-router.put('/:id', (req, res) => {
-    let token = req.query.token;
-    if (database_config.verify_request(token)) {
-        let id = req.params.id;
-        res.send(id);
-    }
-    else {
-        res.sendStatus(401);
-        res.end();
-    }
-});
 router.delete('/:id', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
         let id = req.params.id;
-        connection.query(`DELETE FROM subject WHERE subject.ID = ${id}`, function (error, results, fields) {
+        connection.query(`DELETE FROM subjects WHERE subjects.ID = ${id}`, function (error, results, fields) {
             if (error) throw error;
             res.json(results);
         });
