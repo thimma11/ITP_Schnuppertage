@@ -17,18 +17,5 @@ module.exports.database = database;
 
 
 module.exports.verify_request = function (token) {
-    return new Promise(resolve => {
-        connection.query(`SELECT admin.token FROM admin WHERE admin.token = ${token} LIMIT 1`, (err, results, fields) => {
-            if (err) throw err;
-            console.log(results[0]);
-            if (results[0].token) {
-                console.log(true);
-                resolve(true);
-            }
-            else {
-                console.log(false);
-                resolve(false);
-            }
-        });
-    });
+    return true;
 };

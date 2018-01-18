@@ -51,7 +51,10 @@ router.post('/', (req, res) => {
     let token = req.query.token;
     console.log(token);
     if (database_config.verify_request(token)) {
-
+        connection.query(`INSERT INTO subjects(subjects.NAME) VALUES (${req.body.name});`, function (error, results, fields) {
+            if (error) throw error;
+            res.json(results);
+        });
     }
     else {
         res.sendStatus(401);
@@ -61,7 +64,10 @@ router.post('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
     let id = req.params.id;
-    res.send("asd");
+    connection.query(`SELECT s.ID, s.Name FROM subjects s WHERE s.ID = ${id};`, function (error, results, fields) {
+        if (error) throw error;
+        res.json(results);
+    });
 });
 router.put('/:id', (req, res) => {
     let token = req.query.token;
@@ -78,6 +84,10 @@ router.delete('/:id', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
         let id = req.params.id;
+        connection.query(`DELETE FROM subject WHERE subject.ID = ${id}`, function (error, results, fields) {
+            if (error) throw error;
+            res.json(results);
+        });
     }
     else {
         res.sendStatus(401);
