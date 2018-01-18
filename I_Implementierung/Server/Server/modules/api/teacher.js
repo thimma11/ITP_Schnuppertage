@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 
 
 router.get('/', (req, res) => {
-    connection.query(`SELECT teacher.ID AS id, teacher.contraction from teacher;`, function (error, results, fields) {
+    connection.query(`SELECT teachers.ID, teachers.CONTRACTION from teachers;`, function (error, results, fields) {
         if (error) throw error;
         res.json(results);
     });
@@ -22,7 +22,7 @@ router.post('/', (req, res) => {
     let token = req.query.token;
     console.log(token);
     if (database_config.verify_request(token)) {
-        connection.query(`INSERT INTO teacher(teachers.contraction) VALUES (${req.body.contraction});`, function (error, results, fields) {
+        connection.query(`INSERT INTO teachers(teachers.CONTRACTION) VALUES (?);`, [req.body.contraction], function (error, results, fields) {
             if (error) throw error;
             res.json(results);
         });

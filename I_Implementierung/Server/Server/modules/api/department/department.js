@@ -58,7 +58,7 @@ router.post('/:id/locations', (req, res) => {
 
 router.get('/:id/timetables', (req, res) => {
     let id = req.params.id;
-    connection.query(`SELECT groups.ID FROM groups JOIN timetables ON groups.TIMETABLES_ID = timetables.ID JOIN locations ON timetables.LOCATIONS_ID = locations.ID JOIN departments ON departments.ID = timetables.DEPARTMENTS_ID WHERE departments.ID = ?;`, [id], function (error, results, fields) {
+    connection.query(`SELECT COUNT(groups.ID) FROM groups JOIN timetables ON groups.TIMETABLES_ID = timetables.ID JOIN locations ON timetables.LOCATIONS_ID = locations.ID JOIN departments ON departments.ID = timetables.DEPARTMENTS_ID WHERE departments.ID = ? AND locations.ID = ?;`, [id, req.params.location_id], function (error, results, fields) {
         if (error) throw error;
         res.json(results);
     });

@@ -22,7 +22,7 @@ router.post('/', (req, res) => {
     let token = req.query.token;
     console.log(token);
     if (database_config.verify_request(token)) {
-        connection.query(`INSERT INTO lessons (lessons.START, lessons.END, lessons.DAYTABLES_ID, lessons.SUBJECTS_ID, lessons.TEACHERS_ID) VALUES (${req.body.start}, ${req.body.end}, ${req.body.daytables_id}, ${req.body.subjects_id}, ${teacher_id});`, function (error, results, fields) {
+        connection.query(`INSERT INTO lessons (lessons.START, lessons.END, lessons.DAYTABLES_ID, lessons.SUBJECTS_ID, lessons.TEACHERS_ID) VALUES (?, ?, ?, ?, ?);`, [req.body.start, req.body.end, req.body.daytables_id, req.body.subjects_id, req.body.teacher_id],function (error, results, fields) {
             if (error) throw error;
             res.json(results);
         });
@@ -39,17 +39,6 @@ router.get('/:id', (req, res) => {
         if (error) throw error;
         res.json(results);
     });
-});
-router.put('/:id', (req, res) => {
-    let token = req.query.token;
-    if (database_config.verify_request(token)) {
-        let id = req.params.id;
-        res.send(id);
-    }
-    else {
-        res.sendStatus(401);
-        res.end();
-    }
 });
 router.delete('/:id', (req, res) => {
     let token = req.query.token;
