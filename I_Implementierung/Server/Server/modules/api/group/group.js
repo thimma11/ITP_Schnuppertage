@@ -1,7 +1,7 @@
 ﻿var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
-var database_config = require('./database');
+var database_config = require('../../config/database');
 
 var connection = mysql.createConnection({
     host: database_config.host,
@@ -18,7 +18,13 @@ router.get('/:id/daytables', (req, res) => {
     });
 });
 
-
-
+router.get('/:dep_id/:loc_id', (req, res) => {
+    let dep_id = req.params.dep_id;
+    let loc_id = req.params.loc_id;
+    connection.query(`select count(g.id) as count from timetables t join groups g where t.departments_id=? and t.locations_id=?;`, [dep_id, loc_id], function (error, results, fields) {
+        if (error) throw error;
+        res.json(results);
+    });
+});
 
 module.exports = router;
