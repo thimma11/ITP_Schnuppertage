@@ -43,7 +43,7 @@ router.put('/:id', (req, res) => {
 });
 router.delete('/:id', (req, res) => {
     let token = req.query.token;
-    if (database_config.verify_request(token)) {
+    if (token != undefined && database_config.verify_request(token)) {
         let id = req.params.id;
     }
     else {
