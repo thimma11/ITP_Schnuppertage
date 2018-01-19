@@ -11,18 +11,11 @@ var connection = mysql.createConnection({
 });
 
 router.delete('/:id', (req, res) => {
-    let token = req.query.token;
-    if (token != undefined && database_config.verify_request(token)) {
-        let id = req.params.id;
-        connection.query(`DELETE from events WHERE ID = ${req.params.id};`, function (error, results, fields) {
-            if (error) console.log(error);
-            res.json(results);
-        });
-    }
-    else {
-        res.sendStatus(401);
-        res.end();
-    }
+    let id = req.params.id;
+    connection.query(`DELETE from events WHERE ID = ${req.params.id};`, function (error, results, fields) {
+        if (error) console.log(error);
+        res.json(results);
+    });
 });
 
 

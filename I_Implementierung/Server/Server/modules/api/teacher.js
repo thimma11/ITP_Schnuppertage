@@ -10,7 +10,6 @@ var connection = mysql.createConnection({
     database: database_config.database
 });
 
-
 router.get('/', (req, res) => {
     connection.query(`SELECT teachers.ID, teachers.CONTRACTION from teachers;`, function (error, results, fields) {
         if (error) throw error;
@@ -19,18 +18,10 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    let token = req.query.token;
-    console.log(token);
-    if (database_config.verify_request(token)) {
-        connection.query(`INSERT INTO teachers(teachers.CONTRACTION) VALUES (?);`, [req.body.contraction], function (error, results, fields) {
-            if (error) throw error;
-            res.json(results);
-        });
-    }
-    else {
-        res.sendStatus(401);
-        res.end();
-    }
+    connection.query(`INSERT INTO teachers(teachers.CONTRACTION) VALUES (?);`, [req.body.contraction], function (error, results, fields) {
+        if (error) throw error;
+        res.json(results);
+    });
 });
 
 router.get('/:id', (req, res) => {
@@ -41,18 +32,11 @@ router.get('/:id', (req, res) => {
     });
 });
 router.delete('/:id', (req, res) => {
-    let token = req.query.token;
-    if (database_config.verify_request(token)) {
-        let id = req.params.id;
-        connection.query(`DELETE FROM teachers WHERE teachers.ID = ${id};`, function (error, results, fields) {
-            if (error) throw error;
-            res.json(results);
-        });
-    }
-    else {
-        res.sendStatus(401);
-        res.end();
-    }
+    let id = req.params.id;
+    connection.query(`DELETE FROM teachers WHERE teachers.ID = ${id};`, function (error, results, fields) {
+        if (error) throw error;
+        res.json(results);
+    });
 });
 
 

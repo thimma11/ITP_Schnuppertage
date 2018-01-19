@@ -3,6 +3,9 @@ var http = require('http');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var jwt = require('jsonwebtoken');
+
+app.set('secret', 'itpistcool');
 
 app.use(function (req, res, next) {
 
@@ -35,7 +38,38 @@ app.get('/', (req, res) => {
     console.log("index");
     res.send("Index");
 });
+app.get('/authenticate', require('./modules/authentication'));
 
+app.use(function (req, res, next) {
+
+    // check header or url parameters or post parameters for token
+    var token = req.body.authToken || req.query.authToken || req.headers['Authentication'];
+
+    // decode token
+    if (token) {
+
+        // verifies secret and checks exp
+        jwt.verify(token, app.get('secret'), function (err, decoded) {
+            if (err) {
+                return res.json({ success: false, message: 'Failed to authenticate token.' });
+            } else {
+                // if everything is good, save to request for use in other routes
+                req.decoded = decoded;
+                next();
+            }
+        });
+
+    } else {
+
+        // if there is no token
+        // return an error
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
+
+    }
+});
 app.use('/api', require('./modules/api'));
 
 var server = http.createServer(app);
