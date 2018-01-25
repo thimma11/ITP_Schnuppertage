@@ -4,6 +4,7 @@ import React from 'react';
 import axios from 'axios';
 //#endregion
 
+import Entries from './AEntries';
 import Locations from './ALocations';
 import EventCreator from './AEventCreator';
 import * as Globals from '../../Globals';
@@ -18,10 +19,12 @@ class Department extends React.Component {
         this.state = {
             name: '',
             events: [],
-            createEvent: false
+            createEvent: false,
+            showEntriesID: -1
         };
 
         this.CloseEventCreator = this.CloseEventCreator.bind(this);
+        this.CloseEntries = this.CloseEntries.bind(this);
     }
 
 
@@ -73,6 +76,16 @@ class Department extends React.Component {
         this.setState({ createEvent:  true });
     }
 
+    ShowEntries(id, date, location) {
+        this.setState({ showEntriesID: id });
+        this.eventData = date;
+        this.location = location;
+    }
+
+    CloseEntries(id) {
+        this.setState({ showEntriesID: -1 });
+    }
+
     /* Set variable createEvent to 'false' */
     CloseEventCreator(event) {
         if (event === true) {
@@ -101,7 +114,7 @@ class Department extends React.Component {
     /* Returns the Create Event Button or shows the form */
     GetEventCreator() {
         if (this.state.createEvent)
-            return <EventCreator CloseEventCreator={ this.CloseEventCreator } departmentID={ this.id } />;
+            return <EventCreator Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } CloseEventCreator={ this.CloseEventCreator } departmentID={ this.id } />;
         else
             return <button onClick={ () => this.OpenEventCreator() } >Schnuppertag erstellen</button>;
     }
@@ -125,7 +138,10 @@ class Department extends React.Component {
                                     <tr key={ event.ID }>
                                         <td>{ event.DATE.split('T')[0] }</td>
                                         <td>{ event.NAME }</td>
-                                        <td><button onClick={ () => this.DeleteEvent(event.ID) } >Löschen</button></td>
+                                        <td>
+                                            <button onClick={ () => this.ShowEntries(event.ID, event.DATE.split('T')[0], event.NAME) } >Eintragungen anzeigen</button>
+                                            <button onClick={ () => this.DeleteEvent(event.ID) } >Löschen</button>
+                                        </td>
                                     </tr>
                                 );
                             })
@@ -141,16 +157,25 @@ class Department extends React.Component {
 
 
     render() {
-        return (
-            <div>
-                <h2>Abteilungsverwaltung für <i>"</i>{ this.state.name }<i>"</i></h2>
-                <Locations departmentID={ this.id } />
+        if (this.state.showEntriesID !== -1) {
+            return(
                 <div>
-                    <h3>Schnuppertage</h3>
-                    { this.GetEvents() }
+                    <h2>Abteilungsverwaltung für <i>"</i>{ this.state.name }<i>"</i></h2>
+                    <Entries date={ this.eventData } location={ this.location } CloseEntries={ this.CloseEntries } Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } eventID={ this.state.showEntriesID } />
                 </div>
-            </div>
-        );
+            );
+        } else {
+            return (
+                <div>
+                    <h2>Abteilungsverwaltung für <i>"</i>{ this.state.name }<i>"</i></h2>
+                    <Locations Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } departmentID={ this.id } />
+                    <div>
+                        <h3>Schnuppertage</h3>
+                        { this.GetEvents() }
+                    </div>
+                </div>
+            );
+        }
     }
 
 }
