@@ -35,6 +35,7 @@ router.get('/:id/locations', (req, res) => {
             res.json(results);
         });
 });
+<<<<<<< HEAD
 router.post('/:id/locations', (req, res) => {
     let id = req.params.id;
     connection.query(`INSERT INTO timetables (timetables.DEPARTMENTS_ID, timetables.LOCATIONS_ID) VALUES (?, ?);`, [req.body.location_id, id], function (error, results, fields) {
@@ -49,6 +50,8 @@ router.post('/:id/locations', (req, res) => {
         });
     });
 });
+=======
+>>>>>>> de269a4ddb56e639a72b9dfd3ae6eb7d77ca1316
 router.get('/:id/!locations', (req, res) => {
     let id = req.params.id;
     connection.query(`SELECT locations.ID, locations.NAME FROM locations 
