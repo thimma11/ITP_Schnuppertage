@@ -28,13 +28,22 @@ router.get('/:id/lessons', (req, res) => {
 });
 router.post('/:id/lessons', (req, res) => {
     let id = req.params.id;
-    connection.query(``, [req.body.contraction], function (error, results, fields) {
-        if (error) throw error;
-        res.json(results);
-    });
+    if (checkVariable(req.body.start) && checkVariable(req.body.end) && checkVariable(req.body.start) && checkVariable(req.body.start)) {
+        connection.query(``, [req.body.contraction], function (error, results, fields) {
+            if (error) throw error;
+            res.json(results);
+        });
+    }
+    else {
+
+    }
 });
 
-
-
+function checkVariable(variable) {
+    if (variable != undefined && variable != "")
+        return true;
+    else
+        return false;
+}
 
 module.exports = router;

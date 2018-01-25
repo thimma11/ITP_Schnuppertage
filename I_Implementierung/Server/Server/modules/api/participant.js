@@ -10,7 +10,9 @@ var connection = mysql.createConnection({
     database: database_config.database
 });
 
-router.get('/', (req, res) => {});
+router.get('/', (req, res) => {
+
+});
 
 router.post('/', (req, res) => {
     console.log(req.body);
