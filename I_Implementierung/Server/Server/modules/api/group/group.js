@@ -35,11 +35,8 @@ router.get('/:dep_id/:loc_id', (req, res) => {
             for (let index = 0; index < results.length; index++) {
                 arr.push(results[index]['id']);
             }
-
             res.json(arr);
         });
-
-        console.log(arr);
     }
 });
 
