@@ -39,10 +39,10 @@ app.get('/', (req, res) => {
     res.send("Index");
 });
 app.post('/authenticate', (req, res) => {
-
+    console.log("POST");
     if (req.body.username != undefined && req.body.password != undefined && req.body.username != "" && req.body.password != "") {
         let mysql = require('mysql');
-        let database_config = require('./config/database');
+        let database_config = require('./modules/config/database');
 
         let connection = mysql.createConnection({
             host: database_config.host,
@@ -57,8 +57,7 @@ app.post('/authenticate', (req, res) => {
                 const payload = {
                     username: req.body.username
                 };
-                var token = jwt.sign(payload, app.get('superSecret'), {
-                    expiresInMinutes: 1440 // expires in 24 hours
+                var token = jwt.sign(payload, app.get('secret'), {
                 });
 
                 // return the information including token as JSON
@@ -102,7 +101,12 @@ app.use(function (req, res, next) {
         });
 
     } else {
-        if (not_admin_methods.find(req.method.toUpperCase())){
+        if (not_admin_methods.find((element) => {
+            if (req.method.toUpperCase() == element.toUpperCase())
+                return 1;
+            else
+                return 0;
+        })) {
             next();
         }
         else {
