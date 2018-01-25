@@ -41,10 +41,10 @@ router.post('/:id/locations', (req, res) => {
 });
 router.get('/:id/!locations', (req, res) => {
     let id = req.params.id;
-    connection.query('SELECT locations.ID, locations.NAME FROM locations, locations_departments WHERE ? = locations_departments.DEPARTMENTS_ID AND locations_departments.LOCATIONS_ID != locations.ID;', [id], function (error, results, fields) {
-            if (error) console.log(error);
+    connection.query('SELECT locations.ID, locations.NAME FROM locations WHERE locations.ID NOT IN (SELECT locations.ID FROM locations JOIN locations_departments ON locations.ID = locations_departments.LOCATIONS_ID JOIN departments ON departments.ID = locations_departments.DEPARTMENTS_ID);', [id], function (error, results, fields) {
+        if (error) console.log(error);
             res.json(results);
-        });
+    });
 });
 
 router.get('/:id/timetables', (req, res) => {
