@@ -32,13 +32,6 @@ router.get('/:id/locations', (req, res) => {
             res.json(results);
         });
 });
-router.post('/:id/locations', (req, res) => {
-    let id = req.params.id;
-    connection.query(`INSERT INTO locations_departments (locations_departments.LOCATIONS_ID, locations_departments.DEPARTMENTS_ID) VALUES (?, ?);`, [req.body.location_id, id], function (error, results, fields) {
-        if (error) throw error;
-        res.json(results);
-    });
-});
 router.get('/:id/!locations', (req, res) => {
     let id = req.params.id;
     connection.query('SELECT locations.ID, locations.NAME FROM locations WHERE locations.ID NOT IN (SELECT locations.ID FROM locations JOIN locations_departments ON locations.ID = locations_departments.LOCATIONS_ID JOIN departments ON ? = locations_departments.DEPARTMENTS_ID W);', [id], function (error, results, fields) {
