@@ -30,7 +30,7 @@ router.post('/', (req, res) => {
     }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/events/:id', (req, res) => {
     let id = req.params.id;
     connection.query(`SELECT * from participants p WHERE p.events_id = ${id};`, function (error, results, fields) {
         if (error) throw error;
