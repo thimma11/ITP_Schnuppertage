@@ -29,7 +29,7 @@ router.get('/:dep_id/:loc_id', (req, res) => {
     }
     else {
         arr = []
-        connection.query(`select g.id from timetables t join groups g where t.departments_id=? and t.locations_id=?;`, [dep_id, loc_id], function (error, results, fields) {
+        connection.query(`select g.id from timetables t join on t.departments_id=g.department_id and t.locations_id=g.location_id groups g where t.departments_id=? and t.locations_id=?;`, [dep_id, loc_id], function (error, results, fields) {
             if (error) throw error;
 
             for (let index = 0; index < results.length; index++) {
