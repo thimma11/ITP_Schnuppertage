@@ -64,8 +64,6 @@ router.post('/:id/locations', (req, res) => {
 router.get('/:id/!locations', (req, res) => {
     let id = req.params.id;
     connection.query(`SELECT locations.ID, locations.NAME FROM locations 
-	                JOIN timetables ON timetables.LOCATIONS_ID = locations.ID 
-	                JOIN departments ON timetables.DEPARTMENTS_ID = departments.ID
 	                WHERE locations.ID NOT IN (SELECT locations.ID FROM locations 
 								JOIN timetables ON timetables.LOCATIONS_ID = locations.ID 
 								JOIN departments ON timetables.DEPARTMENTS_ID = departments.ID
