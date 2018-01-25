@@ -21,7 +21,23 @@ router.get('/:id/daytables', (req, res) => {
 router.get('/:dep_id/:loc_id', (req, res) => {
     let dep_id = req.params.dep_id;
     let loc_id = req.params.loc_id;
-    connection.query(`select count(g.id) as count from timetables t join groups g where t.departments_id=? and t.locations_id=?;`, [dep_id, loc_id], function (error, results, fields) {
+    if(req.query.count == 'true') {
+        connection.query(`select count(g.id) as count from timetables t join groups g where t.departments_id=? and t.locations_id=?;`, [dep_id, loc_id], function (error, results, fields) {
+            if (error) throw error;
+            res.json(results);
+        });
+    }
+    else {
+        connection.query(`select g.id from timetables t join groups g where t.departments_id=? and t.locations_id=?;`, [dep_id, loc_id], function (error, results, fields) {
+            if (error) throw error;
+            res.json(results);
+        });
+    }
+});
+
+router.delete('/:id', (req, res) => {
+    let id = req.params.id;
+    connection.query(`DELETE FROM groups WHERE id = ${id};`, function (error, results, fields) {
         if (error) throw error;
         res.json(results);
     });
