@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
 app.post('/authenticate', (req, res) => {
 
     if (req.body.username != undefined && req.body.password != undefined && req.body.username != "" && req.body.password != "") {
-        let = require('mysql');
+        let mysql = require('mysql');
         let database_config = require('./config/database');
 
         let connection = mysql.createConnection({
