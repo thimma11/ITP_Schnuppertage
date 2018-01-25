@@ -22,7 +22,7 @@ router.get('/:dep_id/:loc_id', (req, res) => {
     let dep_id = req.params.dep_id;
     let loc_id = req.params.loc_id;
     if(req.query.count == 'true') {
-        connection.query(`select count(g.id) as count from timetables t join groups g where t.departments_id=? and t.locations_id=?;`, [dep_id, loc_id], function (error, results, fields) {
+        connection.query(`select count(g.id) as count from timetables t join groups g on t.departments_id=g.department_id and t.locations_id=g.location_id where t.departments_id=? and t.locations_id=? group by g.department_id, g.location_id;`, [dep_id, loc_id], function (error, results, fields) {
             if (error) throw error;
             res.json(results);
         });
