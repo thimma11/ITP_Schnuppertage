@@ -40,7 +40,9 @@ app.get('/', (req, res) => {
 });
 app.get('/authenticate', require('./modules/authentication'));
 
-app.use(function (req, res, next) {
+app.use('/api', require('./modules/api'));
+
+/*app.use(function (req, res, next) {
 
     // check header or url parameters or post parameters for token
     var token = req.body.authToken || req.query.authToken || req.headers['Authentication'];
@@ -69,8 +71,7 @@ app.use(function (req, res, next) {
         });
 
     }
-});
-app.use('/api', require('./modules/api'));
+}); */
 
 var server = http.createServer(app);
 server.listen(port, () => {
