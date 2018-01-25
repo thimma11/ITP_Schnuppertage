@@ -28,9 +28,14 @@ router.get('/:dep_id/:loc_id', (req, res) => {
         });
     }
     else {
-        connection.query(`select g.id from timetables t join groups g where t.departments_id=? and t.locations_id=?;`, [dep_id, loc_id], function (error, results, fields) {
+        arr = []
+        connection.query(`select g.id from timetables t join groups g on t.departments_id=g.department_id and t.locations_id=g.location_id where t.departments_id=? and t.locations_id=?;`, [dep_id, loc_id], function (error, results, fields) {
             if (error) throw error;
-            res.json(results);
+
+            for (let index = 0; index < results.length; index++) {
+                arr.push(results[index]['id']);
+            }
+            res.json(arr);
         });
     }
 });
