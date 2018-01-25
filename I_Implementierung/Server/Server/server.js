@@ -38,7 +38,45 @@ app.get('/', (req, res) => {
     console.log("index");
     res.send("Index");
 });
-app.get('/authenticate', require('./modules/authentication'));
+app.post('/authenticate', (req, res) => {
+
+    if (req.body.username != undefined && req.body.password != undefined && req.body.username != "" && req.body.password != "") {
+        let = require('mysql');
+        let database_config = require('./config/database');
+
+        let connection = mysql.createConnection({
+            host: database_config.host,
+            user: database_config.username,
+            password: database_config.password,
+            database: database_config.database
+        });
+
+        connection.query('SELECT * FROM admin WHERE admin.USERNAME = ? AND admin.PASSWORD = ?', [req.body.username, req.body.password], function (error, results, fields) {
+            if (error) throw error;
+            if (results) {
+                const payload = {
+                    username: req.body.username
+                };
+                var token = jwt.sign(payload, app.get('superSecret'), {
+                    expiresInMinutes: 1440 // expires in 24 hours
+                });
+
+                // return the information including token as JSON
+                res.json({
+                    success: true,
+                    token: token
+                });
+            }
+        });
+    }
+    else {
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
+    }
+
+});
 
 app.use('/api', require('./modules/api'));
 
@@ -47,7 +85,7 @@ app.use(function (req, res, next) {
     // check header or url parameters or post parameters for token
     var token = req.body.authToken || req.query.authToken || req.headers['Authentication'];
 
-    let not_admin_methods = ["GET"];
+    let not_admin_methods = ["GET", "POST", "PUT", "DELETE"];
 
     // decode token
     if (token) {
