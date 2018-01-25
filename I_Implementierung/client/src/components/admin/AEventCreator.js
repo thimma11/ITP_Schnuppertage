@@ -13,9 +13,9 @@ class EventCreator extends React.Component {
     constructor(props) {
         super(props);
         this.departmentID = this.props.departmentID;
+        this.locationID = -1;
         this.state = {
             date: '',
-            location: -1,
             locations: [],
             maxGroups: 1,
             currentGroupSize: 1,
@@ -47,25 +47,18 @@ class EventCreator extends React.Component {
 
     /* Get the max group size available for the choosen location */
     InitGroupSize() {
-        //#region Delete this later...
-        this.setState({ maxGroups: 2 });
-        //#endregion
-
-        /* Server Request
         let authToken;
         if (authToken = this.props.GetCookie() === undefined)
 			this.props.Logout();
 
-        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/locations/' + this.state.location + '?maxGroups=true', {
-            headers: { Authorization: authToken }
-		}).then(response => this.setState({ maxGroups: response.data.maxGroups }))
+        axios.get(Globals.BASE_PATH + 'groups/' + this.departmentID + '/' + this.location + '?authToken=' + authToken)
+        .then(response => this.setState({ maxGroups: response.data.count }))
 		.catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
             else
                 console.log(error);
         });
-        */
     }
 
     /* Check the input and create a event */
@@ -80,7 +73,6 @@ class EventCreator extends React.Component {
         }
         this.props.CloseEventCreator(true);
         
-
         axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID + '/events', {
             date: this.state.date,
             location_id: this.state.location,
@@ -97,8 +89,8 @@ class EventCreator extends React.Component {
     }
 
     ChangeLocation(event) {
+        this.location = parseInt(event.target.value, 10);
         this.setState({
-            location: parseInt(event.target.value, 10),
             maxGroups: 2,
             errorMessage: ''
         });
@@ -116,7 +108,7 @@ class EventCreator extends React.Component {
     }
 
     GetGroupSizes() {
-        if (this.state.location !== -1) {
+        if (this.location !== -1) {
             return (
                 <div>
                     <div><label>Gruppenanzahl: <b>{ this.state.currentGroupSize }</b></label></div>
@@ -127,7 +119,7 @@ class EventCreator extends React.Component {
     }
 
     GetCreateButton() {
-        if (this.state.location !== -1) {
+        if (this.location !== -1) {
             return <button onClick={ () => this.CreateEvent() } >Hinzufügen</button>;
         } else {
             return <button disabled >Hinzufügen</button>;
@@ -145,7 +137,7 @@ class EventCreator extends React.Component {
                 </div>
                 <div>
                     <label>Standort:</label>
-                    <select value={ this.state.location } onChange={ (e) => this.ChangeLocation(e) } >
+                    <select id="locationSelecter" onChange={ (e) => this.ChangeLocation(e) } >
                         <option value={ -1 }>Nichts ausgewählt</option>
                     {
                         this.state.locations.map(location => {
