@@ -42,10 +42,12 @@ app.get('/authenticate', require('./modules/authentication'));
 
 app.use('/api', require('./modules/api'));
 
-/*app.use(function (req, res, next) {
+app.use(function (req, res, next) {
 
     // check header or url parameters or post parameters for token
     var token = req.body.authToken || req.query.authToken || req.headers['Authentication'];
+
+    let not_admin_methods = ["GET"];
 
     // decode token
     if (token) {
@@ -62,16 +64,20 @@ app.use('/api', require('./modules/api'));
         });
 
     } else {
-
-        // if there is no token
-        // return an error
-        return res.status(403).send({
-            success: false,
-            message: 'No token provided.'
-        });
+        if (not_admin_methods.find(req.method.toUpperCase())){
+            next();
+        }
+        else {
+            // if there is no token
+            // return an error
+            return res.status(403).send({
+                success: false,
+                message: 'No token provided.'
+            });
+        }
 
     }
-}); */
+});
 
 var server = http.createServer(app);
 server.listen(port, () => {
