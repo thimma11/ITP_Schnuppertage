@@ -27,21 +27,37 @@ router.post('/:id/events', (req, res) => {
 
 router.get('/:id/locations', (req, res) => {
     let id = req.params.id;
-    connection.query(`SELECT locations.ID, locations.NAME FROM locations JOIN locations_departments ON locations_departments.LOCATIONS_ID = locations.ID JOIN departments ON departments.ID = locations_departments.DEPARTMENTS_ID WHERE departments.ID = ?; `, [id], function (error, results, fields) {
+    connection.query(`SELECT locations.ID, locations.NAME FROM locations 
+	                JOIN timetables ON timetables.LOCATIONS_ID = locations.ID 
+	                JOIN departments ON timetables.DEPARTMENTS_ID = departments.ID
+                    WHERE departments.ID = ?;`, [id], function (error, results, fields) {
             if (error) console.log(error);
             res.json(results);
         });
 });
 router.post('/:id/locations', (req, res) => {
     let id = req.params.id;
-    connection.query(`INSERT INTO locations_departments (locations_departments.LOCATIONS_ID, locations_departments.DEPARTMENTS_ID) VALUES (?, ?);`, [req.body.location_id, id], function (error, results, fields) {
+    connection.query(`INSERT INTO timetables (timetables.DEPARTMENTS_ID, timetables.LOCATIONS_ID) VALUES (?, ?);`, [req.body.location_id, id], function (error, results, fields) {
         if (error) throw error;
-        res.json(results);
+        connection.query(`INSERT INTO groups(groups.LOCATION_ID, groups.DEPARTMENT_ID) VALUES (?, ?);`, [req.body.location_id, id], function (error, results, fields) {
+            if (error) throw error;
+            let daytable_id = results[0]["insertId"];
+            connection.query(`INSERT INTO daytables (daytables.DAY_NAME, daytables.GROUPS_ID) VALUES ('MO', ?), ('DI', ?), ('MI', ?), ('DO', ?), ('FR', ?);`, [daytable_id], function (error, results, fields) {
+                if (error) throw error;
+
+            });
+        });
     });
 });
 router.get('/:id/!locations', (req, res) => {
     let id = req.params.id;
-    connection.query('SELECT locations.ID, locations.NAME FROM locations WHERE locations.ID NOT IN (SELECT locations.ID FROM locations JOIN locations_departments ON locations.ID = locations_departments.LOCATIONS_ID JOIN departments ON ? = locations_departments.DEPARTMENTS_ID W);', [id], function (error, results, fields) {
+    connection.query(`SELECT locations.ID, locations.NAME FROM locations 
+	                JOIN timetables ON timetables.LOCATIONS_ID = locations.ID 
+	                JOIN departments ON timetables.DEPARTMENTS_ID = departments.ID
+	                WHERE locations.ID NOT IN (SELECT locations.ID FROM locations 
+								JOIN timetables ON timetables.LOCATIONS_ID = locations.ID 
+								JOIN departments ON timetables.DEPARTMENTS_ID = departments.ID
+                        		WHERE departments.ID = ?);`, [id], function (error, results, fields) {
         if (error) console.log(error);
             res.json(results);
     });
