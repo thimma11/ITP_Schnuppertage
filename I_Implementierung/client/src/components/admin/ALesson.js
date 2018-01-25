@@ -72,7 +72,15 @@ class Lesson extends React.Component {
                 <td>
                     <input value={ this.state.end } onChange={ (e) => this.ChangeEnd(e) } />
                 </td>
-                <td></td>
+                <td>
+                    <select value={ this.state.teacher } onChange={ (e) => this.ChangeTeacher(e) } >
+                    {
+                        this.teachers.map(teacher => {
+                            <option value={ teacher.id }>{ teacher.contraction }</option>
+                        })
+                    }
+                    </select>
+                </td>
                 <td></td>
                 <td></td>
             </tr>

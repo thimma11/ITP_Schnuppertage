@@ -31,22 +31,18 @@ class EventCreator extends React.Component {
 
     /* Get all locations */
     InitLocations() {
-        //#region Delete this later...
-        this.setState({
-            locations: [
-                { id: 0, name: 'Zwettl' },
-                { id: 1, name: 'Krems' }
-            ]
-        });
-        //#endregion
+        let authToken;
+        if (authToken = this.props.GetCookie() === undefined)
+			this.props.Logout();
 
-        //#region Server Request
-        /*
-        axios.get(Globals.BASE_PATH + 'locations')
+        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/locations?authToken=' + authToken)
         .then(response => this.setState({ locations: response.data }))
-        .catch(error => console.log(error));
-        */
-        //#endregion
+		.catch(error => {
+            if (error.response.status === 401)
+                this.props.Logout();
+            else
+                console.log(error);
+        });
     }
 
     /* Get the max group size available for the choosen location */
@@ -84,16 +80,13 @@ class EventCreator extends React.Component {
         }
         this.props.CloseEventCreator(true);
         
-        //#region Server Request
-        /*
+
         axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID + '/events', {
             date: this.state.date,
-            location: this.state.location,
+            location_id: this.state.location,
             groupSize: this.state.currentGroupSize
         }).then(response => this.props.CloseEventCreator(true))
         .catch(error => console.log(error));
-        */
-        //#endregion
     }
 
     ChangeDate(event) {
@@ -156,7 +149,7 @@ class EventCreator extends React.Component {
                         <option value={ -1 }>Nichts ausgewählt</option>
                     {
                         this.state.locations.map(location => {
-                            return <option key={location.id} value={location.id} >{ location.name }</option>;
+                            return <option key={location.ID} value={location.ID} >{ location.NAME }</option>;
                         })
                     }
                     </select>
