@@ -31,6 +31,7 @@
     <Compile Include="modules\api.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="modules\api\timetable.js" />
     <Compile Include="modules\authentication.js">
       <SubType>Code</SubType>
     </Compile>

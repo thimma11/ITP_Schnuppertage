@@ -54,7 +54,7 @@ router.post('/:id/locations', (req, res) => {
         connection2.query(`INSERT INTO groups(groups.LOCATION_ID, groups.DEPARTMENT_ID) VALUES (?, ?);`, [req.body.location_id, id], function (error, results, fields) {
             if (error) throw error;
             let daytable_id = results["insertId"];
-            connection3.query(`INSERT INTO daytables (daytables.DAY_NAME, daytables.GROUPS_ID) VALUES ('MO', ?), ('DI', ?), ('MI', ?), ('DO', ?), ('FR', ?);`, [daytable_id, daytable_id, daytable_id, daytable_id, daytable_id], function (error, results, fields) {
+            connection3.query(`INSERT INTO daytables (daytables.DAY_NAME, daytables.GROUPS_ID) VALUES ('Montag', ?), ('Dienstag', ?), ('Mittwoch', ?), ('Donnerstag', ?), ('Freitag', ?);`, [daytable_id, daytable_id, daytable_id, daytable_id, daytable_id], function (error, results, fields) {
                 if (error) throw error;
                 res.json(results);
             });
