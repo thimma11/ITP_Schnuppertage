@@ -29,8 +29,8 @@ class LocationAdder extends React.Component {
         if (authToken = this.props.GetCookie() === undefined)
 			this.props.Logout();
 			
-        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID +'/!locations?authToken=' + authToken)
-        .then(response => { this.setState({ locations: response.data }); })
+        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID +'/!locations?count=true&authToken=' + authToken)
+        .then(response => this.setState({ locations: response.data }))
 		.catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
@@ -90,6 +90,9 @@ class LocationAdder extends React.Component {
                 </div>
             );
         }
+        return (
+            <p>Keine weitere Abteilung gefunden...</p>
+        );
     }
 
 }

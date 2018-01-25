@@ -20,6 +20,8 @@ class Location extends React.Component {
             name: '',
             groups: undefined
         }
+        
+        this.UpdateGroups = this.UpdateGroups.bind(this);
     }
 
 
@@ -31,6 +33,10 @@ class Location extends React.Component {
                 { id: 10 }
             ]
         });
+    }
+
+    UpdateGroups() {
+        this.componentDidMount();
     }
 
     GetGroupAdder() {
@@ -52,7 +58,7 @@ class Location extends React.Component {
                         return (
                             <div>
                                 <h4>Gruppe { index + 1 }</h4>
-                                <Group id={ group.id } />
+                                <Group id={ group.id } UpdateGroups={ this.UpdateGroups } />
                             </div>
                         );
                     })

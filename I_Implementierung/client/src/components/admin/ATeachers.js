@@ -39,7 +39,7 @@ class Teachers extends React.Component {
         if (authToken = this.props.GetCookie() === undefined)
 			this.props.Logout();
 
-        axios.delete(Globals.BASE_PATH + 'teachers/' + id)
+        axios.delete(Globals.BASE_PATH + 'teachers/' + id + '?authToken')
         .then(response => this.componentDidMount())
 		.catch(error => {
             if (error.response.status === 401)

@@ -31,10 +31,26 @@ class Group extends React.Component {
             return <DayTable groupID={ this.id } selectedDay={ this.state.selectedDay } />;
     }
 
+    RemoveGroup() {
+        let authToken;
+        if (authToken = this.props.GetCookie() === undefined)
+			this.props.Logout();
+
+        axios.delete(Globals.BASE_PATH + 'groups/' + this.id + '?authToken')
+        .then(response => this.props.UpdateGroup )
+		.catch(error => {
+            if (error.response.status === 401)
+                this.props.Logout();
+            else
+                console.log(error);
+        });
+    }
+
 
     render() {
         return(
             <div>
+                <button onClick={ () => this.RemoveGroup() } ></button>
                 <div>
                     <button onClick={ () => this.ChangeSelectedDay('MO') } >Montag</button>
                     <button onClick={ () => this.ChangeSelectedDay('DI') } >Dienstag</button>
