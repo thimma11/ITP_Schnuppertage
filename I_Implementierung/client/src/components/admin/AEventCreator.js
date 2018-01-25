@@ -51,8 +51,8 @@ class EventCreator extends React.Component {
         if (authToken = this.props.GetCookie() === undefined)
 			this.props.Logout();
 
-        axios.get(Globals.BASE_PATH + 'groups/' + this.departmentID + '/' + this.location + '?authToken=' + authToken)
-        .then(response => this.setState({ maxGroups: response.data.count }))
+        axios.get(Globals.BASE_PATH + 'groups/' + this.departmentID + '/' + this.locationID + '?count=true&authToken=' + authToken)
+        .then(response => this.setState({ maxGroups: response.data[0].count }))
 		.catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
@@ -67,7 +67,7 @@ class EventCreator extends React.Component {
             this.setState({ errorMessage: 'Geben Sie bitte ein Datum an.' });
             return null;
         }
-        if (this.state.location === '') {
+        if (this.state.location === -1) {
             this.setState({ errorMessage: 'Sie müssen einen Standort auswählen.' });
             return null;
         }
@@ -75,7 +75,7 @@ class EventCreator extends React.Component {
         
         axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID + '/events', {
             date: this.state.date,
-            location_id: this.state.location,
+            location_id: this.locationID,
             groupSize: this.state.currentGroupSize
         }).then(response => this.props.CloseEventCreator(true))
         .catch(error => console.log(error));
@@ -89,12 +89,13 @@ class EventCreator extends React.Component {
     }
 
     ChangeLocation(event) {
-        this.location = parseInt(event.target.value, 10);
+        this.locationID = parseInt(event.target.value, 10);
         this.setState({
             maxGroups: 2,
             errorMessage: ''
         });
-        this.InitGroupSize();
+        if (this.locationID !== -1)
+            this.InitGroupSize();
     }
 
     ChangeGroupSize(event) {
@@ -108,7 +109,7 @@ class EventCreator extends React.Component {
     }
 
     GetGroupSizes() {
-        if (this.location !== -1) {
+        if (this.locationID !== -1) {
             return (
                 <div>
                     <div><label>Gruppenanzahl: <b>{ this.state.currentGroupSize }</b></label></div>
@@ -119,7 +120,7 @@ class EventCreator extends React.Component {
     }
 
     GetCreateButton() {
-        if (this.location !== -1) {
+        if (this.locationID !== -1) {
             return <button onClick={ () => this.CreateEvent() } >Hinzufügen</button>;
         } else {
             return <button disabled >Hinzufügen</button>;

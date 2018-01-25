@@ -7,6 +7,7 @@ import axios from 'axios';
 import Group from './AGroup';
 import GroupAdder from './AGroupAdder';
 import * as Globals from '../../Globals';
+import { BASE_PATH } from '../../Globals';
 //#endregion
 
 
@@ -14,7 +15,7 @@ class Location extends React.Component {
 
     constructor(props) {
         super(props);
-        this.id = this.props.id;
+        this.locationID = this.props.locationID;
         this.departmentID = this.props.departmentID;
         this.state = {
             name: '',
@@ -26,12 +27,21 @@ class Location extends React.Component {
 
 
     componentDidMount() {
-        this.setState({
-            name: 'Zwettl',
-            groups: [
-                { id: 0 },
-                { id: 10 }
-            ]
+        this.InitGroups();
+    }
+
+    InitGroups() {
+        let authToken;
+        if (authToken = this.props.GetCookie() === undefined)
+			this.props.Logout();
+
+        axios.get(BASE_PATH + 'groups/' + this.departmentID + '/' + this.locationID)
+        .then( response => this.setState({ groups: response.data }) )
+        .catch(error => {
+            if (error.response.status === 401)
+                this.Logout();
+            else
+                console.log(error)
         });
     }
 
@@ -41,7 +51,7 @@ class Location extends React.Component {
 
     GetGroupAdder() {
         if (this.state.groups !== undefined && this.state.groups.length !== 2) {
-            return <GroupAdder departmentID={ this.departmentID } locationID={ this.id } />;
+            return <GroupAdder Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } departmentID={ this.departmentID } locationID={ this.id } />;
         }
     }
 
@@ -58,7 +68,7 @@ class Location extends React.Component {
                         return (
                             <div>
                                 <h4>Gruppe { index + 1 }</h4>
-                                <Group id={ group.id } UpdateGroups={ this.UpdateGroups } />
+                                <Group id={ group } Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } UpdateGroups={ this.UpdateGroups } />
                             </div>
                         );
                     })

@@ -77,13 +77,11 @@ class Teachers extends React.Component {
             return <button onClick={ () => this.CreateTeacher() } >Lehrer hinzufügen</button>;
     }
 
-
-    render() {
-        if (this.state.teachers === undefined)
-            return 'Loading teachers...';
-        return (
-            <div>
-                <h1>Lehrer</h1>
+    GetTeachers() {
+        if (this.state.teachers.length === 0)
+            return <p>Noch keine Lehrer gespeichert...</p>;
+        else {
+            return (
                 <table>
                     <thead>
                         <tr>
@@ -104,6 +102,18 @@ class Teachers extends React.Component {
                     }
                     </tbody>
                 </table>
+            );
+        }
+    }
+
+
+    render() {
+        if (this.state.teachers === undefined)
+            return 'Loading teachers...';
+        return (
+            <div>
+                <h1>Lehrer</h1>
+                {  this.GetTeachers() }
                 <div>
                     <input value={ this.state.contraction } onChange={ (e) => this.ContractionChanged(e)}/>
                     { this.GetAddTeacherButton() }

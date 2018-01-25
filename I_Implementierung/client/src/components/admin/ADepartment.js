@@ -120,7 +120,7 @@ class Department extends React.Component {
     }
 
     GetEvents() {
-        if (this.state.events !== undefined) {
+        if (this.state.events !== undefined && this.state.events.length !== 0) {
             return (
                 <div>
                     <table>
@@ -148,6 +148,13 @@ class Department extends React.Component {
                             }
                         </tbody>
                     </table>
+                    { this.GetEventCreator() }
+                </div>
+            );
+        } else if (this.state.events !== undefined && this.state.events.length === 0) {
+            return (
+                <div>
+                    <p>Noch keine Einträge...</p>
                     { this.GetEventCreator() }
                 </div>
             );

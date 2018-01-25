@@ -29,7 +29,7 @@ class LocationAdder extends React.Component {
         if (authToken = this.props.GetCookie() === undefined)
 			this.props.Logout();
 			
-        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID +'/!locations?count=true&authToken=' + authToken)
+        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID +'/!locations?authToken=' + authToken)
         .then(response => this.setState({ locations: response.data }))
 		.catch(error => {
             if (error.response.status === 401)
@@ -50,9 +50,9 @@ class LocationAdder extends React.Component {
         if (authToken = this.props.GetCookie() === undefined)
 			this.props.Logout();
 			
-		axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID +'/locations', {
+		axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID +'/locations?authToken=' + authToken, {
             location_id: this.state.selectedLocation
-		}).then(response => {
+        }).then(response => {
             this.InitLocations();
             this.props.Reload();
         })

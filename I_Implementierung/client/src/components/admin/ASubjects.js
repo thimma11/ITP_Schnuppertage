@@ -77,13 +77,11 @@ class Teachers extends React.Component {
             return <button onClick={ () => this.CreateSubject() } >Fach hinzufügen</button>;
     }
 
-
-    render() {
-        if (this.state.subjects === undefined)
-            return 'Loading subjects...';
-        return (
-            <div>
-                <h1>Fächer</h1>
+    GetSubjects() {
+        if (this.state.subjects.length === 0)
+            return <p>Noch keine Fächer gespeichert...</p>;
+        else {
+            return (
                 <table>
                     <thead>
                         <tr>
@@ -104,6 +102,18 @@ class Teachers extends React.Component {
                     }
                     </tbody>
                 </table>
+            );
+        }
+    }
+
+
+    render() {
+        if (this.state.subjects === undefined)
+            return 'Loading subjects...';
+        return (
+            <div>
+                <h1>Fächer</h1>
+                { this.GetSubjects() }
                 <div>
                     <input value={ this.state.name } onChange={ (e) => this.NameChanged(e)}/>
                     { this.GetAddSubjectButton() }
