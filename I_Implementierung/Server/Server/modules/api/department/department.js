@@ -27,24 +27,50 @@ router.post('/:id/events', (req, res) => {
 
 router.get('/:id/locations', (req, res) => {
     let id = req.params.id;
-    connection.query(`SELECT locations.ID, locations.NAME FROM locations JOIN locations_departments ON locations_departments.LOCATIONS_ID = locations.ID JOIN departments ON departments.ID = locations_departments.DEPARTMENTS_ID WHERE departments.ID = ?; `, [id], function (error, results, fields) {
+    connection.query(`SELECT locations.ID, locations.NAME FROM locations 
+	                JOIN timetables ON timetables.LOCATIONS_ID = locations.ID 
+	                JOIN departments ON timetables.DEPARTMENTS_ID = departments.ID
+                    WHERE departments.ID = ?;`, [id], function (error, results, fields) {
             if (error) console.log(error);
             res.json(results);
         });
 });
 router.post('/:id/locations', (req, res) => {
     let id = req.params.id;
-    connection.query(`INSERT INTO locations_departments (locations_departments.LOCATIONS_ID, locations_departments.DEPARTMENTS_ID) VALUES (?, ?);`, [req.body.location_id, id], function (error, results, fields) {
+    var connection2 = mysql.createConnection({
+        host: database_config.host,
+        user: database_config.username,
+        password: database_config.password,
+        database: database_config.database
+    });
+    var connection3 = mysql.createConnection({
+        host: database_config.host,
+        user: database_config.username,
+        password: database_config.password,
+        database: database_config.database
+    });
+    connection.query(`INSERT INTO timetables (timetables.DEPARTMENTS_ID, timetables.LOCATIONS_ID) VALUES (?, ?);`, [id, req.body.location_id], function (error, results, fields) {
         if (error) throw error;
-        res.json(results);
+        connection2.query(`INSERT INTO groups(groups.LOCATION_ID, groups.DEPARTMENT_ID) VALUES (?, ?);`, [req.body.location_id, id], function (error, results, fields) {
+            if (error) throw error;
+            let daytable_id = results["insertId"];
+            connection3.query(`INSERT INTO daytables (daytables.DAY_NAME, daytables.GROUPS_ID) VALUES ('Montag', ?), ('Dienstag', ?), ('Mittwoch', ?), ('Donnerstag', ?), ('Freitag', ?);`, [daytable_id, daytable_id, daytable_id, daytable_id, daytable_id], function (error, results, fields) {
+                if (error) throw error;
+                res.json(results);
+            });
+        });
     });
 });
 router.get('/:id/!locations', (req, res) => {
     let id = req.params.id;
-    connection.query('SELECT locations.ID, locations.NAME FROM locations, locations_departments WHERE ? = locations_departments.DEPARTMENTS_ID AND locations_departments.LOCATIONS_ID != locations.ID;', [id], function (error, results, fields) {
-            if (error) console.log(error);
+    connection.query(`SELECT locations.ID, locations.NAME FROM locations 
+	                WHERE locations.ID NOT IN (SELECT locations.ID FROM locations 
+								JOIN timetables ON timetables.LOCATIONS_ID = locations.ID 
+								JOIN departments ON timetables.DEPARTMENTS_ID = departments.ID
+                        		WHERE departments.ID = ?);`, [id], function (error, results, fields) {
+        if (error) console.log(error);
             res.json(results);
-        });
+    });
 });
 
 router.get('/:id/timetables', (req, res) => {
@@ -63,7 +89,6 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    connection.connect();
     connection.query(`INSERT INTO departments (departments.NAME, departments.CONTRACTION) VALUES ('${req.body.name}', '${req.body.contraction}');`, function (error, results, fields) {
         if (error) console.log(error);
         res.json(results);

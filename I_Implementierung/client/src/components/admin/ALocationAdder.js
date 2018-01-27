@@ -15,7 +15,7 @@ class LocationAdder extends React.Component {
 		this.departmentID = this.props.departmentID;
 		this.state = {
             locations: undefined,
-            selectedLocation: 0
+            selectedLocation: -1
 		};
 	}
 
@@ -25,34 +25,18 @@ class LocationAdder extends React.Component {
 	}
 
 	InitLocations() {
-		//#region Delete this later...
-		this.setState({
-			locations: [
-                { id: 0, name: 'Zwettl' },
-                { id: 1, name: 'Krems' }
-            ]
-		});
-		//#endregion
-
-		/* Server Request
 		let authToken;
         if (authToken = this.props.GetCookie() === undefined)
 			this.props.Logout();
 			
-		axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID +'/locations?noRelation=true', {
-            headers: { Authorization: authToken }
-		}).then(response => {
-            this.setState({ locations: response.data.locations });
-            if (this.state.locations.length !== 0)
-                this.setState({ selectedLocation: this.state.locations[0].id });
-        })
+        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID +'/!locations?authToken=' + authToken)
+        .then(response => this.setState({ locations: response.data }))
 		.catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
             else
                 console.log(error);
         });
-		*/
 	}
 
 	ChangeLocation(event) {
@@ -62,20 +46,13 @@ class LocationAdder extends React.Component {
     }
 
     AddLocation() {
-        //#region Delete this later...
-        this.props.InitLocations();
-        this.props.Reload();
-        //#endregion
-
-
-        /* Server Request
 		let authToken;
         if (authToken = this.props.GetCookie() === undefined)
 			this.props.Logout();
 			
-		axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID +'/locations', {
-            headers: { Authorization: authToken }
-		}).then(response => {
+		axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID +'/locations?authToken=' + authToken, {
+            location_id: this.state.selectedLocation
+        }).then(response => {
             this.InitLocations();
             this.props.Reload();
         })
@@ -85,7 +62,13 @@ class LocationAdder extends React.Component {
             else
                 console.log(error);
         });
-		*/
+    }
+
+    GetAdderButton() {
+        if (this.state.selectedLocation === -1)
+            return <button disabled >Standort hinzufügen</button>;
+        else
+            return <button onClick={ () => this.AddLocation() } >Standort hinzufügen</button>;
     }
 
 
@@ -96,16 +79,20 @@ class LocationAdder extends React.Component {
             return (
                 <div>
                     <select value={ this.state.selectedLocation } onChange={ (e) => this.ChangeLocation(e) } >
+                        <option value={ -1 }>Nichts ausgewählt</option>
                         {
                         this.state.locations.map(location => {
-                            return <option key={ location.id } value={ location.id }>{ location.name }</option>
+                            return <option key={ location.ID } value={ location.ID }>{ location.NAME }</option>
                         })
                         }
                     </select>
-                    <button onClick={ () => this.AddLocation() } >Standort hinzufügen</button>
+                    { this.GetAdderButton() }
                 </div>
             );
         }
+        return (
+            <p>Keine weitere Abteilung gefunden...</p>
+        );
     }
 
 }

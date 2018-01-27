@@ -32,7 +32,7 @@ class DepartmentCreator extends React.Component {
                 name: this.state.name
             }).then(response => {
                 let element = {
-                    id: response.data.insertedId,
+                    id: response.data.insertId,
                     contraction: this.state.contraction,
                     name: this.state.name
                 };

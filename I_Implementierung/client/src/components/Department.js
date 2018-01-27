@@ -31,23 +31,9 @@ class Department extends React.Component {
 
     /* Get all department information with all locations */
     InitAll() {
-        //#region Delete this later...
-        this.setState({
-            name: 'Hochbau',
-            locations: [
-                { id: 0, name: 'Zwettl' },
-                { id: 1, name: 'Krems' }
-            ]
-        });
-        //#endregion
-
-        /* Server Request
-        axios.get(Globals.BASE_PATH + 'departments/' + this.id)
-        .then(response => this.setState({ name: response.data.name }))
-        .catch(error => console.log(error));
         axios.get(Globals.BASE_PATH + 'departments/' + this.id + '/locations')
-        .then(response => this.setState({ locations: response.data.locations }))
-        .catch(error => console.log(error)); */
+        .then(response => this.setState({ locations: response.data }))
+		.catch(error => console.log(error));
     }
 
     /* Show a detailed location */
@@ -65,7 +51,14 @@ class Department extends React.Component {
         if(this.state.locations === undefined)
             return 'Loading locations...';
         else {
-            if (this.state.locationID < 0) {
+            if (this.state.locationID < 0 && this.state.locations.length === 0) {
+                return (
+                    <div>
+                        <h3>Standortauswahl</h3>
+                        <p>Keine Standorte für diese Abteilung verfügbar...</p>
+                    </div>
+                );
+            } else if (this.state.locationID < 0 && this.state.locations.length !== 0) {
                 return (
                     <div>
                         <h3>Standortauswahl</h3>

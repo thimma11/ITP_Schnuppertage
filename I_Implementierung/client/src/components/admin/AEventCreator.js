@@ -13,9 +13,9 @@ class EventCreator extends React.Component {
     constructor(props) {
         super(props);
         this.departmentID = this.props.departmentID;
+        this.locationID = -1;
         this.state = {
             date: '',
-            location: -1,
             locations: [],
             maxGroups: 1,
             currentGroupSize: 1,
@@ -31,45 +31,34 @@ class EventCreator extends React.Component {
 
     /* Get all locations */
     InitLocations() {
-        //#region Delete this later...
-        this.setState({
-            locations: [
-                { id: 0, name: 'Zwettl' },
-                { id: 1, name: 'Krems' }
-            ]
-        });
-        //#endregion
-
-        //#region Server Request
-        /*
-        axios.get(Globals.BASE_PATH + 'locations')
-        .then(response => this.setState({ locations: response.data }))
-        .catch(error => console.log(error));
-        */
-        //#endregion
-    }
-
-    /* Get the max group size available for the choosen location */
-    InitGroupSize() {
-        //#region Delete this later...
-        this.setState({ maxGroups: 2 });
-        //#endregion
-
-        /* Server Request
         let authToken;
         if (authToken = this.props.GetCookie() === undefined)
 			this.props.Logout();
 
-        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/locations/' + this.state.location + '?maxGroups=true', {
-            headers: { Authorization: authToken }
-		}).then(response => this.setState({ maxGroups: response.data.maxGroups }))
+        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/locations?authToken=' + authToken)
+        .then(response => this.setState({ locations: response.data }))
 		.catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
             else
                 console.log(error);
         });
-        */
+    }
+
+    /* Get the max group size available for the choosen location */
+    InitGroupSize() {
+        let authToken;
+        if (authToken = this.props.GetCookie() === undefined)
+			this.props.Logout();
+
+        axios.get(Globals.BASE_PATH + 'groups/' + this.departmentID + '/' + this.locationID + '?count=true&authToken=' + authToken)
+        .then(response => this.setState({ maxGroups: response.data[0].count }))
+		.catch(error => {
+            if (error.response.status === 401)
+                this.props.Logout();
+            else
+                console.log(error);
+        });
     }
 
     /* Check the input and create a event */
@@ -78,22 +67,18 @@ class EventCreator extends React.Component {
             this.setState({ errorMessage: 'Geben Sie bitte ein Datum an.' });
             return null;
         }
-        if (this.state.location === '') {
+        if (this.state.location === -1) {
             this.setState({ errorMessage: 'Sie müssen einen Standort auswählen.' });
             return null;
         }
         this.props.CloseEventCreator(true);
         
-        //#region Server Request
-        /*
         axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID + '/events', {
             date: this.state.date,
-            location: this.state.location,
+            location_id: this.locationID,
             groupSize: this.state.currentGroupSize
         }).then(response => this.props.CloseEventCreator(true))
         .catch(error => console.log(error));
-        */
-        //#endregion
     }
 
     ChangeDate(event) {
@@ -104,12 +89,13 @@ class EventCreator extends React.Component {
     }
 
     ChangeLocation(event) {
+        this.locationID = parseInt(event.target.value, 10);
         this.setState({
-            location: parseInt(event.target.value, 10),
             maxGroups: 2,
             errorMessage: ''
         });
-        this.InitGroupSize();
+        if (this.locationID !== -1)
+            this.InitGroupSize();
     }
 
     ChangeGroupSize(event) {
@@ -123,7 +109,7 @@ class EventCreator extends React.Component {
     }
 
     GetGroupSizes() {
-        if (this.state.location !== -1) {
+        if (this.locationID !== -1) {
             return (
                 <div>
                     <div><label>Gruppenanzahl: <b>{ this.state.currentGroupSize }</b></label></div>
@@ -134,7 +120,7 @@ class EventCreator extends React.Component {
     }
 
     GetCreateButton() {
-        if (this.state.location !== -1) {
+        if (this.locationID !== -1) {
             return <button onClick={ () => this.CreateEvent() } >Hinzufügen</button>;
         } else {
             return <button disabled >Hinzufügen</button>;
@@ -152,11 +138,11 @@ class EventCreator extends React.Component {
                 </div>
                 <div>
                     <label>Standort:</label>
-                    <select value={ this.state.location } onChange={ (e) => this.ChangeLocation(e) } >
+                    <select id="locationSelecter" onChange={ (e) => this.ChangeLocation(e) } >
                         <option value={ -1 }>Nichts ausgewählt</option>
                     {
                         this.state.locations.map(location => {
-                            return <option key={location.id} value={location.id} >{ location.name }</option>;
+                            return <option key={location.ID} value={location.ID} >{ location.NAME }</option>;
                         })
                     }
                     </select>

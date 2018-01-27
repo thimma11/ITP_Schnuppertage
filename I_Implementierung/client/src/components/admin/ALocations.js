@@ -26,28 +26,18 @@ class Locations extends React.Component {
 
 
     componentDidMount() {
-        this.setState({
-            locations: [
-                { id: 0, name: 'Zwettl' },
-                { id: 1, name: 'Krems' }
-            ]
-        });
-        
-        /*
 		let authToken;
         if (authToken = this.props.GetCookie() === undefined)
 			this.props.Logout();
 
-        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/locations', {
-            headers: { Authorization: authToken }
-		}).then(response => this.setState({ locations: response.data.locations }))
+        axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/locations?authToken=' + authToken)
+        .then(response => { console.log(response); this.setState({ locations: response.data }) })
 		.catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
             else
                 console.log(error);
         });
-        */
     }
 
     OpenLocation(id) {
@@ -65,7 +55,7 @@ class Locations extends React.Component {
 
     render() {
         if (this.state.locationID >= 0)
-            return <Location id={ this.state.locationID } CloseLocation={ this.CloseLocation } />
+            return <Location id={ this.state.locationID } departmentID={ this.departmentID } locationID={ this.state.locationID } GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } CloseLocation={ this.CloseLocation } />
         else if (this.state.locations === undefined)
             return 'Loading locations...';
         else {
@@ -73,9 +63,9 @@ class Locations extends React.Component {
                 <div>
                     <h3>Standorte</h3>
                     {
-                    this.state.locations.map(location => <button key={ location.id } onClick={ () => this.OpenLocation(location.id) } >{ location.name }</button>)
+                    this.state.locations.map(location => <button key={ location.ID } onClick={ () => this.OpenLocation(location.ID) } >{ location.NAME }</button>)
                     }
-                    <LocationAdder departmentID={ this.departmentID } Reload={ this.Reload } />
+                    <LocationAdder Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } departmentID={ this.departmentID } Reload={ this.Reload } />
                 </div>
             );
         }

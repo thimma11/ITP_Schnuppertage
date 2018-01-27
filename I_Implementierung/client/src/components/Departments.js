@@ -29,21 +29,9 @@ class Departments extends React.Component {
 
     /* Get all departments */
     InitDepartments() {
-        //#region Delete this later...
-        this.setState({
-            departments: [
-                { id: 0, name: "Hochbau"},
-                { id: 1, name: "Tiefbau"},
-                { id: 3, name: "Informationstechnologie"},
-                { id: 2, name: "Holzbau"}
-            ]
-        });
-        //#endregion
-        
-        /* Server Request
         axios.get(Globals.BASE_PATH + 'departments')
-        .then(response => this.setState({ departments: response.data.departments }))
-        .catch(error => console.log(error)); */
+        .then(response => this.setState({ departments: response.data }))
+        .catch(error => console.log(error));
     }
 
     /* Show a detailed department */
@@ -72,7 +60,7 @@ class Departments extends React.Component {
                     this.state.departments.map(department => {
                         return (
                             <li key={department.id} >
-                                { department.name }
+                                <p>{ department.contraction } - { department.name }</p>
                                 <button onClick={ () => this.ShowDepartment(department.id) } >Schnuppertage anzeigen</button>
                             </li>
                         );
@@ -93,7 +81,7 @@ class Departments extends React.Component {
                 </div>
             );
         }
-        return <Department id={ this.viewID } />;
+        return <Department id={ this.state.viewID } />;
     }
 
 }

@@ -16,6 +16,7 @@ class DayTable extends React.Component {
         this.groupID = this.props.groupID;
         this.selectedDay = this.props.selectedDay;
         this.state = {
+            lessons: undefined
         };
     }
 
