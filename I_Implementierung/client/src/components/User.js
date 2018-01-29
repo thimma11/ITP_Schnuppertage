@@ -35,15 +35,15 @@ class User extends React.Component {
     render() {
         return (
             <div>
-                <nav>
+                <nav className="text-center">
                     <ul>
                         <li onClick={ () => this.Navigate('DEPARTMENTS') } >Abteilungen</li>
                         <li onClick={ () => this.Navigate('LOGIN') } >Admin Login</li>
                     </ul>
                 </nav>
-                <main>
+                <div className="container">
                     { this.GetSelectedPage() }
-                </main>
+                </div>
             </div>
         );
     }

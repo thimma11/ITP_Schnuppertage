@@ -15,14 +15,18 @@ class DepartmentCreator extends React.Component {
         this.state = {
             name: '',
             contraction: '',
-            errorMessage: ''
+            nameError: false,
+            contractionError: false
         };
     }
 
 
     /* Check the input and create a department */
     CreateDepartment() {
-        if (this.CheckName() && this.CheckContraction()) {
+        let name = this.CheckName();
+        let contraction = this.CheckContraction();
+
+        if (name && contraction) {
             let authToken;
             if (authToken = this.props.GetCookie() === undefined)
                 this.props.Logout();
@@ -49,20 +53,20 @@ class DepartmentCreator extends React.Component {
     ChangeName(event) {
         this.setState({
             name: event.target.value,
-            errorMessage: ''
+            nameError: false
         });
     }
 
     ChangeContraction(event) {
         this.setState({
             contraction: event.target.value,
-            errorMessage: ''
+            contractionError: false
         });
     }
 
     CheckName() {
         if (this.state.name === '') {
-            this.setState({ errorMessage: 'Geben Sie bitte ein, wie die Abteilung heißen soll.' });
+            this.setState({ nameError: true });
             return false;
         }
         return true;
@@ -70,33 +74,28 @@ class DepartmentCreator extends React.Component {
 
     CheckContraction() {
         if (this.state.contraction === '') {
-            this.setState({ errorMessage: 'Geben Sie bitte eine Abkürzung für diese Abteilung ein.' });
+            this.setState({ contractionError: true });
             return false;
         }
         return true;
     }
 
-    /* Display a error message if available */
-    GetErrorMessage() {
-        if (this.state.errorMessage !== '')
-            return <p>{ this.state.errorMessage }</p>;
-    }
-
 
     render() {
         return (
-            <div>
-                <div>
-                    <label>Abteilungsname:</label>
-                    <input value={ this.state.name } onChange={ (e) => this.ChangeName(e) } />
+            <div className="department-adder">
+                <h4 className="section-title">ABTEILUNG ERSTELLEN</h4>
+                <div className="well">
+                    <div className="form-group">
+                        <label className="full-width">Abkürzung<span className="form-caption"> - Abkürzung der Abteilung</span></label>
+                        <input className={ (this.state.contractionError) ? "full-width error-border" : "full-width" } value={ this.state.contraction } onChange={ (e) => this.ChangeContraction(e) } />
+                    </div>
+                    <div className="form-group form-button-section">
+                        <label className="full-width">Abteilungsname<span className="form-caption"> - Name der Abteilung</span></label>
+                        <input className={ (this.state.nameError) ? "full-width error-border" : "full-width" } value={ this.state.name } onChange={ (e) => this.ChangeName(e) } />
+                    </div>
+                    <button className="btn btn-primary center-block" onClick={ () => this.CreateDepartment() }>Erstellen</button>
                 </div>
-                <div>
-                    <label>Abkürzung:</label>
-                    <input value={ this.state.contraction } onChange={ (e) => this.ChangeContraction(e) } />
-                </div>
-                { this.GetErrorMessage() }
-                <button onClick={ () => this.props.CloseDepartmentCreator(undefined) }>Abbrechen</button>
-                <button onClick={ () => this.CreateDepartment() }>Hinzufügen</button>
             </div>
         );
     }
