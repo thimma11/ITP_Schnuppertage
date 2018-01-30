@@ -3,7 +3,7 @@
 import React from 'react';
 //#endregion
 
-import Departments from './Departments';
+import EventRegistration from './EventRegistration';
 import Login from './Login';
 //#endregion
 
@@ -26,7 +26,7 @@ class User extends React.Component {
     /* Return the component based on the current selected page */
     GetSelectedPage() {
         if (this.page === 'DEPARTMENTS')
-            return <Departments key={ this.state.key } />;
+            return <EventRegistration key={ this.state.key } />;
         if (this.page === 'LOGIN')
             return <Login key={ this.state.key } Login={ this.props.Login } />;
     }
@@ -35,13 +35,27 @@ class User extends React.Component {
     render() {
         return (
             <div>
-                <nav className="text-center">
-                    <ul>
-                        <li onClick={ () => this.Navigate('DEPARTMENTS') } >Abteilungen</li>
-                        <li onClick={ () => this.Navigate('LOGIN') } >Admin Login</li>
-                    </ul>
+                <nav className="navbar navbar-default">
+                    <div className="container">
+                        <div className="navbar-header">
+                            <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                <span className="sr-only">Toggle navigation</span>
+                                <span className="icon-bar"></span>
+                                <span className="icon-bar"></span>
+                                <span className="icon-bar"></span>
+                            </button>
+                            <a className="navbar-brand">Schnuppertage</a>
+                        </div>
+
+                        <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <ul className="nav navbar-nav">
+                                <li className={ (this.page === 'DEPARTMENTS') ? 'active' : '' } onClick={ () => this.Navigate('DEPARTMENTS') }><a href="#">Anmeldung<span className="sr-only">(current)</span></a></li>
+                                <li className={ (this.page === 'LOGIN') ? 'active' : '' } onClick={ () => this.Navigate('LOGIN') }><a href="#">Admin Login</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </nav>
-                <div className="container">
+                <div className="container container-small">
                     { this.GetSelectedPage() }
                 </div>
             </div>
