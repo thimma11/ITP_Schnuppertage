@@ -21,10 +21,13 @@ router.delete('/:id', (req, res) => {
 router.get('/dates/:dep_id/:loc_id', (req, res) => {
     let dep = req.params.dep_id;
     let loc = req.params.loc_id;
-
-    connection.query(`SELECT e.date from events e where e.departments_id = ${dep} and e.locations_id = ${loc};`, function (error, results, fields) {
+    arr = []
+    connection.query(`SELECT DATE_FORMAT(date,\'%m-%d-%Y\') as date from events where departments_id = ${dep} and locations_id = ${loc};`, function (error, results, fields) {
         if (error) throw error;
-        res.json(results);
+        for (let index = 0; index < results.length; index++) {
+            arr.push(results[index]['date']);
+        }
+        res.json(arr);
     });
 });
 
