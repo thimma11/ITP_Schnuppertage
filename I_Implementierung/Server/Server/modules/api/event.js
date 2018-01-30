@@ -18,7 +18,15 @@ router.delete('/:id', (req, res) => {
     });
 });
 
+router.get('/dates/:dep_id/:loc_id', (req, res) => {
+    let dep = req.params.dep_id;
+    let loc = req.params.loc_id;
 
+    connection.query(`SELECT e.date from events e where e.departments_id = ${dep} and e.locations_id = ${loc};`, function (error, results, fields) {
+        if (error) throw error;
+        res.json(results);
+    });
+});
 
 
 module.exports = router;
