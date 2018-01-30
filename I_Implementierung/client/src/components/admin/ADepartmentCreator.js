@@ -23,10 +23,10 @@ class DepartmentCreator extends React.Component {
 
     /* Check the input and create a department */
     CreateDepartment() {
-        let name = this.CheckName();
-        let contraction = this.CheckContraction();
+        this.handleNameLeave();
+        this.handleContractionLeave();
 
-        if (name && contraction) {
+        if (!this.state.nameError && !this.state.contractionError) {
             let authToken;
             if (authToken = this.props.GetCookie() === undefined)
                 this.props.Logout();
@@ -50,49 +50,49 @@ class DepartmentCreator extends React.Component {
         }
     }
 
-    ChangeName(event) {
-        this.setState({
-            name: event.target.value,
-            nameError: false
-        });
-    }
-
-    ChangeContraction(event) {
+    handleContractionChange(event) {
         this.setState({
             contraction: event.target.value,
             contractionError: false
         });
     }
 
-    CheckName() {
-        if (this.state.name === '') {
-            this.setState({ nameError: true });
-            return false;
+    handleContractionLeave() {
+        if (this.state.contraction === '') {
+            this.setState({
+                contractionError: true
+            });
         }
-        return true;
     }
 
-    CheckContraction() {
-        if (this.state.contraction === '') {
-            this.setState({ contractionError: true });
-            return false;
+    handleNameChange(event) {
+        this.setState({
+            name: event.target.value,
+            nameError: false
+        });
+    }
+
+    handleNameLeave() {
+        if (this.state.name === '') {
+            this.setState({
+                nameError: true
+            });
         }
-        return true;
     }
 
 
     render() {
         return (
-            <div className="department-adder">
-                <h4 className="section-title">ABTEILUNG ERSTELLEN</h4>
+            <div className="department-creator">
+                <h4 className="form-header">Abteilung erstellen</h4>
                 <div className="well">
                     <div className="form-group">
-                        <label className="full-width">Abkürzung<span className="form-caption"> - Abkürzung der Abteilung</span></label>
-                        <input className={ (this.state.contractionError) ? "full-width error-border" : "full-width" } value={ this.state.contraction } onChange={ (e) => this.ChangeContraction(e) } />
+                        <label>Abkürzung<span className="label-information"> - Abkürzung der Abteilung</span></label>
+                        <input type="text" className={ (this.state.contractionError) ? 'form-control form-error' : 'form-control' } placeholder="IT" value={ this.state.contraction } onChange={ (event) => this.handleContractionChange(event) } onBlur={ () => this.handleContractionLeave() }/>
                     </div>
-                    <div className="form-group form-button-section">
-                        <label className="full-width">Abteilungsname<span className="form-caption"> - Name der Abteilung</span></label>
-                        <input className={ (this.state.nameError) ? "full-width error-border" : "full-width" } value={ this.state.name } onChange={ (e) => this.ChangeName(e) } />
+                    <div className="form-group">
+                        <label>Abteilungsname<span className="label-information"> - Name der Abteilung</span></label>
+                        <input type="text" className={ (this.state.nameError) ? 'form-control form-error' : 'form-control' } placeholder="Hochbau" value={ this.state.name } onChange={ (event) => this.handleNameChange(event) } onBlur={ () => this.handleNameLeave() }/>
                     </div>
                     <button className="btn btn-primary center-block" onClick={ () => this.CreateDepartment() }>Erstellen</button>
                 </div>

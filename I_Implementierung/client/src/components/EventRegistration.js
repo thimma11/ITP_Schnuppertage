@@ -21,10 +21,13 @@ class EventRegistration extends React.Component {
         this.state = {
             departments: undefined,
             department: '',
+            departmentError: false,
             locations: undefined,
             location: '',
+            locationError: false,
             dates: undefined,
             date: '',
+            dateError: false,
             firstname: '',
             firstnameError: false,
             lastname: '',
@@ -54,8 +57,8 @@ class EventRegistration extends React.Component {
                 departments.push(department.name);
                 return null;
             });
-            this.departmentID === undefined;
-            this.locations === undefined;
+            this.departmentID = undefined;
+            this.locations = undefined;
             this.locationID = undefined;
             this.dates = undefined;
             this.setState({
@@ -106,16 +109,28 @@ class EventRegistration extends React.Component {
         });
 
         if (departments.indexOf(department.value) === -1) {
-            this.setState({ department: '' });
+            this.setState({
+                department: '',
+                departmentError: false
+            });
             this.initDepartments();
         } else {
-            this.setState({ department: department.value });
+            this.setState({
+                department: department.value,
+                departmentError: false
+            });
             this.departments.map(dep => {
                 if (dep.name === department.value) {
                     this.departmentID = dep.id;
                 }
             });
             this.initLocations();
+        }
+    }
+
+    checkDepartment() {
+        if (this.state.department === '') {
+            this.setState({ departmentError: true });
         }
     }
 
@@ -127,10 +142,16 @@ class EventRegistration extends React.Component {
         });
 
         if (locations.indexOf(location.value) === -1) {
-            this.setState({ location: '' });
+            this.setState({
+                location: '',
+                locationError: false
+            });
             this.initLocations();
         } else {
-            this.setState({ location: location.value });
+            this.setState({
+                location: location.value,
+                locationError: false
+            });
             this.locations.map(loc => {
                 if (loc.name === location.value) {
                     this.locationID = loc.id;
@@ -140,12 +161,30 @@ class EventRegistration extends React.Component {
         }
     }
 
+    checkLocation() {
+        if (this.state.location === '') {
+            this.setState({ locationError: true });
+        }
+    }
+
     handleDateChange(date) {
         if (this.dates.indexOf(date.value) === -1) {
-            this.setState({ date: '' });
+            this.setState({
+                date: '',
+                dateError: false
+            });
             this.initDates();
         } else {
-            this.setState({ date: date.value });
+            this.setState({
+                date: date.value,
+                dateError: false
+            });
+        }
+    }
+
+    checkDate() {
+        if (this.state.date === '') {
+            this.setState({ dateError: true });
         }
     }
 
@@ -248,9 +287,21 @@ class EventRegistration extends React.Component {
     }
 
     renderDepartments() {
-        if (this.state.departments !== undefined) {
+        if (this.state.departments === undefined) {
             return (
-                <div class="form-group">
+                <div className={ (this.state.departmentError) ? 'form-group dropdown-error' : 'form-group' }>
+                    <label>Abteilung<span className="label-information"> - Wählen Sie eine Abteilung aus.</span></label>
+                    <Dropdown disabled options={ this.state.departments } onChange={ (event) => this.handleDepartmentChange(event) } value={ this.state.department } placeholder="Abteilung auswählen" />
+                </div>
+            );
+        }
+        if (this.state.departments.length === 0) {
+            return (
+                <div class="alert alert-danger" role="alert"><p><b>Es sind keine Abteilungen vorhanden.</b></p></div>
+            );
+        } else {
+            return (
+                <div className={ (this.state.departmentError) ? 'form-group dropdown-error' : 'form-group' }>
                     <label>Abteilung<span className="label-information"> - Wählen Sie eine Abteilung aus.</span></label>
                     <Dropdown options={ this.state.departments } onChange={ (event) => this.handleDepartmentChange(event) } value={ this.state.department } placeholder="Abteilung auswählen" />
                 </div>
@@ -259,24 +310,54 @@ class EventRegistration extends React.Component {
     }
 
     renderLocations() {
-        if (this.state.locations !== undefined && this.departmentID !== undefined) {
+        if (this.departmentID === undefined) {
             return (
-                <div class="form-group">
+                <div className={ (this.state.locationError) ? 'form-group dropdown-error' : 'form-group' }>
                     <label>Standort<span className="label-information"> - Wählen Sie den Standort aus.</span></label>
-                    <Dropdown options={ this.state.locations } onChange={ (event) => this.handleLocationChange(event) } value={ this.state.location } placeholder="Abteilung auswählen" />
+                    <Dropdown disabled options={ this.state.locations } onChange={ (event) => this.handleLocationChange(event) } value={ this.state.location } placeholder="Abteilung auswählen" />
                 </div>
             );
+        } else {
+            if (this.state.locations !== undefined) {
+                if (this.state.locations.length === 0) {
+                    return (
+                        <div class="alert alert-danger" role="alert"><p><b>Für diese Abteilung ist kein Standort eingetragen.</b></p></div>
+                    );
+                } else {
+                    return (
+                        <div className={ (this.state.locationError) ? 'form-group dropdown-error' : 'form-group' }>
+                            <label>Standort<span className="label-information"> - Wählen Sie den Standort aus.</span></label>
+                            <Dropdown options={ this.state.locations } onChange={ (event) => this.handleLocationChange(event) } value={ this.state.location } placeholder="Abteilung auswählen" />
+                        </div>
+                    );
+                }
+            }
         }
     }
 
     renderDates() {
-        if (this.state.dates !== undefined && this.departmentID !== undefined && this.locationID !== undefined) {
+        if (this.locationID === undefined) {
             return (
-                <div class="form-group">
+                <div className={ (this.state.dateError) ? 'form-group dropdown-error' : 'form-group' }>
                     <label>Verfügare Tage<span className="label-information"> - Wählen Sie ein Datum aus.</span></label>
-                    <Dropdown options={ this.state.dates } onChange={ (event) => this.handleDateChange(event) } value={ this.state.date } placeholder="Datum auswählen" />
+                    <Dropdown disabled options={ this.state.dates } onChange={ (event) => this.handleDateChange(event) } value={ this.state.date } placeholder="Datum auswählen" />
                 </div>
             );
+        } else {
+            if (this.state.dates !== undefined) {
+                if (this.state.dates.length === 0) {
+                    return (
+                        <div class="alert alert-danger" role="alert"><p><b>Für die ausgewählte Abteilung gibt es am angegebenen Standort keine eingetragenen Schuppertage.</b></p></div>
+                    );
+                } else {
+                    return (
+                        <div className={ (this.state.dateError) ? 'form-group dropdown-error' : 'form-group' }>
+                            <label>Verfügare Tage<span className="label-information"> - Wählen Sie ein Datum aus.</span></label>
+                            <Dropdown options={ this.state.dates } onChange={ (event) => this.handleDateChange(event) } value={ this.state.date } placeholder="Datum auswählen" />
+                        </div>
+                    );
+                }
+            }
         }
     }
 
@@ -291,7 +372,6 @@ class EventRegistration extends React.Component {
                     <label>Nachname</label>
                     <input type="text" className={ (this.state.lastnameError) ? 'form-control form-error' : 'form-control' } placeholder="Mustermann" value={ this.state.lastname } onChange={ (event) => this.handleLastnameChange(event) } onBlur={ () => this.handleLastnameLeave() }/>
                 </div>
-                <p><span className="label-information">Sie müssen eine Telefonnummer oderE-Mail angeben.</span></p>
                 <div className="form-group">
                     <label>E-Mail</label>
                     <input type="text" className={ (this.state.emailError) ? 'form-control form-error' : 'form-control' } placeholder="max.mustermann@example.net" value={ this.state.email } onChange={ (event) => this.handleEMailChange(event) } onBlur={ () => this.handleEMailLeave() }/>
@@ -324,8 +404,12 @@ class EventRegistration extends React.Component {
         this.handlePhoneLeave();
         this.handleSchoolLocationLeave();
         this.handleSchoolTypeLeave();
+        this.checkDepartment();
+        this.checkLocation();
+        this.checkDate();
 
-        if (this.state.firstnameError || this.state.lastnameError || this.state.emailError || this.state.phoneError || this.state.schoolLocationError || this.state.schoolTypeError || this.state.department === '' || this.state.location === '' || this.state.date === '') {
+        if (this.state.firstnameError || this.state.lastnameError || this.state.emailError || this.state.phoneError || this.state.schoolLocationError || this.state.schoolTypeError || this.state.departmentError || this.state.locationError || this.state.dateError) {
+        } else {
             this.registerParticipant();
         }
     }
@@ -333,7 +417,7 @@ class EventRegistration extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="container container-small">
                 <h4 className="form-header">Anmeldungsformular</h4>
                 <div className="well">
                     { this.renderDepartments() }

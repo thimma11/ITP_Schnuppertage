@@ -6,6 +6,7 @@ import React from 'react';
 import Departments from './admin/ADepartments';
 import Teachers from './admin/ATeachers';
 import Subjects from './admin/ASubjects';
+import Events from './admin/AEvents';
 //#endregion
 
 
@@ -26,6 +27,8 @@ class Admin extends React.Component {
 
     /* Return the component based on the current selected page */
     GetSelectedPage() {
+        if (this.page === 'EVENTS')
+            return <Events key={ this.state.key } GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } />;
         if (this.page === 'DEPARTMENTS')
             return <Departments key={ this.state.key } GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } />;
         if (this.page === 'TEACHERS')
@@ -38,17 +41,30 @@ class Admin extends React.Component {
     render() {
         return (
             <div>
-                <nav className="bg-blue">
+                <nav className="navbar navbar-default">
                     <div className="container">
-                        <ul>
-                            <li className="float-left" onClick={ () => this.Navigate('DEPARTMENTS') } ><h6>Abteilungen</h6></li>
-                            <li className="float-left" onClick={ () => this.Navigate('TEACHERS') } ><h6>Lehrer</h6></li>
-                            <li className="float-left" onClick={ () => this.Navigate('SUBJECTS') } ><h6>Fächer</h6></li>
-                            <li className="float-right" onClick={ () => this.props.Logout() } ><h6>Logout</h6></li>
-                        </ul>
+                        <div className="navbar-header">
+                            <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                <span className="sr-only">Toggle navigation</span>
+                                <span className="icon-bar"></span>
+                                <span className="icon-bar"></span>
+                                <span className="icon-bar"></span>
+                            </button>
+                            <a className="navbar-brand">Schnuppertage</a>
+                        </div>
+
+                        <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <ul className="nav navbar-nav">
+                                <li className={ (this.page === 'EVENTS') ? 'active' : '' } onClick={ () => this.Navigate('EVENTS') }><a href="#">Schnuppertage</a></li>
+                                <li className={ (this.page === 'DEPARTMENTS') ? 'active' : '' } onClick={ () => this.Navigate('DEPARTMENTS') }><a href="#">Abteilungen</a></li>
+                                <li className={ (this.page === 'TEACHERS') ? 'active' : '' } onClick={ () => this.Navigate('TEACHERS') }><a href="#">Lehrer</a></li>
+                                <li className={ (this.page === 'SUBJECTS') ? 'active' : '' } onClick={ () => this.Navigate('SUBJECTS') }><a href="#">Fächer</a></li>
+                                <li onClick={ () => this.props.Logout() }><a href="#">Logout</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </nav>
-                <div className="container">
+                <div>
                     { this.GetSelectedPage() }
                 </div>
             </div>
