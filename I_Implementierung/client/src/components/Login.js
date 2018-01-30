@@ -11,81 +11,67 @@ class Login extends React.Component {
         super();
         this.state = {
             username: '',
+            usernameError: false,
             password: '',
+            passwordError: '',
             errorMessage: '',
             loading: false
         };
     }
 
 
-    ChangeUsername(event) {
+    handleUsernameChange(event) {
         this.setState({
             username: event.target.value,
-            errorMessage: ''
-        })
+            usernameError: false
+        });
     }
 
-    CheckUsername() {
+    handleUsernameLeave() {
         if (this.state.username === '') {
-            this.setState({ errorMessage: "Geben Sie einen Benutzernamen ein." });
-            return false;
+            this.setState({
+                usernameError: true
+            });
         }
-        return true;
-    }
+    }    
 
-    ChangePassword(event) {
+    handlePasswordChange(event) {
         this.setState({
             password: event.target.value,
-            errorMessage: ''
-        })
+            passwordError: false
+        });
     }
 
-    CheckPassword() {
-        if (this.state.password === '') {
-            this.setState({ errorMessage: "Geben Sie ein Passwort ein." });
-            return false;
-        }
-        return true;
-    }
-
-    CheckLogin() {
-        if (this.CheckUsername() && this.CheckPassword()) {
-            this.setState({ loading: true });
-            let response = this.props.Login(this.state.username, this.state.password);
-            response.then(response => {
-                if (response === false)
-                    this.setState({ errorMessage: 'Nicht erfolgreich, überprüfen Sie den Benutzernamen und das Passwort.' });
-                this.setState({ loading: false });
+    handlePasswordLeave() {
+        if (this.state.username === '') {
+            this.setState({
+                passwordError: true
             });
         }
     }
 
     GetErrorMessage() {
         if (this.state.errorMessage !== '')
-            return <p>{ this.state.errorMessage }</p>
-    }
-
-    GetLoading() {
-        if (this.state.loading)
-            return <p>Trying to log in...</p>;
+            return <div class="alert alert-danger" role="alert"><p><b>{ this.state.errorMessage }</b></p></div>;
     }
 
 
     render() {
         return (
             <div>
-                <h1>Admin Login</h1>
-                <div>
-                    <label>Benutzername:</label>
-                    <input value={ this.state.username } onChange={ (e) => this.ChangeUsername(e) } />
+                <h4 className="form-header">Admin Login</h4>
+                <div className="well">
+                    <div className="form-group">
+                        <label>Benutzername</label>
+                        <input type="text" className={ (this.state.usernameError) ? 'form-control form-error' : 'form-control' } placeholder="m.mustermann" value={ this.state.username } onChange={ (event) => this.handleUsernameChange(event) } onBlur={ () => this.handleUsernameLeave() }/>
+                    </div>
+                    <div className="form-group">
+                        <label>Passwort</label>
+                        <input type="password" className={ (this.state.passwordError) ? 'form-control form-error' : 'form-control' } placeholder="●●●●●●●●" value={ this.state.password } onChange={ (event) => this.handlePasswordChange(event) } onBlur={ () => this.handlePasswordLeave() }/>
+                    </div>
+                    <button className="btn btn-primary center-block">Weiter</button>
+                    { this.GetErrorMessage() }
                 </div>
-                <div>
-                    <label>Passwort:</label>
-                    <input value={ this.state.password } onChange={ (e) => this.ChangePassword(e) } />
-                </div>
-                { this.GetLoading() }
-                { this.GetErrorMessage() }
-                <button onClick={ () => this.CheckLogin() } >Login</button>
             </div>
         );
     }

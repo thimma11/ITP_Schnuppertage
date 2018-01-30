@@ -84,10 +84,10 @@ class Layout extends React.Component {
     render(){
 		if (this.role) {
 			if (this.role === 'ADMIN')
-				return <Admin GetCookie={ this.GetCookie } Logout={ this.Logout } />;
+				return <User Login={ this.Login } />;
 			if (this.role === 'USER')
-				return <Admin GetCookie={ this.GetCookie } Logout={ this.Logout } />;
-			return <User Login={ this.Login } />;
+				return <User Login={ this.Login } />;
+			return <Admin GetCookie={ this.GetCookie } Logout={ this.Logout } />;
 		} else {
 			return 'Loading...';
 		}

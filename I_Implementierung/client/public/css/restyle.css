@@ -197,6 +197,12 @@ label {
 .last-form-group {
     margin-bottom: 5px;
 }
+.form-error {
+    border-color: #f05a67 !important
+}
+.form-success {
+    border-color: #24bf98 !important
+}
 textarea {
     resize: vertical;
 }
@@ -273,6 +279,7 @@ option {
 .Dropdown-control {
     padding: 8px 10px;
     border: 2px solid #bbb;
+    line-height: 1;
 }
 .Dropdown-control:hover {
     border: 2px solid #999;
@@ -282,6 +289,9 @@ option {
     float: right;
     color: #555;
     font-family: 'FontAwesome';
+}
+.Dropdown-noresults {
+    padding: 8px 10px;
 }
 .is-open .Dropdown-placeholder:after {
     content: '\f077';
