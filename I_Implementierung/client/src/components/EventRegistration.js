@@ -141,7 +141,7 @@ class EventRegistration extends React.Component {
     }
 
     handleDateChange(date) {
-        if (this.dates.indexOf(date) === -1) {
+        if (this.dates.indexOf(date.value) === -1) {
             this.setState({ date: '' });
             this.initDates();
         } else {
@@ -308,9 +308,26 @@ class EventRegistration extends React.Component {
                     <label>Schultyp</label>
                     <input type="text" className={ (this.state.schoolTypeError) ? 'form-control form-error' : 'form-control' } placeholder="Gymnasium" value={ this.state.schoolType } onChange={ (event) => this.handleSchoolTypeChange(event) } onBlur={ () => this.handleSchoolTypeLeave() }/>
                 </div>
-                <button className="btn btn-primary center-block">Absenden</button>
+                <button className="btn btn-primary center-block" onClick={ () => this.checkAllValues() }>Absenden</button>
             </div>
         );
+    }
+
+    registerParticipant() {
+
+    }
+
+    checkAllValues() {
+        this.handleFirstnameLeave();
+        this.handleLastnameLeave();
+        this.handleEMailLeave();
+        this.handlePhoneLeave();
+        this.handleSchoolLocationLeave();
+        this.handleSchoolTypeLeave();
+
+        if (this.state.firstnameError || this.state.lastnameError || this.state.emailError || this.state.phoneError || this.state.schoolLocationError || this.state.schoolTypeError || this.state.department === '' || this.state.location === '' || this.state.date === '') {
+            this.registerParticipant();
+        }
     }
 
 
