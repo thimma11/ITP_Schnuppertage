@@ -22,7 +22,7 @@ class Entries extends React.Component {
         if (authToken = this.props.GetCookie() === undefined)
 			this.props.Logout();
 
-        axios.get(Globals.BASE_PATH + 'participants/' + this.eventID + '?authToken=' + authToken)
+        axios.get(Globals.BASE_PATH + 'participants/events/' + this.eventID + '?authToken=' + authToken)
         .then(response => this.setState({ students: response.data }))
 		.catch(error => {
             if (error.response.status === 401)
@@ -55,7 +55,7 @@ class Entries extends React.Component {
             return (
                 <div>
                     <h3>Alle Teilnehmer des Schnuppertags in { this.props.location } am { this.props.date }</h3>
-                    <p>Keine Teilnehmer für diesen Schnuppertag eingetragen...</p>
+                    <p>Keine Teilnehmer für diesem Schnuppertag eingetragen...</p>
                     <button onClick={ () => this.props.CloseEntries() } >Zurück</button>
                 </div>
             );

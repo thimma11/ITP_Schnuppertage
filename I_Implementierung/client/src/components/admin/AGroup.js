@@ -6,6 +6,7 @@ import axios from 'axios';
 
 import * as Globals from '../../Globals';
 import DayTable from './ADayTable';
+import { BASE_PATH } from '../../Globals';
 //#endregion
 
 
@@ -15,10 +16,26 @@ class Group extends React.Component {
         super(props);
         this.id = this.props.id;
         this.state = {
+            days: undefined,
             selectedDay: undefined
         }
     }
 
+
+    componentDidMount() {
+        let authToken;
+        if (authToken = this.props.GetCookie() === undefined)
+			this.props.Logout();
+
+        axios.get(Globals.BASE_PATH + 'groups/' + this.id + '/daytables?authToken')
+        .then(response => this.setState({ days: response.data }))
+        .catch(error => {
+            if (error.response.status === 401)
+                this.Logout();
+            else
+                console.log(error)
+        });
+    }
 
     ChangeSelectedDay(day) {
         this.setState({ selectedDay: day });
@@ -48,15 +65,18 @@ class Group extends React.Component {
 
 
     render() {
+        if (this.state.days === undefined) {
+            return 'Loading day...';
+        }
         return(
             <div>
-                <button onClick={ () => this.RemoveGroup() } ></button>
+                <button onClick={ () => this.RemoveGroup() } >Gruppe entfernen</button>
                 <div>
-                    <button onClick={ () => this.ChangeSelectedDay('MO') } >Montag</button>
-                    <button onClick={ () => this.ChangeSelectedDay('DI') } >Dienstag</button>
-                    <button onClick={ () => this.ChangeSelectedDay('MI') } >Mittwoch</button>
-                    <button onClick={ () => this.ChangeSelectedDay('DO') } >Donnerstag</button>
-                    <button onClick={ () => this.ChangeSelectedDay('FR') } >Freitag</button>
+                {
+                    this.state.days.map(day => {
+                        return <button key={ day.ID } onClick={ () => this.ChangeSelectedDay(day.ID) } >{ day.DAY_NAME }</button>;
+                    })
+                }
                 </div>
                 { this.GetSelectedDay() }
             </div>

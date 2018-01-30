@@ -16,8 +16,7 @@ class Departments extends React.Component {
         super();
         this.state = {
             departments: undefined,
-            departmentID: -1,
-            createDepartment: false,
+            departmentID: -1
         };
 
         this.CloseDepartment = this.CloseDepartment.bind(this);
@@ -77,19 +76,9 @@ class Departments extends React.Component {
             let departments = this.state.departments;
             departments.push(department);
             this.setState({
-                departments: departments,
-                createDepartment: false
+                departments: departments
             });
-        } else
-            this.setState({ createDepartment: false });
-    }
-
-    /* Returns the Create Department Button or shows the form */
-    GetDepartmentCreator() {
-        if (this.state.createDepartment)
-            return <DepartmentCreator GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } CloseDepartmentCreator={ this.CloseDepartmentCreator } />;
-        else
-            return <button onClick={ () => this.OpenDepartmentCreator() } >Abteilung erstellen</button>;
+        }
     }
 
     /* Get departments if not undefined */
@@ -97,20 +86,21 @@ class Departments extends React.Component {
         if (this.state.departments !== undefined) {
             return (
                 <div>
-                    <ul>
+                    <div className="well">
                         {
                         this.state.departments.map((department, index) => {
                             return (
-                                <li key={index} >
+                                <button key={index} >
                                     <p>{ department.contraction } - { department.name }</p>
-                                    <button onClick={ () => this.ShowDepartment(department.id) } >Abteilung verwalten</button>
-                                    <button onClick={ () => this.DeleteDepartment(department.id) } >Löschen</button>
-                                </li>
+                                    <button className="btn btn-primary" onClick={ () => this.ShowDepartment(department.id) } >Abteilung verwalten</button>
+                                    <button className="btn btn-info" onClick={ () => this.DeleteDepartment(department.id) } >Löschen</button>
+                                </button>
                             );
                         })
                         }
-                    </ul>
-                    { this.GetDepartmentCreator() }
+                    </div>
+                    <div className="section-spacer"/>
+                    <DepartmentCreator GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } CloseDepartmentCreator={ this.CloseDepartmentCreator } />
                 </div>
             );
         } else

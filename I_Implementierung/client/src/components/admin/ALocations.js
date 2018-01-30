@@ -31,7 +31,7 @@ class Locations extends React.Component {
 			this.props.Logout();
 
         axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/locations?authToken=' + authToken)
-        .then(response => this.setState({ locations: response.data }))
+        .then(response => { console.log(response); this.setState({ locations: response.data }) })
 		.catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
@@ -55,7 +55,7 @@ class Locations extends React.Component {
 
     render() {
         if (this.state.locationID >= 0)
-            return <Location id={ this.state.locationID } CloseLocation={ this.CloseLocation } />
+            return <Location id={ this.state.locationID } departmentID={ this.departmentID } locationID={ this.state.locationID } GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } CloseLocation={ this.CloseLocation } />
         else if (this.state.locations === undefined)
             return 'Loading locations...';
         else {

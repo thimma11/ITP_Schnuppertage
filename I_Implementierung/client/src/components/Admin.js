@@ -38,17 +38,19 @@ class Admin extends React.Component {
     render() {
         return (
             <div>
-                <nav>
-                    <ul>
-                        <li onClick={ () => this.Navigate('DEPARTMENTS') } >Abteilungen</li>
-                        <li onClick={ () => this.Navigate('TEACHERS') } >Lehrer</li>
-                        <li onClick={ () => this.Navigate('SUBJECTS') } >Fächer</li>
-                        <li onClick={ () => this.props.Logout() } >Logout</li>
-                    </ul>
+                <nav className="bg-blue">
+                    <div className="container">
+                        <ul>
+                            <li className="float-left" onClick={ () => this.Navigate('DEPARTMENTS') } ><h6>Abteilungen</h6></li>
+                            <li className="float-left" onClick={ () => this.Navigate('TEACHERS') } ><h6>Lehrer</h6></li>
+                            <li className="float-left" onClick={ () => this.Navigate('SUBJECTS') } ><h6>Fächer</h6></li>
+                            <li className="float-right" onClick={ () => this.props.Logout() } ><h6>Logout</h6></li>
+                        </ul>
+                    </div>
                 </nav>
-                <main>
+                <div className="container">
                     { this.GetSelectedPage() }
-                </main>
+                </div>
             </div>
         );
     }
