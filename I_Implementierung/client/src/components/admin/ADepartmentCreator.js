@@ -26,7 +26,7 @@ class DepartmentCreator extends React.Component {
         this.handleNameLeave();
         this.handleContractionLeave();
 
-        if (!this.state.nameError && !this.state.contractionError) {
+        if (this.state.name !== '' && this.state.contraction !== '') {
             let authToken;
             if (authToken = this.props.GetCookie() === undefined)
                 this.props.Logout();

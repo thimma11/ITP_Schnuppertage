@@ -115,34 +115,36 @@ class Events extends React.Component {
             }
             if (this.state.events !== undefined) {
                 return (
-                    <div className="table-responsive">
-                        <table class="table departments-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Datum</th>
-                                    <th>Standort</th>
-                                    <th>Aktionen</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {
-                            this.state.events.map((event, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>{ event.ID }</td>
-                                        <td>{ event.DATE.split('T')[0] }</td>
-                                        <td>{ event.NAME }</td>
-                                        <td>
-                                            <button className="btn btn-primary btn-sm button-space" onClick={ () => this.ShowEntries(event.ID) } >Teilnehmer</button>
-                                            <button className="btn btn-danger btn-sm" onClick={ () => this.DeleteEvent(event.ID) } >Löschen</button>
-                                        </td>
+                    <div>
+                        <div className="table-responsive">
+                            <table class="table departments-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Datum</th>
+                                        <th>Standort</th>
+                                        <th>Aktionen</th>
                                     </tr>
-                                );
-                            })
-                            }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                {
+                                this.state.events.map((event, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td>{ event.ID }</td>
+                                            <td>{ event.DATE.split('T')[0] }</td>
+                                            <td>{ event.NAME }</td>
+                                            <td>
+                                                <button className="btn btn-primary btn-sm button-space" onClick={ () => this.ShowEntries(event.ID) } >Teilnehmer</button>
+                                                <button className="btn btn-danger btn-sm" onClick={ () => this.DeleteEvent(event.ID) } >Löschen</button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
+                                }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 );
             }
@@ -151,7 +153,7 @@ class Events extends React.Component {
 
     renderEventCreator() {
         if (this.departmentID !== undefined) {
-            return <EventCreator key={ this.departmentID } Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } CloseEventCreator={ this.CloseEventCreator } departmentID={ this.departmentID } />;
+            return <div><hr/><EventCreator key={ this.departmentID } Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } CloseEventCreator={ this.CloseEventCreator } departmentID={ this.departmentID } /></div>;
         }
     }
 
@@ -164,7 +166,6 @@ class Events extends React.Component {
                     { this.renderDepartments() }
                     { this.renderEvents() }
                 </div>
-                <hr/>
                 { this.renderEventCreator() }
             </div>
         );
