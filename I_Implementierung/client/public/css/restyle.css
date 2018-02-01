@@ -16,6 +16,11 @@ body {
     letter-spacing: 1px;
     white-space: normal;
 }
+.btn-sm {
+    padding: 3px 15px;
+    font-size: 12.6px;
+    font-size-adjust: none;
+}
 .btn.btn-default {
     color: #30a4dc;
     border-color: #30a4dc;
@@ -200,6 +205,9 @@ label {
 .form-error {
     border-color: #f05a67 !important
 }
+.dropdown-error .Dropdown-control {
+    border-color: #f05a67 !important;
+}
 .form-success {
     border-color: #24bf98 !important
 }
@@ -280,6 +288,7 @@ option {
     padding: 8px 10px;
     border: 2px solid #bbb;
     line-height: 1;
+    cursor: pointer;
 }
 .Dropdown-control:hover {
     border: 2px solid #999;
@@ -292,6 +301,10 @@ option {
 }
 .Dropdown-noresults {
     padding: 8px 10px;
+}
+.Dropdown-disabled {
+    pointer-events: none;
+    opacity: 0.5;
 }
 .is-open .Dropdown-placeholder:after {
     content: '\f077';
@@ -310,13 +323,13 @@ option {
     border-left: 2px solid #bbb;
     border-right: 2px solid #bbb;
 }
-.Dropdown-component .Dropdown-option:last-child {
-    border: 2px solid #bbb;
-    border-top: unset;
-}
 .Dropdown-option:hover {
     cursor: pointer;
     background-color: #eee;
+}
+.Dropdown-component .Dropdown-option:last-child {
+    border: 2px solid #bbb;
+    border-top: unset;
 }
 .Dropdown-component .Dropdown-option:last-child:hover {
     cursor: pointer;
@@ -387,6 +400,7 @@ option {
     border-radius: 0;
     letter-spacing: 0.5px;
     color: #fff;
+    margin-bottom: 15px;
 }
 .alert-success {
     background-color: #24bf98;
@@ -399,4 +413,17 @@ option {
 .alert-danger {
     background-color: #f05a67;
     border: none;
+}
+/* Table */
+td {
+    vertical-align: middle !important;
+}
+@-moz-document url-prefix() {
+    fieldset { display: table-cell; }
+}
+.table-responsive {
+    border: none;
+}
+.table input {
+    min-width: 150px;
 }

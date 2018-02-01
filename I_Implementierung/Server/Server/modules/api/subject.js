@@ -54,6 +54,14 @@ router.post('/', (req, res) => {
     });
 });
 
+router.put('/:id', (req, res) => {
+    let id = req.params.id;
+    connection.query(`UPDATE subjects set name = ? WHERE id = ${id};`, [req.body.name], function (error, results, fields) {
+        if (error) console.log(error);
+        res.json(results);
+    });
+});
+
 router.get('/:id', (req, res) => {
     let id = req.params.id;
     connection.query(`SELECT s.ID, s.Name FROM subjects s WHERE s.ID = ${id};`, function (error, results, fields) {

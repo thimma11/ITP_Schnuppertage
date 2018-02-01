@@ -55,10 +55,20 @@ class Login extends React.Component {
             return <div class="alert alert-danger" role="alert"><p><b>{ this.state.errorMessage }</b></p></div>;
     }
 
+    checkLogin() {
+        this.handleUsernameLeave();
+        this.handlePasswordLeave();
+
+        if (this.state.usernameError || this.state.passwordError) {
+        } else {
+            this.props.Login(this.state.username, this.state.password);
+        }
+    }
+
 
     render() {
         return (
-            <div>
+            <div className="container login">
                 <h4 className="form-header">Admin Login</h4>
                 <div className="well">
                     <div className="form-group">
@@ -69,8 +79,8 @@ class Login extends React.Component {
                         <label>Passwort</label>
                         <input type="password" className={ (this.state.passwordError) ? 'form-control form-error' : 'form-control' } placeholder="●●●●●●●●" value={ this.state.password } onChange={ (event) => this.handlePasswordChange(event) } onBlur={ () => this.handlePasswordLeave() }/>
                     </div>
-                    <button className="btn btn-primary center-block">Weiter</button>
                     { this.GetErrorMessage() }
+                    <button className="btn btn-primary center-block" onClick={ () => this.checkLogin()}>Weiter</button>
                 </div>
             </div>
         );

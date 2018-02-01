@@ -114,11 +114,12 @@ router.get('/:id', (req, res) => {
 
 router.put('/:id', (req, res) => {
     let id = req.params.id;
-    connection.query(`UPDATE d.ID AS id, d.Contraction AS contraction, d.Name AS name from departments d WHERE d.ID = ${id};`, function (error, results, fields) {
+    connection.query(`UPDATE departments set contraction = ?, name = ? WHERE id = ${id};`, [req.body.contraction, req.body.name], function (error, results, fields) {
         if (error) console.log(error);
         res.json(results);
     });
 });
+
 router.delete('/:id', (req, res) => {
     connection.query(`DELETE from departments WHERE ID = ${req.params.id};`, function (error, results, fields) {
         if (error) console.log(error);

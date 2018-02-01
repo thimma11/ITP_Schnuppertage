@@ -4,3 +4,37 @@ body {
 .container-small {
     max-width: 1050px;
 }
+.login {
+    max-width: 450px;
+}
+.department-creator {
+    margin: auto;
+    max-width: 700px;
+}
+.departments {
+    max-width: 900px;
+}
+.departments-table {
+    margin-bottom: 0;
+}
+.edit-row {
+    background-color: #eee;
+}
+.button-space {
+    margin-right: 15px;
+}
+.teachers {
+    max-width: 650px;
+    margin: auto;
+}
+.add-teacher {
+    max-width: 400px;
+    margin: auto;
+}
+.events {
+    max-width: 900px;
+}
+.add-event {
+    margin: auto;
+    max-width: 700px;
+}

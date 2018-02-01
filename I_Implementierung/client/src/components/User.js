@@ -55,7 +55,7 @@ class User extends React.Component {
                         </div>
                     </div>
                 </nav>
-                <div className="container container-small">
+                <div>
                     { this.GetSelectedPage() }
                 </div>
             </div>

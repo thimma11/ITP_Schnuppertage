@@ -24,6 +24,14 @@ router.post('/', (req, res) => {
     });
 });
 
+router.put('/:id', (req, res) => {
+    let id = req.params.id;
+    connection.query(`UPDATE teachers set contraction = ? WHERE id = ${id};`, [req.body.contraction], function (error, results, fields) {
+        if (error) console.log(error);
+        res.json(results);
+    });
+});
+
 router.get('/:id', (req, res) => {
     let id = req.params.id;
     connection.query(`SELECT teachers.ID AS id, teachers.contraction from teachers WHERE teachers.ID = ${id};`, function (error, results, fields) {

@@ -2,6 +2,7 @@
 //#region Dependencies
 import React from 'react';
 import axios from 'axios';
+import Dropdown from 'react-dropdown';
 //#endregion
 
 import * as Globals from '../../Globals';
@@ -13,13 +14,16 @@ class EventCreator extends React.Component {
     constructor(props) {
         super(props);
         this.departmentID = this.props.departmentID;
-        this.locationID = -1;
+        this.locations = undefined;
         this.state = {
             date: '',
+            dateError: false,
             locations: [],
+            location: '',
+            locationError: false,
             maxGroups: 1,
-            currentGroupSize: 1,
-            errorMessage: ''
+            currentGroupSize: '',
+            groupError: false
         };
     }
 
@@ -36,7 +40,15 @@ class EventCreator extends React.Component {
 			this.props.Logout();
 
         axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/locations?authToken=' + authToken)
-        .then(response => this.setState({ locations: response.data }))
+        .then(response => {
+            this.locations = response.data;
+            let locations = [];
+            response.data.map(location => {
+                locations.push(location.NAME);
+            })
+            this.setState({ locations: locations });
+            console.log(this.state.locations);
+        })
 		.catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
@@ -63,94 +75,121 @@ class EventCreator extends React.Component {
 
     /* Check the input and create a event */
     CreateEvent() {
-        if (this.state.date === '') {
-            this.setState({ errorMessage: 'Geben Sie bitte ein Datum an.' });
-            return null;
+        this.checkLocation();
+        this.handleDateLeave();
+        this.checkGroupSize();
+
+        if (!this.state.dateError || !this.state.locationError || !this.state.groupError) {
+            axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID + '/events', {
+                date: this.state.date,
+                location_id: this.locationID,
+                groupSize: this.state.currentGroupSize
+            }).then(response => this.props.CloseEventCreator(true))
+            .catch(error => console.log(error));
         }
-        if (this.state.location === -1) {
-            this.setState({ errorMessage: 'Sie müssen einen Standort auswählen.' });
-            return null;
-        }
-        this.props.CloseEventCreator(true);
-        
-        axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID + '/events', {
-            date: this.state.date,
-            location_id: this.locationID,
-            groupSize: this.state.currentGroupSize
-        }).then(response => this.props.CloseEventCreator(true))
-        .catch(error => console.log(error));
     }
 
-    ChangeDate(event) {
+    handleDateChange(event) {
         this.setState({
             date: event.target.value,
-            errorMessage: ''
+            dateError: false
         });
     }
 
-    ChangeLocation(event) {
-        this.locationID = parseInt(event.target.value, 10);
-        this.setState({
-            maxGroups: 2,
-            errorMessage: ''
+    handleDateLeave() {
+        if (this.state.date.length !== 10) {
+            this.setState({
+                dateError: true
+            });
+        }
+    }
+
+    handleGroupSizeChange(event) {
+        if (event.value > 0 && event.value <= this.state.maxGroups) {
+            this.setState({
+                currentGroupSize: event.value,
+                groupError: false
+            });
+        } else {
+            this.setState({
+                currentGroupSize: '',
+                groupError: true
+            });
+        }
+    }
+    checkGroupSize() {
+        if (this.state.currentGroupSize <= 0 || this.state.currentGroupSize > this.state.maxGroups) {
+            this.setState({ groupError: true });
+        }
+    }
+
+    handleLocationChange(location) {
+        let locations = [];
+        this.locations.map(loc => {
+            locations.push(loc.NAME);
+            return null;
         });
-        if (this.locationID !== -1)
-            this.InitGroupSize();
+
+        if (locations.indexOf(location.value) === -1) {
+            this.setState({
+                location: '',
+                locationError: false
+            });
+            this.initLocations();
+        } else {
+            this.setState({
+                location: location.value,
+                locationError: false
+            });
+            this.locations.map(loc => {
+                if (loc.NAME === location.value) {
+                    this.locationID = loc.ID;
+                }
+            });
+        }
     }
 
-    ChangeGroupSize(event) {
-        this.setState({ currentGroupSize: event.target.value });
-    }
-
-    /* Display a error message if available */
-    GetErrorMessage() {
-        if (this.state.errorMessage !== '')
-            return <p>{ this.state.errorMessage }</p>;
+    checkLocation() {
+        if (this.state.location === '') {
+            this.setState({
+                locationError: true
+            });
+            console.log(this.state.locationError);
+        }
     }
 
     GetGroupSizes() {
         if (this.locationID !== -1) {
+            let values = [];
+            for(let i = 1; i <= this.state.maxGroups; i++) {
+                values.push(i);
+            }
             return (
-                <div>
-                    <div><label>Gruppenanzahl: <b>{ this.state.currentGroupSize }</b></label></div>
-                    <input type='range' min='1' max={ this.state.maxGroups } value={ this.state.currentGroupSize } onChange={ (e) => this.ChangeGroupSize(e) } />
+                <div className={ (this.state.groupError) ? 'form-group dropdown-error' : 'form-group' }>
+                    <label>Gruppenanzahl<span className="label-information"></span></label>
+                    <Dropdown options={ values } onChange={ (event) => this.handleGroupSizeChange(event) } value={ this.state.currentGroupSize.toString() } placeholder="Gruppenanzahl wählen" />
                 </div>
             );
-        }
-    }
-
-    GetCreateButton() {
-        if (this.locationID !== -1) {
-            return <button onClick={ () => this.CreateEvent() } >Hinzufügen</button>;
-        } else {
-            return <button disabled >Hinzufügen</button>;
         }
     }
 
 
     render() {
         return (
-            <div>
-                <h4>Schnuppertagerstellung</h4>
-                <div>
-                    <label>Datum:</label>
-                    <input type='date' value={ this.state.date } onChange={ (e) => this.ChangeDate(e) } />
+            <div className="add-event">
+                <h4 className="form-header">Schnuppertag erstellen</h4>
+                <div className="well">
+                <div className="form-group">
+                    <label>Datum</label>
+                    <input type="text" className={ (this.state.dateError) ? 'form-control form-error' : 'form-control' } placeholder="YYYY-MM-DD" value={ this.state.date } onChange={ (event) => this.handleDateChange(event) } onBlur={ () => this.handleDateLeave() }/>
                 </div>
-                <div>
-                    <label>Standort:</label>
-                    <select id="locationSelecter" onChange={ (e) => this.ChangeLocation(e) } >
-                        <option value={ -1 }>Nichts ausgewählt</option>
-                    {
-                        this.state.locations.map(location => {
-                            return <option key={location.ID} value={location.ID} >{ location.NAME }</option>;
-                        })
-                    }
-                    </select>
+                <div className={ (this.state.locationError) ? 'form-group dropdown-error' : 'form-group' }>
+                    <label>Standort<span className="label-information"> - Wählen Sie einen Standort aus.</span></label>
+                    <Dropdown options={ this.state.locations } onChange={ (event) => this.handleLocationChange(event) } value={ this.state.location } placeholder="Standort auswählen" />
                 </div>
                 { this.GetGroupSizes() }
-                { this.GetErrorMessage() }
-                <button onClick={ () => this.props.CloseEventCreator(false) }>Abbrechen</button>
-                { this.GetCreateButton() }
+                <button className="btn btn-primary center-block" onClick={ () => this.CreateEvent() } >Hinzufügen</button>
+                </div>
             </div>
         );
     }
