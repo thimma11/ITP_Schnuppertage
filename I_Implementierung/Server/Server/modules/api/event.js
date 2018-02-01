@@ -18,6 +18,17 @@ router.delete('/:id', (req, res) => {
     });
 });
 
+router.post('/', (req, res) => {
+    let date = req.body.date;
+    let dep_id = req.body.departments_id;
+    let loc_id =req.body.locations_id;
+    let group_size = req.body.groupSize;
+    connection.query(`INSERT INTO events(date, departments_id, locations_id, group_size) VALUES(?, ?, ?, ?)`, [date, dep_id, loc_id, group_size], function (error, results, fields) {
+        if (error) console.log(error);
+        res.json(results);
+    });
+});
+
 router.get('/dates/:dep_id/:loc_id', (req, res) => {
     let dep = req.params.dep_id;
     let loc = req.params.loc_id;
@@ -30,6 +41,5 @@ router.get('/dates/:dep_id/:loc_id', (req, res) => {
         res.json(arr);
     });
 });
-
 
 module.exports = router;
