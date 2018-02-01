@@ -28,7 +28,8 @@ class Department extends React.Component {
             groupIds: [],
             selectedGroup: '',
             selectedGroupID: -1,
-            dayName: ''
+            dayName: '',
+            lessons: []
         };
     }
 
@@ -236,6 +237,7 @@ class Department extends React.Component {
         this.setState({
             dayName: event.value
         });
+        axios.get(Globals.BASE_PATH + 'daytables/lessons/' + event.value + '/' + this.state.selectedGroupID);
     }
 
     renderTimetable() {
@@ -248,7 +250,7 @@ class Department extends React.Component {
             return (
                 <div className='form-group'>
                     <label>Wochentag</label>
-                    <Dropdown options={ ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'] } onChange={ (event) => this.handleDayChange(event) } value={ this.state.dayName } placeholder="Tag auswählen" />
+                    <Dropdown options={ [{value: 'Montag' }, {value: 'Dienstag' }, { value: 'Mittwoch' }, {value: 'Donnerstag' }, {value: 'Freitag' }] } onChange={ (event) => this.handleDayChange(event) } value={ this.state.dayName } placeholder="Tag auswählen" />
                 </div>
             );
         }
