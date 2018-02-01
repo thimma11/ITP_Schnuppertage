@@ -53,14 +53,6 @@ router.get('/:id?', (req, res) => {
         res.json(results);
     });
 });
-router.delete('/:id', (req, res) => {
-    let id = req.params.id;
-    connection.query(`DELETE FROM locations WHERE locations.ID = ${id}`, function (error, results, fields) {
-        if (error) throw error;
-        res.json(results);
-    });
-});
-
 
 
 

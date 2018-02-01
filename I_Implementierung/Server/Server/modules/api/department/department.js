@@ -121,18 +121,19 @@ router.delete('/:id/locations/:location_id', (req, res) => {
                         if (typeof daytable_item != 'undefined')
                             connection.query('DELETE FROM LESSONS WHERE LESSONS.DAYTABLES_ID = ?', [daytable_item.ID], (error, results, fields) => {
                                 if (error) console.log(error);
+                                connection.query('DELETE FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ? AND GROUPS.LOCATION_ID = ?', [id, location_id], (error, results, fields) => {
+                                    if (error) console.log(error);
+                                    connection.query('DELETE FROM TIMETABLES WHERE TIMETABLES.DEPARTMENTS_ID = ? AND TIMETABLES.LOCATIONS_ID = ?', [id, location_id], (error, results, fields) => {
+                                        if (error) console.log(error);
+                                        
+                                    });
+                                });
                             });
                     });
                     connection.query('DELETE FROM DAYTABLES WHERE DAYTABLES.GROUPS_ID = ?', [group_item.ID], (error, results, fields) => {
                         if (error) console.log(error);
                     });
                 });
-        });
-        connection.query('DELETE FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ? AND GROUPS.LOCATION_ID = ?', [id, location_id], (error, results, fields) => {
-            if (error) console.log(error);
-            connection.query('DELETE FROM TIMETABLES WHERE TIMETABLES.DEPARTMENTS_ID = ? AND TIMETABLES.LOCATIONS_ID = ?', [id, location_id], (error, results, fields) => {
-                if (error) console.log(error);
-            });
         });
         res.json("success");
     });
@@ -189,24 +190,24 @@ router.delete('/:id', (req, res) => {
                         if (typeof daytable_item != 'undefined')
                             connection.query('DELETE FROM LESSONS WHERE LESSONS.DAYTABLES_ID = ?', [daytable_item.ID], (error, results, fields) => {
                                 if (error) console.log(error);
+                                connection.query('DELETE FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ?', [id], (error, results, fields) => {
+                                    if (error) console.log(error);
+                                    connection.query('DELETE FROM TIMETABLES WHERE TIMETABLES.DEPARTMENTS_ID = ?', [id], (error, results, fields) => {
+                                        if (error) console.log(error);
+                                        connection.query('DELETE FROM EVENTS WHERE EVENTS.DEPARTMENTS_ID = ?', [id], (error, results, fields) => {
+                                            if (error) console.log(error);
+                                            connection.query('DELETE FROM DEPARTMENTS WHERE DEPARTMENTS.ID = ?', [id], (error, results, fields) => {
+                                                if (error) console.log(error);
+                                            });
+                                        });
+                                    });
+                                });
                             });
                     });
                     connection.query('DELETE FROM DAYTABLES WHERE DAYTABLES.GROUPS_ID = ?', [group_item.ID], (error, results, fields) => {
                         if (error) console.log(error);
                     });
                 });
-        });
-        connection.query('DELETE FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ?', [id], (error, results, fields) => {
-            if (error) console.log(error);
-            connection.query('DELETE FROM TIMETABLES WHERE TIMETABLES.DEPARTMENTS_ID = ?', [id], (error, results, fields) => {
-                if (error) console.log(error);
-                connection.query('DELETE FROM EVENTS WHERE EVENTS.DEPARTMENTS_ID = ?', [id], (error, results, fields) => {
-                    if (error) console.log(error);
-                    connection.query('DELETE FROM DEPARTMENTS WHERE DEPARTMENTS.ID = ?', [id], (error, results, fields) => {
-                        if (error) console.log(error);
-                    });
-                });
-            });
         });
         res.json("success");
     });
