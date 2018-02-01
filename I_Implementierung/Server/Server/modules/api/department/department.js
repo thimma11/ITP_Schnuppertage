@@ -178,9 +178,37 @@ router.put('/:id', (req, res) => {
     });
 });
 router.delete('/:id', (req, res) => {
-    connection.query(`DELETE from departments WHERE ID = ${req.params.id};`, function (error, results, fields) {
+    let id = req.params.id;
+    connection.query('SELECT GROUPS.ID FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ?', [id], (error, results, fields) => {
         if (error) console.log(error);
-        res.json(results);
+        results.forEach((group_item) => {
+            if (typeof group_item != 'undefined')
+                connection.query('SELECT DAYTABLES.ID FROM DAYTABLES WHERE DAYTABLES.GROUPS_ID = ?', [group_item.ID], (error, results, fields) => {
+                    if (error) console.log(error);
+                    results.forEach((daytable_item) => {
+                        if (typeof daytable_item != 'undefined')
+                            connection.query('DELETE FROM LESSONS WHERE LESSONS.DAYTABLES_ID = ?', [daytable_item.ID], (error, results, fields) => {
+                                if (error) console.log(error);
+                            });
+                    });
+                    connection.query('DELETE FROM DAYTABLES WHERE DAYTABLES.GROUPS_ID = ?', [group_item.ID], (error, results, fields) => {
+                        if (error) console.log(error);
+                    });
+                });
+        });
+        connection.query('DELETE FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ?', [id], (error, results, fields) => {
+            if (error) console.log(error);
+            connection.query('DELETE FROM TIMETABLES WHERE TIMETABLES.DEPARTMENTS_ID = ?', [id], (error, results, fields) => {
+                if (error) console.log(error);
+                connection.query('DELETE FROM EVENTS WHERE EVENTS.DEPARTMENTS_ID = ?', [id], (error, results, fields) => {
+                    if (error) console.log(error);
+                    connection.query('DELETE FROM DEPARTMENTS WHERE DEPARTMENTS.ID = ?', [id], (error, results, fields) => {
+                        if (error) console.log(error);
+                    });
+                });
+            });
+        });
+        res.json("success");
     });
 });
 
