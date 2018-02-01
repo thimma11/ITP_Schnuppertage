@@ -75,14 +75,15 @@ class EventCreator extends React.Component {
 
     /* Check the input and create a event */
     CreateEvent() {
-        this.checkLocation();
-        this.handleDateLeave();
-        this.checkGroupSize();
+        let location = this.checkLocation();
+        let date = this.handleDateLeave();
+        let group = this.checkGroupSize();
 
-        if (!this.state.dateError || !this.state.locationError || !this.state.groupError) {
+        if (location && date && group) {
             axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID + '/events', {
                 date: this.state.date,
-                location_id: this.locationID,
+                locations_id: this.locationID,
+                departments_id: this.departmentID,
                 groupSize: this.state.currentGroupSize
             }).then(response => this.props.CloseEventCreator(true))
             .catch(error => console.log(error));
@@ -101,7 +102,9 @@ class EventCreator extends React.Component {
             this.setState({
                 dateError: true
             });
+            return false;
         }
+        return true;
     }
 
     handleGroupSizeChange(event) {
@@ -120,7 +123,9 @@ class EventCreator extends React.Component {
     checkGroupSize() {
         if (this.state.currentGroupSize <= 0 || this.state.currentGroupSize > this.state.maxGroups) {
             this.setState({ groupError: true });
+            return false;
         }
+        return true;
     }
 
     handleLocationChange(location) {
@@ -154,8 +159,9 @@ class EventCreator extends React.Component {
             this.setState({
                 locationError: true
             });
-            console.log(this.state.locationError);
+            return false;
         }
+        return true;
     }
 
     GetGroupSizes() {

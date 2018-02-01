@@ -107,6 +107,13 @@ class Events extends React.Component {
         }
     }
 
+    DeleteEvent(id) {
+        axios.delete(Globals.BASE_PATH + 'events/' + id)
+        .then(() => {
+            this.initEvents();
+        }).catch(error => console.log(error))
+    }
+
     renderEvents() {
         if (this.departmentID === undefined) {
         } else {
@@ -114,6 +121,25 @@ class Events extends React.Component {
 
             }
             if (this.state.events !== undefined) {
+                if (this.state.events.length === 0) {
+                    return (
+                        <div>
+                            <div className="table-responsive">
+                                <table class="table departments-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Datum</th>
+                                            <th>Standort</th>
+                                            <th>Aktionen</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                                <h5 className="text-center"><b>Keine Schnuppertage gefunden . . .</b></h5>
+                            </div>
+                        </div>
+                    );
+                }
                 return (
                     <div>
                         <div className="table-responsive">

@@ -14,7 +14,7 @@ class Admin extends React.Component {
 
     constructor(props) {
         super(props);
-        this.page = 'DEPARTMENTS';
+        this.page = 'EVENTS';
         this.state = { key: 0 };
     }
 
