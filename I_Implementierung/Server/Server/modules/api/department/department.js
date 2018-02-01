@@ -107,6 +107,32 @@ router.get('/:id/!locations', (req, res) => {
     });
 });
 
+router.delete('/:id/locations/:location_id', (req, res) => {
+    let id = req.params.id;
+    let location_id = req.params.location_id;
+    //zuerst alle Gruppen für den timetable finden
+    connection.query('SELECT GROUPS.ID FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ? AND GROUPS.LOCATION_ID = ?', [id, location_id], (error, results, fields) => {
+        if (error) console.log(error);
+        results.forEach((group_item) => {
+            connection.query('SELECT DAYTABLES.ID FROM DAYTABLES WHERE DAYTABLES.GROUPS_ID = ?', [group_item.ID], (error, results, fields) => {
+                if (error) console.log(error);
+                results.forEach((daytable_item) => {
+                    connection.query('DELETE FROM LESSONS WHERE LESSONS.DAYTABLES_ID = ?', [daytable_item.ID], (error, results, fields) => {
+                        if (error) console.log(error);
+                    });
+                });
+                connection.query('DELETE FROM LESSONS WHERE LESSONS.DAYTABLES_ID = ?', [daytable_item.ID], (error, results, fields) => {
+                    if (error) console.log(error);
+                });
+            });
+        });
+        connection.query('DELETE FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ? AND GROUPS.LOCATION_ID = ?', [id, location_id], (error, results, fields) => {
+            if (error) console.log(error);
+        });
+    });
+
+});
+
 router.get('/:id/timetables', (req, res) => {
     let id = req.params.id;
     connection.query(`SELECT COUNT(groups.ID) FROM groups JOIN timetables ON groups.TIMETABLES_ID = timetables.ID JOIN locations ON timetables.LOCATIONS_ID = locations.ID JOIN departments ON departments.ID = timetables.DEPARTMENTS_ID WHERE departments.ID = ? AND locations.ID = ?;`, [id, req.params.location_id], function (error, results, fields) {
