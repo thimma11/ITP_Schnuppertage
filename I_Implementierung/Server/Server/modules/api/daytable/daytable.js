@@ -19,13 +19,14 @@ router.get('/:id', (req, res) => {
     let id = req.params.id;
 });
 
-router.get('/:id/lessons', (req, res) => {
-    let id = req.params.id;
-    connection.query(`SELECT lessons.ID, lessons.START, lessons.END FROM lessons JOIN daytables ON lessons.DAYTABLES_ID = daytables.ID WHERE daytables.ID = ? ORDER BY lessons.START DESC;`, [id], function (error, results, fields) {
+router.get('/:name/lessons', (req, res) => {
+    let name = req.params.name;
+    connection.query(`SELECT lessons.ID, lessons.START, lessons.END FROM lessons JOIN daytables ON lessons.DAYTABLES_ID = daytables.ID WHERE daytables.day_name = ? ORDER BY lessons.START DESC;`, [name], function (error, results, fields) {
         if (error) throw error;
         res.json(results);
     });
 });
+
 router.post('/:id/lessons', (req, res) => {
     let id = req.params.id;
     if (checkVariable(req.body.start) && checkVariable(req.body.end) && checkVariable(req.body.start) && checkVariable(req.body.start)) {

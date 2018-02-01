@@ -35,6 +35,14 @@ router.get('/:id/locations', (req, res) => {
             res.json(results);
         });
 });
+router.get('/:id/all_locations', (req, res) => {
+    let department_id = req.params.id;
+    arr = []
+    connection.query(`SELECT id, name from locations;`, function (error, locations, fields) {
+            res.json(locations);
+    });
+});
+
 router.post('/:id/locations', (req, res) => {
     let id = req.params.id;
     var connection2 = mysql.createConnection({
@@ -103,6 +111,7 @@ router.get('/:id', (req, res) => {
         res.json(results);
     });
 });
+
 router.put('/:id', (req, res) => {
     let id = req.params.id;
     connection.query(`UPDATE d.ID AS id, d.Contraction AS contraction, d.Name AS name from departments d WHERE d.ID = ${id};`, function (error, results, fields) {
