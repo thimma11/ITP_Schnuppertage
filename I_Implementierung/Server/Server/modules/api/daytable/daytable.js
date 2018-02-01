@@ -1,7 +1,7 @@
 ﻿var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
-var database_config = require('./database');
+var database_config = require('../../config/database');
 
 var connection = mysql.createConnection({
     host: database_config.host,
@@ -10,20 +10,21 @@ var connection = mysql.createConnection({
     database: database_config.database
 });
 
-
 router.get('/', (req, res) => {
-    connection.query('SELECT '
+    connection.query('SELECT');
 });
 
 router.get('/:id', (req, res) => {
     let id = req.params.id;
 });
 
-router.get('/:name/lessons', (req, res) => {
-    let name = req.params.name;
-    connection.query(`SELECT lessons.ID, lessons.START, lessons.END FROM lessons JOIN daytables ON lessons.DAYTABLES_ID = daytables.ID WHERE daytables.day_name = ? ORDER BY lessons.START DESC;`, [name], function (error, results, fields) {
+router.get('/lessons/:day_name/:group_id', (req, res) => {
+    let day_name = req.params.day_name;
+    let group_id = req.params.group_id
+    connection.query(`SELECT l.id, l.start, l.end, t.contraction, s.name from lessons l JOIN teachers t ON(l.teachers_id=t.id) JOIN subjects s ON(l.subjects_id=s.id) JOIN daytables d ON(l.daytables_id=d.id) JOIN groups g ON(d.groups_id=g.id) WHERE d.day_name = ? and g.id = ? ORDER BY l.start DESC;`, [day_name, group_id], function (error, results, fields) {
         if (error) throw error;
         res.json(results);
+        console.log("HELLO");
     });
 });
 

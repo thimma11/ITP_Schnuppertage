@@ -9,6 +9,7 @@ var participant = require('./api/participant');
 var event = require('./api/event');
 var group = require('./api/group/group');
 var timetable = require('./api/timetable');
+var daytable = require('./api/daytable/daytable');
 
 router.use('/subjects', subject);
 router.use('/teachers', teacher);
@@ -19,6 +20,7 @@ router.use('/events', event);
 router.use('/locations', location);
 router.use('/groups', group);
 router.use('/timetables', timetable);
+router.use('/daytables', daytable);
 
 router.get('/', (req, res) => {
     res.send("asd");

@@ -37,9 +37,35 @@ router.get('/:id/locations', (req, res) => {
 });
 router.get('/:id/all_locations', (req, res) => {
     let department_id = req.params.id;
+    let is_dep = false;
+    let id = "";
+    let name = "";
     arr = []
-    connection.query(`SELECT id, name from locations;`, function (error, locations, fields) {
-            res.json(locations);
+    connection.query(`SELECT id, name from locations;`, function (error, results, fields) {
+        let locations = results;
+        connection.query(`SELECT departments_id as dep_id, locations_id as loc_id from timetables;`, function (error, timetables, fields) {
+            for (let i = 0; i < locations.length; i++) {
+                id = locations[i]['id']
+                name = locations[i]['name']
+                for (let j = 0; j < timetables.length; j++) {
+                    let dep_id = timetables[j]['dep_id']
+                    let loc_id = timetables[j]['loc_id']
+                    
+                    if (loc_id == id && dep_id == department_id) {
+                        is_dep = true;
+                        break;
+                    }
+                    else {
+                        is_dep = false;
+                    }
+                }
+                
+                arr.push({id: id, name: name, in_dep: is_dep});                
+            }
+
+            if (error) throw error;
+            res.json(arr);
+        });
     });
 });
 
@@ -114,12 +140,11 @@ router.get('/:id', (req, res) => {
 
 router.put('/:id', (req, res) => {
     let id = req.params.id;
-    connection.query(`UPDATE departments set contraction = ?, name = ? WHERE id = ${id};`, [req.body.contraction, req.body.name], function (error, results, fields) {
+    connection.query(`UPDATE d.ID AS id, d.Contraction AS contraction, d.Name AS name from departments d WHERE d.ID = ${id};`, function (error, results, fields) {
         if (error) console.log(error);
         res.json(results);
     });
 });
-
 router.delete('/:id', (req, res) => {
     connection.query(`DELETE from departments WHERE ID = ${req.params.id};`, function (error, results, fields) {
         if (error) console.log(error);
