@@ -2,6 +2,7 @@
 //#region Dependencies
 import React from 'react';
 import axios from 'axios';
+import Dropdown from 'react-dropdown';
 //#endregion
 
 import Entries from './AEntries';
@@ -16,173 +17,278 @@ class Department extends React.Component {
     constructor(props) {
         super(props);
         this.id = this.props.id;
+        this.nonLocations = [];
         this.state = {
-            name: '',
-            events: [],
-            createEvent: false,
-            showEntriesID: -1
+            contraction: this.props.contraction,
+            name: this.props.name,
+            locations: undefined,
+            editLocations: false,
+            locationID: -1,
+            nonLocations: undefined,
+            groupIds: [],
+            selectedGroup: '',
+            selectedGroupID: -1,
+            dayName: ''
         };
-
-        this.CloseEventCreator = this.CloseEventCreator.bind(this);
-        this.CloseEntries = this.CloseEntries.bind(this);
     }
 
 
     /* Get all display information */
     componentDidMount() {
-        this.InitDepartment();
-        this.InitEvents();
+        this.InitLocations();
+        this.InitNonLocations();
     }
 
-    /* Get a detailed department information */
-    InitDepartment() {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
-            this.props.Logout();
-        
-        axios.get(Globals.BASE_PATH + 'departments/' + this.id)
+    InitLocations() {
+        axios.get(Globals.BASE_PATH + 'departments/' + this.id + '/locations')
         .then(response => {
             this.setState({
-                name: response.data[0].name,
-                contraction: response.data[0].contraction
-            });
-        }).catch(error => {
-            if (error.response.status === 401)
-                this.props.Logout();
-            else
-                console.log(error);
+                locations: response.data
+            })
         });
     }
 
-    InitEvents() {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
-            this.props.Logout();
-
-        axios.get(Globals.BASE_PATH + 'departments/' + this.id + '/events?authToken=' + authToken)
+    InitNonLocations() {
+        axios.get(Globals.BASE_PATH + 'departments/' + this.id + '/!locations')
         .then(response => {
-            this.setState({ events: response.data });
-        })
-        .catch(error => {
-            if (error.response.status === 401)
-                this.props.Logout();
-            else
-                console.log(error);
+            this.nonLocations = response.data;
+            let nonLocations = [];
+            this.nonLocations.map(location => {
+                nonLocations.push(location.NAME);
+            });
+            this.setState({
+                location: '',
+                nonLocations: nonLocations
+            });
         });
     }
 
-    /* Set variable createEvent to 'true' */
-    OpenEventCreator() {
-        this.setState({ createEvent:  true });
-    }
-
-    ShowEntries(id, date, location) {
-        this.setState({ showEntriesID: id });
-        this.eventData = date;
-        this.location = location;
-    }
-
-    CloseEntries(id) {
-        this.setState({ showEntriesID: -1 });
-    }
-
-    /* Set variable createEvent to 'false' */
-    CloseEventCreator(event) {
-        if (event === true) {
-            this.setState({ createEvent: false });
-            this.InitEvents();
-        } else
-            this.setState({ createEvent: false });
-    }
-
-    /* Delete an event */
-    DeleteEvent(id) {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
-            this.props.Logout();
+    DeleteLocation() {
         
-        axios.delete(Globals.BASE_PATH + 'events/' + id + '?authToken=' + authToken)
-        .then(response => this.InitEvents())
-        .catch(error => {
-            if (error.response.status === 401)
-                this.props.Logout();
-            else
-                console.log(error);
+    }
+
+    handleLocationChange(event) {
+        let nonLocations = [];
+        this.nonLocations.map(location => {
+            nonLocations.push(location.NAME);
         });
+        if (nonLocations.indexOf(event.value) !== -1) {
+            this.setState({
+                location: event.value
+            });
+        } else {
+            this.InitNonLocations();
+        }
     }
 
-    /* Returns the Create Event Button or shows the form */
-    GetEventCreator() {
-        if (this.state.createEvent)
-            return <EventCreator Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } CloseEventCreator={ this.CloseEventCreator } departmentID={ this.id } />;
-        else
-            return <button onClick={ () => this.OpenEventCreator() } >Schnuppertag erstellen</button>;
-    }
-
-    GetEvents() {
-        if (this.state.events !== undefined && this.state.events.length !== 0) {
+    renderLocations() {
+        if (this.state.locations === undefined) {
             return (
-                <div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Datum</th>
-                                <th>Standort</th>
-                                <th>Aktionen</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                            this.state.events.map(event => {
-                                return (
-                                    <tr key={ event.ID }>
-                                        <td>{ event.DATE.split('T')[0] }</td>
-                                        <td>{ event.NAME }</td>
-                                        <td>
-                                            <button onClick={ () => this.ShowEntries(event.ID, event.DATE.split('T')[0], event.NAME) } >Eintragungen anzeigen</button>
-                                            <button onClick={ () => this.DeleteEvent(event.ID) } >Löschen</button>
-                                        </td>
-                                    </tr>
-                                );
-                            })
-                            }
-                        </tbody>
-                    </table>
-                    { this.GetEventCreator() }
+                <div className="well">
+                    <div className="table-responsive">
+                        <table class="table departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Standort ID</th>
+                                    <th>Name</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <h5 className="text-center"><b>Standorte werden geladen . . .</b></h5>
+                    </div>
                 </div>
             );
-        } else if (this.state.events !== undefined && this.state.events.length === 0) {
+        } else if (this.state.locations.length === 0) {
             return (
-                <div>
-                    <p>Noch keine Einträge...</p>
-                    { this.GetEventCreator() }
-                </div>
-            );
-        } else
-            return 'Loading events...';
-    }
-
-
-    render() {
-        if (this.state.showEntriesID !== -1) {
-            return(
-                <div>
-                    <h2>Abteilungsverwaltung für <i>"</i>{ this.state.name }<i>"</i></h2>
-                    <Entries date={ this.eventData } location={ this.location } CloseEntries={ this.CloseEntries } Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } eventID={ this.state.showEntriesID } />
+                <div className="well">
+                    <div className="table-responsive">
+                        <table class="table departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Standort ID</th>
+                                    <th>Name</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <h5 className="text-center"><b>Keine Standorte gefunden . . .</b></h5>
+                    </div>
                 </div>
             );
         } else {
             return (
+                <div className="well">
+                    <div className="table-responsive">
+                        <table class="table departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {
+                                this.state.locations.map((location, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td>{ location.NAME }</td>
+                                            <td>
+                                                <button className="btn btn-primary btn-sm button-space" onClick={ () => this.SelectLocation(location.ID) } >Stundenplan</button>
+                                                <button className="btn btn-danger btn-sm" onClick={ () => this.DeleteLocation(location.ID) } >Entfernen</button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                    { this.renderLocationAdder() }
+                </div>
+            );
+        }
+    }
+
+    renderLocationAdder() {
+        if (this.state.nonLocations === undefined) {
+            return <h5 className="text-center"><b>Standorte werden geladen . . .</b></h5>;
+        } else if (this.state.nonLocations.length === 0 ) {
+            return <h5 className="text-center"><b>Keine weiteren Standorte gefunden . . .</b></h5>;
+        } else {
+            return (
                 <div>
-                    <h2>Abteilungsverwaltung für <i>"</i>{ this.state.name }<i>"</i></h2>
-                    <Locations Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } departmentID={ this.id } />
+                    <div className='form-group nonLocations'>
+                        <Dropdown options={ this.state.nonLocations } onChange={ (event) => this.handleLocationChange(event) } value={ this.state.location } placeholder="Standort hinzufügen" />
+                    </div>
+                    {
+                        (this.state.location === '') ?
+                        <button className="btn btn-primary Dropdown-disabled center-block" disabled>Hinzufügen</button> :
+                        <button className="btn btn-primary center-block" onClick={ () => this.AddLocation() }>Hinzufügen</button>
+                    }
+                </div>
+            );
+        }
+    }
+
+    SelectLocation(id) {
+        axios.get(Globals.BASE_PATH + 'groups/' + this.id + '/' + id)
+        .then( response => {
+            this.setState({
+                groupIds: response.data,
+                selectedGroup: '',
+                selectedGroupID: -1
+            })
+        })
+        .catch(error => {
+            console.log(error)
+        });
+        this.setState({
+            locationID: id
+        });
+    }
+
+    AddLocation() {
+        let nonLocations = [];
+        this.nonLocations.map(location => {
+            nonLocations.push(location.NAME);
+        });
+        if (nonLocations.indexOf(this.state.location) !== -1) {
+            let id;
+            this.nonLocations.map(location => {
+                if (location.NAME === this.state.location) {
+                    id = location.ID;
+                }
+            });
+            axios.post(Globals.BASE_PATH + 'departments/' + this.id +'/locations', {
+                location_id: id
+            }).then(response => {
+                this.InitLocations();
+                this.InitNonLocations();
+            }).catch(error => {
+                console.log(error);
+            });
+        } else {
+            this.InitNonLocations();
+        }
+    }
+
+    GetGroupOptions() {
+        let options = [];
+        this.state.groupIds.map((id, index) => {
+            options.push({
+                value: id,
+                label: 'Gruppe ' + (index + 1)
+            });
+        });
+        return options;
+    }
+
+    handleGroupChange(event) {
+        this.setState({
+            selectedGroup: event.label,
+            selectedGroupID: parseInt(event.value, 10),
+            dayName: ''
+        });
+    }
+
+    handleDayChange(event) {
+        this.setState({
+            dayName: event.value
+        });
+    }
+
+    renderTimetable() {
+
+    }
+
+    renderDayDropdown() {
+        console.log(this.state.selectedGroupID);
+        if (this.state.selectedGroupID !== -1) {
+            return (
+                <div className='form-group'>
+                    <label>Wochentag</label>
+                    <Dropdown options={ ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'] } onChange={ (event) => this.handleDayChange(event) } value={ this.state.dayName } placeholder="Tag auswählen" />
+                </div>
+            );
+        }
+    }
+
+    renderTimetables() {
+        if (this.state.locationID !== -1) {
+            return (
+                <div>
+                    <hr/>
                     <div>
-                        <h3>Schnuppertage</h3>
-                        { this.GetEvents() }
+                        <h5 className="form-header">Stundenplan</h5>
+                        <div className="well">
+                            <div className='form-group'>
+                                <label>Gruppe<span className="label-information"> - Wählen Sie die Gruppe aus.</span></label>
+                                <Dropdown options={ this.GetGroupOptions() } onChange={ (event) => this.handleGroupChange(event) } value={ this.state.selectedGroup.toString() } placeholder="Gruppe auswählen" />
+                            </div>
+                            { this.renderDayDropdown() }
+                            { this.renderTimetable() }
+                        </div>
                     </div>
                 </div>
             );
         }
+    }
+
+    render() {
+        return (
+            <div>
+                <div className="container container-small">
+                    <h4 className="form-header">{ this.state.contraction } - { this.state.name }</h4>
+                    <hr/>
+                    <div className="container locations">
+                        <h5 className="form-header">Standorte</h5>
+                        { this.renderLocations() }
+                    </div>
+                    { this.renderTimetables() }
+                </div>
+            </div>
+        );
     }
 
 }

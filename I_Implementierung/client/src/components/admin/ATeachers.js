@@ -24,53 +24,48 @@ class Teachers extends React.Component {
 
 
     componentDidMount() {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
-			this.props.Logout();
-
-        axios.get(Globals.BASE_PATH + 'teachers?authToken' + authToken)
+        axios.get(Globals.BASE_PATH + 'teachers')
         .then(response => this.setState({ teachers: response.data }))
 		.catch(error => {
-            if (error.response.status === 401)
-                this.props.Logout();
-            else
-                console.log(error);
+            console.log(error);
         });
     }
 
     DeleteTeacher(id) {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
-			this.props.Logout();
-
-        axios.delete(Globals.BASE_PATH + 'teachers/' + id + '?authToken')
-        .then(response => this.componentDidMount())
-		.catch(error => {
-            if (error.response.status === 401)
-                this.props.Logout();
-            else
-                console.log(error);
+        axios.delete(Globals.BASE_PATH + 'teachers/' + id)
+        .catch(error => {
+            console.log(error);
         });
+
+        let teachers = [];
+        this.state.teachers.map(teacher => {
+            if (teacher.ID !== id) {
+                teachers.push(teacher);
+            }
+        });
+        this.setState({ teachers: teachers });
     }
 
     CreateTeacher() {
         this.handleContractionLeave();
-
-        if (!this.state.contractionError) {
-            let authToken;
-            if (authToken = this.props.GetCookie() === undefined)
-                this.props.Logout();
-
-            axios.post(Globals.BASE_PATH + 'teachers?authToken' + authToken, {
+        if (this.state.contraction.length === 4) {
+            axios.post(Globals.BASE_PATH + 'teachers', {
                 contraction: this.state.contraction
-            }).then(response => this.componentDidMount())
+            }).then(response => {
+                let teachers = this.state.teachers;
+                console.log(response.data);
+                teachers.push({
+                    ID: response.data.insertId,
+                    CONTRACTION: this.state.contraction
+                });
+                this.setState({
+                    teachers: teachers,
+                    contraction: ''
+                });
+            })
             .catch(error => {
-                if (error.response.status === 401)
-                    this.props.Logout();
-                else
-                    console.log(error);
+                console.log(error);
             });
-            this.setState({ contraction: '' });
         }
     }
 
@@ -82,7 +77,7 @@ class Teachers extends React.Component {
     }
 
     handleContractionLeave() {
-        if (this.state.contraction === '' || this.state.contraction.length !== 4) {
+        if (this.state.contraction.length !== 4) {
             this.setState({
                 contractionError: true
             });
@@ -97,7 +92,7 @@ class Teachers extends React.Component {
     }
 
     handleEditContractionLeave() {
-        if (this.state.editContraction === '' || this.state.editContraction.length !== 4) {
+        if (this.state.editContraction.length !== 4) {
             this.setState({
                 editContractionError: true
             });
@@ -117,16 +112,30 @@ class Teachers extends React.Component {
     }
 
     SaveTeacher() {
-
+        let id = this.state.editID;
+        axios.put(Globals.BASE_PATH + 'teachers/' + id, {
+            contraction: this.state.editContraction
+        }).catch(error => {
+            console.log(error);
+        });
+        
+        let teachers = this.state.teachers;
+        teachers.map(teacher => {
+            if (teacher.ID === id) {
+                teacher.CONTRACTION = this.state.editContraction;
+            }
+            return null;
+        });
+        this.setState({
+            teachers: teachers,
+            editID: -1
+        });
     }
 
-    CloseTeacher() {
+    CloseTeacher(id) {
         this.handleEditContractionLeave();
-
-        if (this.state.editContractionError) {
-        } else {
+        if (this.state.editContraction.length === 4) {
             this.SaveTeacher();
-            this.setState({ editID: -1 });
         }
     }
 
@@ -144,57 +153,91 @@ class Teachers extends React.Component {
     }
 
     GetTeachers() {
-        return (
-            <div className="well">
-                <div className="table-responsive">
-                    <table class="table departments-table">
-                        <thead>
-                            <tr>
-                                <th>Lehrer ID</th>
-                                <th>Abkürzung</th>
-                                <th>Aktionen</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {
-                        this.state.teachers.map((teacher, index) => {
-                            if (teacher.ID === this.state.editID) {
-                                return (
-                                    <tr key={index} className='edit-row'>
-                                        <td>{ teacher.ID }</td>
-                                        <td><input type="text" className={ (this.state.editContractionError) ? 'form-control form-error' : 'form-control' } value={ this.state.editContraction } onChange={ (event) => this.handleEditContractionChange(event) } onBlur={ () => this.handleEditContractionLeave() }/></td>
-                                        <td><button className="btn btn-success btn-sm" onClick={ () => this.CloseTeacher(teacher.ID) } >Speichern</button></td>
-                                    </tr>
-                                );
-                            } else {
-                                return (
-                                    <tr key={index}>
-                                        <td>{ teacher.ID }</td>
-                                        <td>{ teacher.CONTRACTION }</td>
-                                        { this.GetButtons(teacher.ID) }
-                                    </tr>
-                                );
-                            }
-                        })
-                        }
-                        </tbody>
-                    </table>
+        if (this.state.teachers === undefined) {
+            return (
+                <div className="well">
+                    <div className="table-responsive">
+                        <table class="table departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Lehrer ID</th>
+                                    <th>Abkürzung</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <h5 className="text-center"><b>Lehrer werden geladen . . .</b></h5>
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        } else if (this.state.teachers.length === 0) {
+            return (
+                <div className="well">
+                    <div className="table-responsive">
+                        <table class="table departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Lehrer ID</th>
+                                    <th>Abkürzung</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <h5 className="text-center"><b>Keine Lehrer gefunden . . .</b></h5>
+                    </div>
+                </div>
+            );
+        } else {
+            return (
+                <div className="well">
+                    <div className="table-responsive">
+                        <table class="table departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Lehrer ID</th>
+                                    <th>Abkürzung</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {
+                            this.state.teachers.map((teacher, index) => {
+                                if (teacher.ID === this.state.editID) {
+                                    return (
+                                        <tr key={index} className='edit-row'>
+                                            <td>{ teacher.ID }</td>
+                                            <td><input type="text" className={ (this.state.editContractionError) ? 'form-control form-error' : 'form-control' } value={ this.state.editContraction } onChange={ (event) => this.handleEditContractionChange(event) } onBlur={ () => this.handleEditContractionLeave() }/></td>
+                                            <td><button className="btn btn-success btn-sm" onClick={ () => this.CloseTeacher(teacher.ID) } >Speichern</button></td>
+                                        </tr>
+                                    );
+                                } else {
+                                    return (
+                                        <tr key={index}>
+                                            <td>{ teacher.ID }</td>
+                                            <td>{ teacher.CONTRACTION }</td>
+                                            { this.GetButtons(teacher.ID) }
+                                        </tr>
+                                    );
+                                }
+                            })
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        };
     }
 
 
     render() {
-        if (this.state.teachers == undefined)
-            return <div className="container teachers"><h4 className="form-header">Lehrer</h4></div>;
         return (
             <div className="container">
                 <div className="teachers">
                     <h4 className="form-header">Lehrer</h4>
                     {  this.GetTeachers() }
+                    <hr/>
                 </div>
-                <hr/>
                 <div className="add-teacher">
                     <h4 className="form-header">Lehrer hinzufügen</h4>
                     <div className="well">

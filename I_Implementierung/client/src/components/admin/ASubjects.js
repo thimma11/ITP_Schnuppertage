@@ -39,38 +39,44 @@ class Teachers extends React.Component {
     }
 
     DeleteSubject(id) {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
-			this.props.Logout();
-
         axios.delete(Globals.BASE_PATH + 'subjects/' + id)
-        .then(response => this.componentDidMount())
-		.catch(error => {
+        .catch(error => {
             if (error.response.status === 401)
                 this.props.Logout();
             else
                 console.log(error);
         });
+
+        let subjects = [];
+        this.state.subjects.map(subject => {
+            if (subject.ID === id) {
+                subjects.push(subject);
+            }
+        });
+        this.setState({
+            subjects: subjects
+        });
     }
 
     CreateSubject() {
         this.handleNameLeave();
-
         if (this.state.name !== '') {
-            let authToken;
-            if (authToken = this.props.GetCookie() === undefined)
-                this.props.Logout();
-
-            axios.post(Globals.BASE_PATH + 'subjects?authToken' + authToken, {
+            axios.post(Globals.BASE_PATH + 'subjects', {
                 name: this.state.name
-            }).then(response => this.componentDidMount())
+            }).then(response => {
+                let subjects = this.state.subjects;
+                subjects.push({
+                    ID: response.data.insertId,
+                    Name: this.state.name
+                });
+                this.setState({
+                    subjects: subjects,
+                    name: ''
+                });
+            })
             .catch(error => {
-                if (error.response.status === 401)
-                    this.props.Logout();
-                else
-                    console.log(error);
+                console.log(error);
             });
-            this.setState({ name: '' });
         }
     }
 
@@ -117,13 +123,30 @@ class Teachers extends React.Component {
     }
 
     SaveSubject() {
-
+        let id = this.state.editID;
+        axios.put(Globals.BASE_PATH + 'subjects/' + id, {
+            name: this.state.editName
+        }).catch(error => {
+            console.log(error);
+        });
+        
+        let subjects = this.state.subjects;
+        subjects.map(subject => {
+            if (subject.ID === id) {
+                subject.Name = this.state.editName;
+            }
+            return null;
+        });
+        this.setState({
+            subjects: subjects,
+            editID: -1
+        });
     }
 
     CloseSubject() {
         this.handleEditNameLeave();
-
-        if (this.state.editNameError) {
+        if (this.state.editName !== '') {
+            this.SaveSubject();
         } else {
             this.SaveSubject();
             this.setState({ editID: -1 });
@@ -151,57 +174,91 @@ class Teachers extends React.Component {
     }
 
     GetSubjects() {
-        return (
-            <div className="well">
-                <div className="table-responsive">
-                    <table class="table departments-table">
-                        <thead>
-                            <tr>
-                                <th>Fach ID</th>
-                                <th>Name</th>
-                                <th>Aktionen</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {
-                        this.state.subjects.map((subject, index) => {
-                            if (subject.ID === this.state.editID) {
-                                return (
-                                    <tr key={index} className='edit-row'>
-                                        <td>{ subject.ID }</td>
-                                        <td><input type="text" className={ (this.state.editNameError) ? 'form-control form-error' : 'form-control' } value={ this.state.editName } onChange={ (event) => this.handleEditNameChange(event) } onBlur={ () => this.handleEditNameLeave() }/></td>
-                                        <td><button className="btn btn-success btn-sm" onClick={ () => this.CloseSubject(subject.ID) } >Speichern</button></td>
-                                    </tr>
-                                );
-                            } else {
-                                return (
-                                    <tr key={index}>
-                                        <td>{ subject.ID }</td>
-                                        <td>{ subject.Name }</td>
-                                        { this.GetButtons(subject.ID) }
-                                    </tr>
-                                );
-                            }
-                        })
-                        }
-                        </tbody>
-                    </table>
+        if (this.state.subjects === undefined) {
+            return (
+                <div className="well">
+                    <div className="table-responsive">
+                        <table class="table departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Fach ID</th>
+                                    <th>Name</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <h5 className="text-center"><b>Fächer werden geladen . . .</b></h5>
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        } else  if (this.state.subjects.length === 0) {
+            return (
+                <div className="well">
+                    <div className="table-responsive">
+                        <table class="table departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Fach ID</th>
+                                    <th>Name</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <h5 className="text-center"><b>Keine Fächer gefunden . . .</b></h5>
+                    </div>
+                </div>
+            );
+        } else {
+            return (
+                <div className="well">
+                    <div className="table-responsive">
+                        <table class="table departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Fach ID</th>
+                                    <th>Name</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {
+                            this.state.subjects.map((subject, index) => {
+                                if (subject.ID === this.state.editID) {
+                                    return (
+                                        <tr key={index} className='edit-row'>
+                                            <td>{ subject.ID }</td>
+                                            <td><input type="text" className={ (this.state.editNameError) ? 'form-control form-error' : 'form-control' } value={ this.state.editName } onChange={ (event) => this.handleEditNameChange(event) } onBlur={ () => this.handleEditNameLeave() }/></td>
+                                            <td><button className="btn btn-success btn-sm" onClick={ () => this.CloseSubject(subject.ID) } >Speichern</button></td>
+                                        </tr>
+                                    );
+                                } else {
+                                    return (
+                                        <tr key={index}>
+                                            <td>{ subject.ID }</td>
+                                            <td>{ subject.Name }</td>
+                                            { this.GetButtons(subject.ID) }
+                                        </tr>
+                                    );
+                                }
+                            })
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        }
     }
 
 
     render() {
-        if (this.state.subjects === undefined)
-        return <div className="container teachers"><h4 className="form-header">Fächer</h4></div>;
         return (
             <div className="container">
                 <div className="teachers">
                     <h4 className="form-header">Fächer</h4>
                     {  this.GetSubjects() }
+                    <hr/>
                 </div>
-                <hr/>
                 <div className="add-teacher">
                     <h4 className="form-header">Fach hinzufügen</h4>
                     <div className="well">

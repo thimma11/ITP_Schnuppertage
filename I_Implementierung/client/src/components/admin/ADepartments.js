@@ -14,6 +14,8 @@ class Departments extends React.Component {
 
     constructor() {
         super();
+        this.departmentID = undefined;
+        this.departmentName = undefined;
         this.state = {
             departments: undefined,
             departmentID: -1,
@@ -21,11 +23,13 @@ class Departments extends React.Component {
             contraction: '',
             contractionError: false,
             name: '',
-            nameError: false
+            nameError: false,
+            viewID: -1
         };
 
         this.CloseDepartment = this.CloseDepartment.bind(this);
         this.CloseDepartmentCreator = this.CloseDepartmentCreator.bind(this);
+        this.CloseViewDepartment =  this.CloseViewDepartment.bind(this);
     }
 
 
@@ -36,13 +40,12 @@ class Departments extends React.Component {
 
     /* Get all departments */
     InitDepartments() {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
-            this.props.Logout();
-        
         axios.get(Globals.BASE_PATH + 'departments')
-        .then(response => this.setState({ departments: response.data }))
-        .catch(error => console.log(error));
+        .then(response => {
+            this.setState({ departments: response.data })
+        }).catch(error => {
+            console.log(error)
+        });
     }
 
     /* Handle a specific department request */
@@ -56,11 +59,29 @@ class Departments extends React.Component {
                 });
             }
             return null;
-        })
+        });
     }
 
     SaveDepartment() {
+        let id = this.state.editID;
+        axios.put(Globals.BASE_PATH + 'departments/' + id, {
+            contraction: this.state.contraction,
+            name: this.state.name
+        }).catch(error => {
+            console.log(error);
+        });
 
+        let departments = this.state.departments;
+        departments.map(department => {
+            if (department.id === id) {
+                department.contraction = this.state.contraction;
+                department.name = this.state.name;
+            }
+        });
+        this.setState({
+            departments: departments,
+            editID: -1
+        });
     }
 
     /* Close a specific department view */
@@ -68,10 +89,8 @@ class Departments extends React.Component {
         this.handleNameLeave();
         this.handleContractionLeave();
 
-        if (this.state.nameError || this.state.contractionError) {
-        } else {
+        if (this.state.name !== '' && this.state.contraction !== '') {
             this.SaveDepartment();
-            this.setState({ editID: -1 });
         }
     }
 
@@ -81,18 +100,19 @@ class Departments extends React.Component {
     }
 
     DeleteDepartment(id) {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
-            this.props.Logout();
-
-        axios.delete(Globals.BASE_PATH + 'departments/' + id + '?authToken=' + authToken)
-        .then(response => this.InitDepartments())
+        axios.delete(Globals.BASE_PATH + 'departments/' + id)
         .catch(error => {
-            if (error.response.status === 401)
-                this.Logout();
-            else
-                console.log(error)
+            console.log(error);
         });
+
+        let departments = [];
+        this.state.departments.map(department => {
+            if (department.id !== id) {
+                departments.push(department);
+            }
+            return null;
+        });
+        this.setState({ departments: departments });
     }
 
     /* Set createDepartment to 'false' */
@@ -136,12 +156,27 @@ class Departments extends React.Component {
         }
     }
 
+    ViewDepartment(id) {
+        this.state.departments.map(department => {
+            if (department.id === id) {
+                this.departmentName = department.name;
+                this.departmentContraction = department.contraction;
+            }
+        })
+        this.setState({ departmentID: id });
+    }
+
+    CloseViewDepartment() {
+        this.setState({ departmentID: -1 });
+    }
+
     GetButtons(id) {
         if (this.state.editID === -1) {
             return (
-                <td>                   
+                <td>
                     <button className="btn btn-primary btn-sm button-space" onClick={ () => this.EditDepartment(id) } >Bearbeiten</button>
-                    <button className="btn btn-danger btn-sm" onClick={ () => this.DeleteDepartment(id) } >Löschen</button>
+                    <button className="btn btn-danger btn-sm button-space" onClick={ () => this.DeleteDepartment(id) } >Löschen</button>
+                    <button className="btn btn-info btn-sm" onClick={ () => this.ViewDepartment(id) } >Verwalten</button>
                 </td>
             );
         } else {
@@ -151,22 +186,57 @@ class Departments extends React.Component {
 
     /* Get departments if not undefined */
     GetDepartments() {
-        if (this.state.departments !== undefined) {
+        if (this.state.departments === undefined) {
             return (
-                <div>
-                    <div className="well">
-                        <div className="table-responsive">
-                            <table class="table departments-table">
-                                <thead>
-                                    <tr>
-                                        <th>Abteilungs ID</th>
-                                        <th>Abkürzung</th>
-                                        <th>Name</th>
-                                        <th>Aktionen</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {
+                <div className="well">
+                    <div className="table-responsive">
+                        <table class="table departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Abteilungs ID</th>
+                                    <th>Abkürzung</th>
+                                    <th>Name</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <h5 className="text-center"><b>Abteilungen werden geladen . . .</b></h5>
+                    </div>
+                </div>
+            );
+        } else if (this.state.departments.length === 0) {
+            return (
+                <div className="well">
+                    <div className="table-responsive">
+                        <table class="table departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Abteilungs ID</th>
+                                    <th>Abkürzung</th>
+                                    <th>Name</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <h5 className="text-center"><b>Keine Abteilungen gefunden . . .</b></h5>
+                    </div>
+                </div>
+            );
+        } else {
+            return (
+                <div className="well">
+                    <div className="table-responsive">
+                        <table class="table departments-table">
+                            <thead>
+                                <tr>
+                                    <th>Abteilungs ID</th>
+                                    <th>Abkürzung</th>
+                                    <th>Name</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {
                                 this.state.departments.map((department, index) => {
                                     if (department.id === this.state.editID) {
                                         return (
@@ -188,13 +258,10 @@ class Departments extends React.Component {
                                         );
                                     }
                                 })
-                                }
-                                </tbody>
-                            </table>
-                        </div>
+                            }
+                            </tbody>
+                        </table>
                     </div>
-                    <hr/>
-                    <DepartmentCreator GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } CloseDepartmentCreator={ this.CloseDepartmentCreator } />
                 </div>
             );
         }
@@ -207,10 +274,12 @@ class Departments extends React.Component {
                 <div className="container departments">
                     <h4 className="form-header">Abteilungen</h4>
                     { this.GetDepartments() }
+                    <hr/>
+                    <DepartmentCreator GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } CloseDepartmentCreator={ this.CloseDepartmentCreator } />
                 </div>
             );
         }
-        return <Department id={this.state.departmentID} GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } CloseDepartment={ this.CloseDepartment } />;
+        return <Department id={this.state.departmentID} name={ this.departmentName } contraction={ this.departmentContraction } GetCookie={ this.props.GetCookie } Logout={ this.props.Logout } CloseDepartment={ this.CloseViewDepartment } />;
         
     }
 
