@@ -30,30 +30,23 @@ router.get('/lessons/:day_name/:group_id', (req, res) => {
 router.post('/lessons/:day_name/:group_id', (req, res) => {
     let day_name = req.params.day_name;
     let group_id = req.params.group_id;
+
     let start = req.body.start;
     let end = req.body.end;
     let subject_id = req.body.subjects_id;
     let teacher_id = req.body.teachers_id;
 
-    connection.query(`SELECT d.id as id from daytables d WHERE d.day_name = ? and d.groups_id = ?`, [day_name, group_id], function (error, daytables, fields) {
-        if (error) throw error;
-        connection.query(`INSERT INTO lessons (start, end, subjects_id, teachers_id, daytables_id) VALUES(?, ?, ?, ?, ?)`, [start, end, subject_id, teacher_id, daytables[0]['id']], function (error, results, fields) {
-            if (error) throw error;
-            res.json(results);
-        });
-    });
-});
-
-router.post('/:id/lessons', (req, res) => {
-    let id = req.params.id;
     if (checkVariable(req.body.start) && checkVariable(req.body.end) && checkVariable(req.body.start) && checkVariable(req.body.start)) {
-        connection.query(``, [req.body.contraction], function (error, results, fields) {
+        connection.query(`SELECT d.id as id from daytables d WHERE d.day_name = ? and d.groups_id = ?`, [day_name, group_id], function (error, daytables, fields) {
             if (error) throw error;
-            res.json(results);
+            connection.query(`INSERT INTO lessons (start, end, subjects_id, teachers_id, daytables_id) VALUES(?, ?, ?, ?, ?)`, [start, end, subject_id, teacher_id, daytables[0]['id']], function (error, results, fields) {
+                if (error) throw error;
+                res.json(results);
+            });
         });
     }
     else {
-
+        res.json("error: ");
     }
 });
 
