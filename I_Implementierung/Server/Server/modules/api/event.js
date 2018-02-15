@@ -12,10 +12,14 @@ var connection = mysql.createConnection({
 
 router.delete('/:id', (req, res) => {
     let id = req.params.id;
-    connection.query(`DELETE from events WHERE ID = ${req.params.id};`, function (error, results, fields) {
+    connection.query('DELETE FROM participants WHERE participants.EVENTS_ID = ?', [req.params.id], function (error, results, fields) {
         if (error) console.log(error);
-        res.json(results);
+        connection.query(`DELETE from events WHERE ID = ${req.params.id};`, function (error, results, fields) {
+            if (error) console.log(error);
+            res.json(results);
+        });
     });
+    
 });
 
 router.post('/', (req, res) => {
