@@ -178,7 +178,7 @@ router.get('/:id', (req, res) => {
 
 router.put('/:id', (req, res) => {
     let id = req.params.id;
-    connection.query(`UPDATE departments set contraction=?, name=? WHERE id = ${id};`,[req.body.contraction, req.body.name] ,function (error, results, fields) {
+    connection.query(`UPDATE departments set contraction=?, name=? WHERE id = ${id};`, [req.body.contraction, req.body.name], function (error, results, fields) {
         if (error) console.log(error);
         res.json(results);
     });
