@@ -14,6 +14,9 @@ body {
 .departments {
     max-width: 900px;
 }
+.departments .responsive-table {
+    min-width: 200px;
+}
 .departments-table {
     margin-bottom: 0;
 }

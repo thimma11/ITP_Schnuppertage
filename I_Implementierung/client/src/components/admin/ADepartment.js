@@ -87,7 +87,7 @@ class Department extends React.Component {
 
     DeleteLocation(id) {
         axios.delete(Globals.BASE_PATH + 'departments/' + this.id + '/locations/' + id)
-        .then(() => {
+        .then(response => {
             this.InitLocations();
             this.InitNonLocations();
         })

@@ -80,7 +80,7 @@ class EventCreator extends React.Component {
         let group = this.checkGroupSize();
 
         if (location && date && group) {
-            axios.post(Globals.BASE_PATH + 'departments/' + this.departmentID + '/events', {
+            axios.post(Globals.BASE_PATH + 'events', {
                 date: this.state.date,
                 locations_id: this.locationID,
                 departments_id: this.departmentID,

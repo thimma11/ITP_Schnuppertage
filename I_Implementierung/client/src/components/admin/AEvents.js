@@ -16,13 +16,15 @@ class Events extends React.Component {
         super(props);
         this.departments = undefined;
         this.departmentID = undefined;
+        this.eventID = undefined;
         this.state = {
             departments: undefined,
             department: '',
             events: undefined,
             eventID: -1,
             entries: undefined,
-            viewEntries: -1
+            viewEntries: -1,
+            participants: undefined
         };
     }
 
@@ -56,7 +58,20 @@ class Events extends React.Component {
         axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/events?authToken=' + authToken)
         .then(response => {
             this.setState({ events: response.data });
-        })
+        });
+    }
+
+    initParticipantsForEvent(eventID) {
+        this.eventID = eventID;
+
+        let authToken;
+        if (authToken = this.props.GetCookie() === undefined)
+            this.props.Logout();
+
+        axios.get(Globals.BASE_PATH + 'participants/events/' + eventID + "?authToken=" + authToken)
+        .then(response => {
+            this.setState({ participants: response.data });
+        });
     }
 
     handleDepartmentChange(department) {
@@ -161,7 +176,7 @@ class Events extends React.Component {
                                             <td>{ event.DATE.split('T')[0] }</td>
                                             <td>{ event.NAME }</td>
                                             <td>
-                                                <button className="btn btn-primary btn-sm button-space" onClick={ () => this.ShowEntries(event.ID) } >Teilnehmer</button>
+                                                <button className="btn btn-primary btn-sm button-space" onClick={ () => this.initParticipantsForEvent(event.ID) } >Teilnehmer</button>
                                                 <button className="btn btn-danger btn-sm" onClick={ () => this.DeleteEvent(event.ID) } >Löschen</button>
                                             </td>
                                         </tr>
@@ -177,9 +192,21 @@ class Events extends React.Component {
         }
     }
 
+    CloseEventCreator() {
+        this.initEvents();
+    }
+
     renderEventCreator() {
+        if (this.state.participants !== undefined) {
+            return (
+                <div>
+                    <hr/>
+                    <h4 className="form-header">Teilnehmer</h4>
+                </div>
+            );
+        }
         if (this.departmentID !== undefined) {
-            return <div><hr/><EventCreator key={ this.departmentID } Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } CloseEventCreator={ this.CloseEventCreator } departmentID={ this.departmentID } /></div>;
+            return <div><hr/><EventCreator key={ this.departmentID } Logout={ this.props.Logout } GetCookie={ this.props.GetCookie } CloseEventCreator={ this.CloseEventCreator.bind(this) } departmentID={ this.departmentID } /></div>;
         }
     }
 

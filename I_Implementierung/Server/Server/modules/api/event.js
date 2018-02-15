@@ -33,7 +33,7 @@ router.get('/dates/:dep_id/:loc_id', (req, res) => {
     let dep = req.params.dep_id;
     let loc = req.params.loc_id;
     arr = []
-    connection.query(`SELECT DATE_FORMAT(date,\'%m-%d-%Y\') as date from events where departments_id = ${dep} and locations_id = ${loc} and date >= NOW();`, function (error, results, fields) {
+    connection.query(`SELECT DATE_FORMAT(date,\'%Y-%m-%d\') as date from events where departments_id = ${dep} and locations_id = ${loc} and date >= NOW();`, function (error, results, fields) {
         if (error) throw error;
         for (let index = 0; index < results.length; index++) {
             arr.push(results[index]['date']);

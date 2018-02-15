@@ -310,6 +310,7 @@ class EventRegistration extends React.Component {
     }
 
     renderLocations() {
+        console.log(this.departmentID);
         if (this.departmentID === undefined) {
             return (
                 <div className={ (this.state.locationError) ? 'form-group dropdown-error' : 'form-group' }>
