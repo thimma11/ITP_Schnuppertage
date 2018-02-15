@@ -20,9 +20,8 @@ router.post('/', (req, res) => {
 
         connection.query(`INSERT INTO participants (firstname, lastname, phone, email, school_location, school_typ, events_id) VALUES (?, ?, ?, ?, ?, ?, ?)`, [req.body.firstname, req.body.lastname, req.body.phone, req.body.email, req.body.school_location, req.body.school_typ, results[0].id], function (error, results, fields) {
             if (error) console.log(error);
+            res.json(results);
         });
-
-        res.json(results);
     });
 });
 
