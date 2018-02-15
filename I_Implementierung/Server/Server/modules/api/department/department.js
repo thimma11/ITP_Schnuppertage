@@ -131,6 +131,8 @@ router.delete('/:id/locations/:location_id', (req, res) => {
                                             if (error) console.log(error);
                                             connection.query('DELETE FROM EVENTS WHERE EVENTS.DEPARTMENTS_ID = ? AND EVENTS.LOCATIONS_ID = ?', [id, location_id], (error, results, fields) => {
                                                 if (error) console.log(error);
+                                                if (!res.finished)
+                                                    res.json("success");
                                             });
                                         });
                                     });
@@ -139,7 +141,6 @@ router.delete('/:id/locations/:location_id', (req, res) => {
                     });
                 });
         });
-        res.json("success");
     });
 
 });
