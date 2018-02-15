@@ -49,7 +49,7 @@ router.delete('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag']
+    days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'];
     connection.query(`INSERT INTO groups(department_id, location_id) VALUES(?, ?);`, [req.body.department_id, req.body.location_id], function (error, results, fields) {
         if (error) throw error;
 

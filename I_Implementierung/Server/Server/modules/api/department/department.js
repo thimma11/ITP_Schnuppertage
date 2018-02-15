@@ -12,14 +12,14 @@ var connection = mysql.createConnection({
 
 router.get('/:id/events', (req, res) => {
     let id = req.params.id;
-    connection.query(`SELECT events.ID, events.DATE, locations.NAME FROM events JOIN locations ON locations.ID = events.LOCATIONS_ID WHERE events.DEPARTMENTS_ID = ${id};`, function (error, results, fields) {
+    connection.query(`SELECT events.ID, DATE_FORMAT(events.DATE,\'%Y-%m-%d\') as DATE, locations.NAME FROM events JOIN locations ON locations.ID = events.LOCATIONS_ID WHERE events.DEPARTMENTS_ID = ${id};`, function (error, results, fields) {
         if (error) throw error;
         res.json(results);
     });
 });
 router.post('/:id/events', (req, res) => {
     let id = req.params.id; 
-    connection.query(`INSERT INTO events (events.DATE, events.DEPARTMENTS_ID, events.LOCATIONS_ID) VALUES (?, ?, ?);`, [req.body.date, id, req.body.location_id],function (error, results, fields) {
+    connection.query(`INSERT INTO events (events.DATE, events.DEPARTMENTS_ID, events.LOCATIONS_ID) VALUES (?, ?, ?);`, [req.body.date, id, req.body.location_id], function (error, results, fields) {
         if (error) throw error;
         res.json(results);
     });
