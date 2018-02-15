@@ -130,10 +130,17 @@ router.delete('/:id/locations/:location_id', (req, res) => {
                                         if (error) console.log(error);
                                         connection.query('DELETE FROM TIMETABLES WHERE TIMETABLES.DEPARTMENTS_ID = ? AND TIMETABLES.LOCATIONS_ID = ?', [id, location_id], (error, results, fields) => {
                                             if (error) console.log(error);
-                                            connection.query('DELETE FROM EVENTS WHERE EVENTS.DEPARTMENTS_ID = ? AND EVENTS.LOCATIONS_ID = ?', [id, location_id], (error, results, fields) => {
+                                            connection.query('SELECT EVENTS.ID FROM EVENTS WHERE EVENTS.DEPARTMENTS_ID = ? AND EVENTS.LOCATIONS_ID = ?', [id, location_id], (error, results, fields) => {
                                                 if (error) console.log(error);
-                                                if (!res.finished)
-                                                    res.json("success");
+                                                results.forEach((event_item) => {
+                                                    connection.query("DELETE FROM participants WHERE participants.EVENTS_ID = ?;", [event_item.ID], (error, results, fields) => {
+                                                        connection.query('DELETE FROM EVENTS WHERE EVENTS.ID = ?', [event_item.ID], (error, results, fields) => {
+                                                            if (error) console.log(error);
+                                                            if (!res.finished)
+                                                                res.json("success");
+                                                        });
+                                                    });
+                                                });
                                             });
                                         });
                                     });
