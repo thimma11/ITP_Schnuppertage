@@ -113,6 +113,7 @@ router.delete('/:id/locations/:location_id', (req, res) => {
     //zuerst alle Gruppen für den timetable finden
     connection.query('SELECT GROUPS.ID FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ? AND GROUPS.LOCATION_ID = ?', [id, location_id], (error, results, fields) => {
         if (error) console.log(error);
+        console.log(results);
         results.forEach((group_item) => {
             if (typeof group_item != 'undefined')
                 connection.query('SELECT DAYTABLES.ID FROM DAYTABLES WHERE DAYTABLES.GROUPS_ID = ?', [group_item.ID], (error, results, fields) => {
