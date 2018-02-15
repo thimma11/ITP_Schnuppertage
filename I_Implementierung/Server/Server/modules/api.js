@@ -26,6 +26,10 @@ router.get('/', (req, res) => {
     res.send("asd");
 });
 
+router.get('/confirm_registration/:id', (req, res) => {
+    user_id = req.params.id;
 
+    // set active bool for user
+});
 
 module.exports = router;
