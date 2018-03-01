@@ -111,44 +111,9 @@ router.delete('/:id/locations/:location_id', (req, res) => {
     let id = req.params.id;
     let location_id = req.params.location_id;
     //zuerst alle Gruppen für den timetable finden
-    connection.query('SELECT GROUPS.ID FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ? AND GROUPS.LOCATION_ID = ?', [id, location_id], (error, results, fields) => {
+    connection.query('DELETE FROM TIMETABLES WHERE TIMETABLES.DEPARTMENTS_ID = ? AND TIMETABLES.LOCATIONS_ID = ?', [id, location_id], (error, results, fields) => {
         if (error) console.log(error);
-        console.log(results);
-        results.forEach((group_item) => {
-            if (typeof group_item != 'undefined')
-                connection.query('SELECT DAYTABLES.ID FROM DAYTABLES WHERE DAYTABLES.GROUPS_ID = ?', [group_item.ID], (error, results, fields) => {
-                    if (error) console.log(error);
-                    results.forEach((daytable_item) => {
-                        if (typeof daytable_item != 'undefined')
-                            connection.query('DELETE FROM LESSONS WHERE LESSONS.DAYTABLES_ID = ?', [daytable_item.ID], (error, results, fields) => {
-                                if (error) console.log(error);
-                                console.log("delete lessons");
-                                connection.query('DELETE FROM DAYTABLES WHERE DAYTABLES.GROUPS_ID = ?', [group_item.ID], (error, results, fields) => {
-                                    if (error) console.log(error);
-                                    console.log("delete daytables");
-                                    connection.query('DELETE FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ? AND GROUPS.LOCATION_ID = ?', [id, location_id], (error, results, fields) => {
-                                        if (error) console.log(error);
-                                        connection.query('DELETE FROM TIMETABLES WHERE TIMETABLES.DEPARTMENTS_ID = ? AND TIMETABLES.LOCATIONS_ID = ?', [id, location_id], (error, results, fields) => {
-                                            if (error) console.log(error);
-                                            connection.query('SELECT EVENTS.ID FROM EVENTS WHERE EVENTS.DEPARTMENTS_ID = ? AND EVENTS.LOCATIONS_ID = ?', [id, location_id], (error, results, fields) => {
-                                                if (error) console.log(error);
-                                                results.forEach((event_item) => {
-                                                    connection.query("DELETE FROM participants WHERE participants.EVENTS_ID = ?;", [event_item.ID], (error, results, fields) => {
-                                                        connection.query('DELETE FROM EVENTS WHERE EVENTS.ID = ?', [event_item.ID], (error, results, fields) => {
-                                                            if (error) console.log(error);
-                                                            if (!res.finished)
-                                                                res.json("success");
-                                                        });
-                                                    });
-                                                });
-                                            });
-                                        });
-                                    });
-                                });
-                            });
-                    });
-                });
-        });
+        res.json("success");
     });
 
 });
@@ -194,36 +159,8 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
     let id = req.params.id;
-    connection.query('SELECT GROUPS.ID FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ?', [id], (error, results, fields) => {
+    connection.query('DELETE FROM DEPARTMENTS WHERE DEPARTMENTS.ID = ?', [id], (error, results, fields) => {
         if (error) console.log(error);
-        results.forEach((group_item) => {
-            if (typeof group_item != 'undefined')
-                connection.query('SELECT DAYTABLES.ID FROM DAYTABLES WHERE DAYTABLES.GROUPS_ID = ?', [group_item.ID], (error, results, fields) => {
-                    if (error) console.log(error);
-                    results.forEach((daytable_item) => {
-                        if (typeof daytable_item != 'undefined')
-                            connection.query('DELETE FROM DAYTABLES WHERE DAYTABLES.GROUPS_ID = ?', [group_item.ID], (error, results, fields) => {
-                                if (error) console.log(error);
-                                connection.query('DELETE FROM LESSONS WHERE LESSONS.DAYTABLES_ID = ?', [daytable_item.ID], (error, results, fields) => {
-                                    if (error) console.log(error);
-                                    connection.query('DELETE FROM GROUPS WHERE GROUPS.DEPARTMENT_ID = ?', [id], (error, results, fields) => {
-                                        if (error) console.log(error);
-                                        connection.query('DELETE FROM TIMETABLES WHERE TIMETABLES.DEPARTMENTS_ID = ?', [id], (error, results, fields) => {
-                                            if (error) console.log(error);
-                                            connection.query('DELETE FROM EVENTS WHERE EVENTS.DEPARTMENTS_ID = ?', [id], (error, results, fields) => {
-                                                if (error) console.log(error);
-                                                connection.query('DELETE FROM DEPARTMENTS WHERE DEPARTMENTS.ID = ?', [id], (error, results, fields) => {
-                                                    if (error) console.log(error);
-                                                });
-                                            });
-                                        });
-                                    });
-                                });
-                            });
-                    
-                    });
-                });
-        });
         res.json("success");
     });
 });

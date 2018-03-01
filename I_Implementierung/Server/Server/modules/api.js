@@ -11,6 +11,16 @@ var group = require('./api/group/group');
 var timetable = require('./api/timetable');
 var daytable = require('./api/daytable/daytable');
 
+var mysql = require('mysql');
+var database_config = require('./config/database');
+
+var connection = mysql.createConnection({
+    host: database_config.host,
+    user: database_config.username,
+    password: database_config.password,
+    database: database_config.database
+});
+
 router.use('/subjects', subject);
 router.use('/teachers', teacher);
 router.use('/lessons', lesson);
@@ -26,6 +36,17 @@ router.get('/', (req, res) => {
     res.send("asd");
 });
 
+router.get('/confirm_registration/:id', (req, res) => {
+    user_id = req.params.id;
 
+    connection.query(`UPDATE participants set is_confirmed=true WHERE id = ${user_id};`, function (error, results, fields) {
+        if (error) {
+            console.log(error);
+        }
+        else {
+            res.send("Ihre Teilnahme wurde bestätigt!");
+        }
+    });
+});
 
 module.exports = router;

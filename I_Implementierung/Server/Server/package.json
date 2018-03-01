@@ -7,7 +7,9 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "jsonwebtoken": "^8.1.0",
-    "mysql": "^2.15.0"
+    "mysql": "^2.15.0",
+    "nodemailer": "^4.4.2",
+    "nodemailer-smtp-transport": "^2.7.4"
   },
   "devDependencies": {},
   "scripts": {
