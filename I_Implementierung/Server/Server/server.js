@@ -40,8 +40,7 @@ app.get('/', (req, res) => {
 });
 app.post('/authenticate', (req, res) => {
     console.log("POST");
-    res.json("asd");
-    /*if (req.body.username != undefined && req.body.password != undefined && req.body.username != "" && req.body.password != "") {
+    if (req.body.username != undefined && req.body.password != undefined && req.body.username != "" && req.body.password != "") {
         let mysql = require('mysql');
         let database_config = require('./modules/config/database');
 
@@ -70,13 +69,15 @@ app.post('/authenticate', (req, res) => {
         });
     }
     else {
-        res.status(200).send({
+        return res.status(403).send({
             success: false,
             message: 'No token provided.'
         });
-    } */
+    }
 
 });
+
+app.use('/api', require('./modules/api'));
 
 app.use(function (req, res, next) {
 
@@ -119,8 +120,6 @@ app.use(function (req, res, next) {
 
     }
 });
-
-app.use('/api', require('./modules/api'));
 
 var server = http.createServer(app);
 server.listen(port, () => {
