@@ -39,7 +39,8 @@ class EventRegistration extends React.Component {
             schoolLocation: '',
             schoolLocationError: false,
             schoolType: '',
-            schoolTypeError: false
+            schoolTypeError: false,
+            showSuccessfulRegistration: false
         };
     }
 
@@ -395,7 +396,21 @@ class EventRegistration extends React.Component {
     }
 
     registerParticipant() {
-
+        axios.post(Globals.BASE_PATH + 'participants', {
+            firstname: this.state.firstname,
+            lastname: this.state.lastname,
+            phone: this.state.phone,
+            email: this.state.email,
+            school_location: this.state.schoolLocation,
+            school_typ: this.state.schoolType,
+            location_id: this.locationID,
+            department_id: this.departmentID,
+            date: this.state.date
+        }).then(response => {
+            this.setState({
+                showSuccessfulRegistration: true
+            });
+        })
     }
 
     checkAllValues() {
@@ -417,6 +432,16 @@ class EventRegistration extends React.Component {
 
 
     render() {
+        if (this.state.showSuccessfulRegistration) {
+            return(
+                <div className="container container-small">
+                    <h4 className="form-header">Danke für Ihre Teilnahme!</h4>
+                    <div className="well">
+                        <h5 className="text-center">Weitere Informationen bekommen Sie an die angebebene E-Mail zugesendet.</h5>
+                    </div>
+                </div>
+            );
+        }
         return (
             <div className="container container-small">
                 <h4 className="form-header">Anmeldungsformular</h4>
