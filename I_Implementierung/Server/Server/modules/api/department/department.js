@@ -10,6 +10,18 @@ var connection = mysql.createConnection({
     database: database_config.database
 });
 
+router.all('*', function (req, res, next) {
+    console.log("departments alll");
+    try {
+        connection.connect();
+        console.log("no error");
+        next();
+    } catch (e) {
+        res.setHeader(500);
+        res.end("connection failed");
+    }
+});
+
 router.get('/:id/events', (req, res) => {
     let id = req.params.id;
     connection.query(`SELECT events.ID, DATE_FORMAT(events.DATE,\'%Y-%m-%d\') as DATE, locations.NAME FROM events JOIN locations ON locations.ID = events.LOCATIONS_ID WHERE events.DEPARTMENTS_ID = ${id};`, function (error, results, fields) {

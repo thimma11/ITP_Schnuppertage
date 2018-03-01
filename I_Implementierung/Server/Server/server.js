@@ -77,8 +77,6 @@ app.post('/authenticate', (req, res) => {
 
 });
 
-app.use('/api', require('./modules/api'));
-
 app.use(function (req, res, next) {
 
     // check header or url parameters or post parameters for token
@@ -120,6 +118,8 @@ app.use(function (req, res, next) {
 
     }
 });
+
+app.use('/api', require('./modules/api'));
 
 var server = http.createServer(app);
 server.listen(port, () => {
