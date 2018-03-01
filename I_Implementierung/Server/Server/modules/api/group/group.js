@@ -11,14 +11,20 @@ var connection = mysql.createConnection({
 });
 
 router.all('*', function (req, res, next) {
-    
-    try {
-        connection.connect();
+    var p = new Promise(function (resolve, reject) {
+        try {
+            connection.connect();
+            resolve();
+        } catch (e) {
+            reject();
+        }
+    });
+    p.then((value) => {
         next();
-    } catch (e) {
+    }, (reason) => {
         res.setHeader(500);
         res.end("connection failed");
-    }
+    });
 });
 
 router.get('/:id/daytables', (req, res) => {

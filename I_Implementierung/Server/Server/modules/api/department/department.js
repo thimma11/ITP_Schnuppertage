@@ -11,7 +11,6 @@ var connection = mysql.createConnection({
 });
 
 router.all('*', function (req, res, next) {
-    console.log("departments alll");
     var p = new Promise(function (resolve, reject) {
         try {
             connection.connect();
