@@ -15,7 +15,7 @@ var connection = mysql.createConnection({
 var nodemailer = require('nodemailer');
 
 var email = 't.himmer@htlkrems.at';
-var pass = ''
+var pass = '11.11.1998'
 
 var server_url = 'http://localhost:1337/api/confirm_registration/'
 
