@@ -12,14 +12,20 @@ var connection = mysql.createConnection({
 
 router.all('*', function (req, res, next) {
     console.log("departments alll");
-    try {
-        connection.connect();
-        console.log("no error");
+    var p = new Promise(function (resolve, reject) {
+        try {
+            connection.connect();
+            resolve();
+        } catch (e) {
+            reject();
+        }
+    });
+    p.then((value) => {
         next();
-    } catch (e) {
+    }, (reason) => {
         res.setHeader(500);
         res.end("connection failed");
-    }
+    });
 });
 
 router.get('/:id/events', (req, res) => {
