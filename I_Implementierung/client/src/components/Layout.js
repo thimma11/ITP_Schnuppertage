@@ -61,7 +61,7 @@ class Layout extends React.Component {
 
 	//#region Authentification System
 	Login(username, password) {
-		let response = axios.post(Globals.BASE_PATH + 'login', {
+		let response = axios.post(Globals.LOGIN + 'authenticate', {
 			username: username,
 			password: password
 		}).then(response => {
@@ -86,7 +86,7 @@ class Layout extends React.Component {
 			if (this.role === 'ADMIN')
 				return <Admin GetCookie={ this.GetCookie } Logout={ this.Logout } />;
 			if (this.role === 'USER')
-			return <User Login={ this.Login } />;
+				return <User Login={ this.Login } />;
 			return <Admin GetCookie={ this.GetCookie } Logout={ this.Logout } />;
 		} else {
 			return 'Loading...';

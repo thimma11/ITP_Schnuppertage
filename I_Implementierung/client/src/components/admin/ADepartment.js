@@ -80,6 +80,7 @@ class Department extends React.Component {
             });
             this.setState({
                 location: '',
+                locationID: -1,
                 nonLocations: nonLocations
             });
         });
@@ -116,7 +117,6 @@ class Department extends React.Component {
                         <table class="table departments-table">
                             <thead>
                                 <tr>
-                                    <th>Standort ID</th>
                                     <th>Name</th>
                                     <th>Aktionen</th>
                                 </tr>
@@ -133,7 +133,6 @@ class Department extends React.Component {
                         <table class="table departments-table">
                             <thead>
                                 <tr>
-                                    <th>Standort ID</th>
                                     <th>Name</th>
                                     <th>Aktionen</th>
                                 </tr>
@@ -141,6 +140,7 @@ class Department extends React.Component {
                         </table>
                         <h5 className="text-center"><b>Keine Standorte gefunden . . .</b></h5>
                     </div>
+                    { this.renderLocationAdder() }
                 </div>
             );
         } else {
@@ -198,14 +198,20 @@ class Department extends React.Component {
         }
     }
 
-    SelectLocation(id) {
+    SelectLocation(id, selectLast) {
         axios.get(Globals.BASE_PATH + 'groups/' + this.id + '/' + id)
         .then( response => {
             this.setState({
                 groupIds: response.data,
                 selectedGroup: '',
                 selectedGroupID: -1
-            })
+            });
+            if (selectLast) {
+                this.setState({
+                    selectedGroup: 'Gruppe ' + this.state.groupIds.length,
+                    selectedGroupID: this.state.groupIds[this.state.groupIds.length - 1]
+                });
+            }
         })
         .catch(error => {
             console.log(error)
@@ -385,6 +391,24 @@ class Department extends React.Component {
         }
     }
 
+    AddGroup() {
+        let authToken;
+        if (authToken = this.props.GetCookie() === undefined)
+            this.props.Logout();
+        
+        axios.post(Globals.BASE_PATH + 'groups', {
+            location_id: this.state.locationID,
+            department_id: this.id
+        }).then(response => {
+            this.SelectLocation(this.state.locationID, true);
+            this.setState({
+                selectedGroup: '',
+                selectedGroupID: -1,
+                dayName: ''
+            });
+        });
+    }
+
     renderLessonCreator() {
         return (
             <tr>
@@ -491,6 +515,7 @@ class Department extends React.Component {
                     <div>
                         <h5 className="form-header">Stundenplan</h5>
                         <div className="well">
+                            <button className="btn btn-sm btn-primary center-block" style={{marginTop: '10px'}} onClick={ () => this.AddGroup() }>Neue Gruppe erstellen</button>
                             <div className='form-group'>
                                 <label>Gruppe<span className="label-information"> - Wählen Sie die Gruppe aus.</span></label>
                                 <Dropdown options={ this.GetGroupOptions() } onChange={ (event) => this.handleGroupChange(event) } value={ this.state.selectedGroup.toString() } placeholder="Gruppe auswählen" />

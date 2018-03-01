@@ -144,13 +144,15 @@ class EventCreator extends React.Component {
         } else {
             this.setState({
                 location: location.value,
-                locationError: false
+                locationError: false,
+                currentGroupSize: ''
             });
             this.locations.map(loc => {
                 if (loc.NAME === location.value) {
                     this.locationID = loc.ID;
                 }
             });
+            this.InitGroupSize();
         }
     }
 

@@ -3,6 +3,8 @@
 import React from 'react';
 import axios from 'axios';
 import Dropdown from 'react-dropdown';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 //#endregion
 
 import EventCreator from './AEventCreator';
@@ -24,7 +26,8 @@ class Events extends React.Component {
             eventID: -1,
             entries: undefined,
             viewEntries: -1,
-            participants: undefined
+            participants: undefined,
+            eventDate: ''
         };
     }
 
@@ -61,7 +64,7 @@ class Events extends React.Component {
         });
     }
 
-    initParticipantsForEvent(eventID) {
+    initParticipantsForEvent(eventID, eventDate) {
         this.eventID = eventID;
 
         let authToken;
@@ -70,7 +73,10 @@ class Events extends React.Component {
 
         axios.get(Globals.BASE_PATH + 'participants/events/' + eventID + "?authToken=" + authToken)
         .then(response => {
-            this.setState({ participants: response.data });
+            this.setState({
+                participants: response.data,
+                eventDate: eventDate
+            });
         });
     }
 
@@ -176,7 +182,7 @@ class Events extends React.Component {
                                             <td>{ event.DATE.split('T')[0] }</td>
                                             <td>{ event.NAME }</td>
                                             <td>
-                                                <button className="btn btn-primary btn-sm button-space" onClick={ () => this.initParticipantsForEvent(event.ID) } >Teilnehmer</button>
+                                                <button className="btn btn-primary btn-sm button-space" onClick={ () => this.initParticipantsForEvent(event.ID,  event.DATE.split('T')[0]) } >Teilnehmer</button>
                                                 <button className="btn btn-danger btn-sm" onClick={ () => this.DeleteEvent(event.ID) } >Löschen</button>
                                             </td>
                                         </tr>
@@ -196,12 +202,71 @@ class Events extends React.Component {
         this.initEvents();
     }
 
+    GeneratePDF() {
+        let input = document.getElementById('#divToPrint');
+        html2canvas(input)
+        .then((canvas) => {
+        let pdf = new jsPDF();
+        pdf.text(35, 35, "hallo");
+        pdf.fromHTML("<h2 style=\"float: left;\">A</h2><h3 style=\"float: right;\">B</h3>");
+        pdf.save("download.pdf");
+      })
+    ;
+    }
+
     renderEventCreator() {
         if (this.state.participants !== undefined) {
             return (
                 <div>
                     <hr/>
-                    <h4 className="form-header">Teilnehmer</h4>
+                    <h4 className="form-header">Teilnehmerliste - { this.state.eventDate }</h4>
+                    <div className="well">
+                        {
+                            (this.state.participants.length === 0) ? <h5 className="text-center"><b>Keine Teilnehmer gefunden . . .</b></h5> :
+                            <div>
+                                <div className="table-responsive">
+                                    <table class="table departments-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Vorname</th>
+                                                <th>Nachname</th>
+                                                <th>Telefon</th>
+                                                <th>E-Mail</th>
+                                                <th>Schulstandort</th>
+                                                <th>Schultyp</th>
+                                                <th>Aktionen</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {
+                                        this.state.participants.map((participant, index) => {
+                                            return (
+                                                <tr key={index}>
+                                                    <td>{ participant.FIRSTNAME }</td>
+                                                    <td>{ participant.LASTNAME }</td>
+                                                    <td>{ participant.PHONE }</td>
+                                                    <td>{ participant.EMAIL }</td>
+                                                    <td>{ participant.SCHOOL_LOCATION }</td>
+                                                    <td>{ participant.SCHOOL_TYP }</td>
+                                                    <td>
+                                                        <button className="btn btn-danger btn-sm button-space" onClick={ () => this.initParticipantsForEvent(participant.ID) } >Austragen</button>
+                                                        <button className="btn btn-primary btn-sm button-space" onClick={ () => this.GeneratePDF() } >PDF</button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                        }
+                                        </tbody>
+                                    </table>
+                                    <div id="divToPrint">
+                                        <h2>Note: Here the dimensions of div are same as A4</h2> 
+                                        <p>You Can add any component here</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <button style={{marginTop: '10px'}} className="center-block btn btn-primary" onClick={ () => this.setState({ participants: undefined }) }>Teilnehmerliste schließen</button>
+                    </div>
                 </div>
             );
         }
@@ -213,13 +278,15 @@ class Events extends React.Component {
     
     render() {
         return (
-            <div className="container events">
-                <h4 className="form-header">Schnuppertage</h4>
-                <div className="well">
-                    { this.renderDepartments() }
-                    { this.renderEvents() }
+            <div>
+                <div className="container events">
+                    <h4 className="form-header">Schnuppertage</h4>
+                    <div className="well">
+                        { this.renderDepartments() }
+                        { this.renderEvents() }
+                    </div>
+                    { this.renderEventCreator() }
                 </div>
-                { this.renderEventCreator() }
             </div>
         );
     }

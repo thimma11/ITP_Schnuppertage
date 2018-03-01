@@ -10,7 +10,6 @@ var connection = mysql.createConnection({
     database: database_config.database
 });
 
-
 router.get('/', (req, res) => {
     connection.query(`SELECT s.ID, s.Name FROM subjects s;`, function (error, results, fields) {
         if (error) throw error;
