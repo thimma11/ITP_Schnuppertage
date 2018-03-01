@@ -10,23 +10,6 @@ var connection = mysql.createConnection({
     database: database_config.database
 });
 
-router.all('*', function (req, res, next) {
-    var p = new Promise(function (resolve, reject) {
-        try {
-            connection.connect();
-            resolve();
-        } catch (e) {
-            reject();
-        }
-    });
-    p.then((value) => {
-        next();
-    }, (reason) => {
-        res.setHeader(500);
-        res.end("connection failed");
-    });
-});
-
 router.get('/', (req, res) => {
     connection.query(`SELECT s.ID, s.Name FROM subjects s;`, function (error, results, fields) {
         if (error) throw error;

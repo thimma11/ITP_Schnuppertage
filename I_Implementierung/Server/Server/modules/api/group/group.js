@@ -10,23 +10,6 @@ var connection = mysql.createConnection({
     database: database_config.database
 });
 
-router.all('*', function (req, res, next) {
-    var p = new Promise(function (resolve, reject) {
-        try {
-            connection.connect();
-            resolve();
-        } catch (e) {
-            reject();
-        }
-    });
-    p.then((value) => {
-        next();
-    }, (reason) => {
-        res.setHeader(500);
-        res.end("connection failed");
-    });
-});
-
 router.get('/:id/daytables', (req, res) => {
     let id = req.params.id;
     connection.query('SELECT daytables.ID, daytables.DAY_NAME FROM groups JOIN daytables ON groups.ID = daytables.GROUPS_ID WHERE groups.ID = ?;', [id], function (error, results, fields) {

@@ -28,23 +28,6 @@ var transporter = nodemailer.createTransport({
   }
 });
 
-router.all('*', function (req, res, next) {
-    var p = new Promise(function (resolve, reject) {
-        try {
-            connection.connect();
-            resolve();
-        } catch (e) {
-            reject();
-        }
-    });
-    p.then((value) => {
-        next();
-    }, (reason) => {
-        res.setHeader(500);
-        res.end("connection failed");
-    });
-});
-
 router.get('/', (req, res) => {
     // EMAIL TEST
     var mailOptions = {
