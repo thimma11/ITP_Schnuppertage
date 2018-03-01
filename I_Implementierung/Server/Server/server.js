@@ -69,7 +69,7 @@ app.post('/authenticate', (req, res) => {
         });
     }
     else {
-        return res.status(403).send({
+        res.status(403).send({
             success: false,
             message: 'No token provided.'
         });
