@@ -12,7 +12,7 @@ var timetable = require('./api/timetable');
 var daytable = require('./api/daytable/daytable');
 
 var jwt = require('jsonwebtoken');
-router.set('secret', 'itpistcool');
+var secret = 'itpistcool';
 
 var mysql = require('mysql');
 var database_config = require('./config/database');
@@ -24,7 +24,7 @@ var connection = mysql.createConnection({
     database: database_config.database
 });
 
-app.post('/authenticate', (req, res) => {
+router.post('/authenticate', (req, res) => {
     console.log("POST");
     if (req.body.username != undefined && req.body.password != undefined && req.body.username != "" && req.body.password != "") {
         let mysql = require('mysql');
@@ -43,7 +43,7 @@ app.post('/authenticate', (req, res) => {
                 const payload = {
                     username: req.body.username
                 };
-                var token = jwt.sign(payload, app.get('secret'), {
+                var token = jwt.sign(payload, secret, {
                 });
 
                 // return the information including token as JSON
@@ -63,7 +63,7 @@ app.post('/authenticate', (req, res) => {
 
 });
 
-app.use(function (req, res, next) {
+router.use(function (req, res, next) {
 
     // check header or url parameters or post parameters for token
     var token = req.body.authToken || req.query.authToken || req.headers['Authentication'];
@@ -74,7 +74,7 @@ app.use(function (req, res, next) {
     if (token) {
 
         // verifies secret and checks exp
-        jwt.verify(token, app.get('secret'), function (err, decoded) {
+        jwt.verify(token, secret, function (err, decoded) {
             if (err) {
                 return res.json({ success: false, message: 'Failed to authenticate token.' });
             } else {
