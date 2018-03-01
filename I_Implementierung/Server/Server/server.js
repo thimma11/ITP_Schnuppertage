@@ -3,9 +3,6 @@ var http = require('http');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var jwt = require('jsonwebtoken');
-
-app.set('secret', 'itpistcool');
 
 app.use(function (req, res, next) {
 

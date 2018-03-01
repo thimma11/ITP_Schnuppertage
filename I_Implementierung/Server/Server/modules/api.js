@@ -11,6 +11,9 @@ var group = require('./api/group/group');
 var timetable = require('./api/timetable');
 var daytable = require('./api/daytable/daytable');
 
+var jwt = require('jsonwebtoken');
+router.set('secret', 'itpistcool');
+
 var mysql = require('mysql');
 var database_config = require('./config/database');
 
