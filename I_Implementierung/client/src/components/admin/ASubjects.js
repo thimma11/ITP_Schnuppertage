@@ -49,7 +49,7 @@ class Teachers extends React.Component {
 
         let subjects = [];
         this.state.subjects.map(subject => {
-            if (subject.ID === id) {
+            if (subject.ID !== id) {
                 subjects.push(subject);
             }
         });
