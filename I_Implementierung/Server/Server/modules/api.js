@@ -59,7 +59,7 @@ router.get('/getpdf/:id', (req, res) => {
     console.log("start process");
     const ls = execFile('Schnupperschülerbestätigung.exe', [user_id]);
     
-    const child = execFile('Schnupperschülerbestätigung.exe', [user_id], (error, stdout, stderr) => {
+    const child = execFile('./Schnupperschülerbestätigung/Schnupperschülerbestätigung/bin/Debug/Schnupperschülerbestätigung.exe', [user_id], (error, stdout, stderr) => {
         console.log("start processssssss2123");
         if (error) {
             throw error;
