@@ -13,6 +13,8 @@ var daytable = require('./api/daytable/daytable');
 
 var mysql = require('mysql');
 var database_config = require('./config/database');
+const { spawn } = require('child_process');
+
 
 var connection = mysql.createConnection({
     host: database_config.host,
@@ -32,6 +34,7 @@ router.use('/groups', group);
 router.use('/timetables', timetable);
 router.use('/daytables', daytable);
 
+
 router.get('/', (req, res) => {
     res.send("asd");
 });
@@ -46,6 +49,23 @@ router.get('/confirm_registration/:id', (req, res) => {
         else {
             res.send("Ihre Teilnahme wurde bestätigt!");
         }
+    });
+});
+
+
+router.get('/getpdf/:id', (req, res) => {
+    user_id = req.params.id;
+    console.log("start process");
+    const ls = spawn('Schnupperschülerbestätigung.exe', [user_id]);
+    ls.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+    });
+
+    ls.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`);
+    });
+    ls.on('close', (code) => {
+        console.log(`child process exited with code ${code}`);
     });
 });
 
