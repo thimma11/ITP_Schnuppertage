@@ -98,9 +98,16 @@ class EventRegistration extends React.Component {
     initDates() {
         axios.get(Globals.BASE_PATH + 'events/dates/' + this.departmentID + '/' + this.locationID)
         .then(response => {
-            this.dates = response.data;
+            let datesArr = new Array();
+            response.data.forEach(function(date) {
+                datesArr.push(moment(date));
+            }, this);
+
+            console.log(datesArr);
+
+            this.dates = datesArr;
             this.setState({
-                dates: response.data,
+                dates: datesArr,
                 date: ''
             });
         })
@@ -363,6 +370,7 @@ class EventRegistration extends React.Component {
                             <DatePicker
                             todayButton={"Heutiges Datum"}
                             selected={this.state.date}
+                            includeDates={this.state.dates}
                             onChange={ (event) => this.handleDateChange(event) } placeholder="Datum auswählen" />
                         </div>
                     );
