@@ -21,7 +21,7 @@ router.post('/:id/events', (req, res) => {
     let token = req.query.token;
     if (database_config.verify_request(token)) {
         let id = req.params.id;
-        connection.query('INSERT INTO events (events.DATE, events.DEPARTMENTS_ID, events.LOCATIONS_ID) VALUES ', function (error, results, fields) {
+        connection.query('INSERT INTO events (events.DATE, events.DEPARTMENTS_ID, events.LOCATIONS_ID) VALUES (?, ?, ?)', [req.body.date, req.body.departments_id, req.body.location_id], function (error, results, fields) {
             if (error) throw error;
             res.json(results);
         });
@@ -33,7 +33,7 @@ router.post('/:id/events', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-    connection.query(`SELECT locations.ID, locations.NAME FROM locations;`, function (error, results, fields) {
+    connection.query('SELECT locations.ID, locations.NAME FROM locations;', function (error, results, fields) {
         if (error) throw error;
         res.json(results);
     });
