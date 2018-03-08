@@ -14,6 +14,7 @@ var daytable = require('./api/daytable/daytable');
 var mysql = require('mysql');
 var database_config = require('./config/database');
 const { spawn } = require('child_process');
+const { execFile } = require('child_process');
 
 
 var connection = mysql.createConnection({
@@ -56,16 +57,14 @@ router.get('/confirm_registration/:id', (req, res) => {
 router.get('/getpdf/:id', (req, res) => {
     user_id = req.params.id;
     console.log("start process");
-    const ls = spawn('Schnupperschülerbestätigung.exe', [user_id]);
-    ls.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`);
-    });
-
-    ls.stderr.on('data', (data) => {
-        console.log(`stderr: ${data}`);
-    });
-    ls.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
+    const ls = execFile('Schnupperschülerbestätigung.exe', [user_id]);
+    
+    const child = execFile('Schnupperschülerbestätigung.exe', [user_id], (error, stdout, stderr) => {
+        console.log("start processssssss2123");
+        if (error) {
+            throw error;
+        }
+        console.log(stdout);
     });
 });
 
