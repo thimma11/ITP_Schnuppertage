@@ -214,6 +214,13 @@ class Events extends React.Component {
     ;
     }
 
+    DeleteParticipant(partID) {
+        axios.delete(Globals.BASE_PATH + '/participants/' + partID)
+        .then(() => {
+            this.initParticipantsForEvent(this.eventID);
+        }).catch(error => console.log(error))
+    }
+
     renderEventCreator() {
         if (this.state.participants !== undefined) {
             return (
@@ -249,8 +256,7 @@ class Events extends React.Component {
                                                     <td>{ participant.SCHOOL_LOCATION }</td>
                                                     <td>{ participant.SCHOOL_TYP }</td>
                                                     <td>
-                                                        <button className="btn btn-danger btn-sm button-space" onClick={ () => this.initParticipantsForEvent(participant.ID) } >Austragen</button>
-                                                        <button className="btn btn-primary btn-sm button-space" onClick={ () => this.GeneratePDF() } >PDF</button>
+                                                        <button className="btn btn-danger btn-sm button-space" onClick={ () => this.DeleteParticipant(participant.ID) } >Austragen</button>
                                                     </td>
                                                 </tr>
                                             );
@@ -258,10 +264,6 @@ class Events extends React.Component {
                                         }
                                         </tbody>
                                     </table>
-                                    <div id="divToPrint">
-                                        <h2>Note: Here the dimensions of div are same as A4</h2> 
-                                        <p>You Can add any component here</p>
-                                    </div>
                                 </div>
                             </div>
                         }
