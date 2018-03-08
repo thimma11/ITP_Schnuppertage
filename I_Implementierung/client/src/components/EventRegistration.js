@@ -3,6 +3,10 @@
 import React from 'react';
 import axios from 'axios';
 import Dropdown from 'react-dropdown';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+
+import 'react-datepicker/dist/react-datepicker.css';
 //#endregion
 
 import * as Globals from '../Globals';
@@ -26,7 +30,7 @@ class EventRegistration extends React.Component {
             location: '',
             locationError: false,
             dates: undefined,
-            date: '',
+            date: moment(),
             dateError: false,
             firstname: '',
             firstnameError: false,
@@ -169,15 +173,15 @@ class EventRegistration extends React.Component {
     }
 
     handleDateChange(date) {
-        if (this.dates.indexOf(date.value) === -1) {
+        if (this.dates.indexOf(date) === -1) {
             this.setState({
-                date: '',
+                date: moment(),
                 dateError: false
             });
             this.initDates();
         } else {
             this.setState({
-                date: date.value,
+                date: date,
                 dateError: false
             });
         }
@@ -338,6 +342,7 @@ class EventRegistration extends React.Component {
     }
 
     renderDates() {
+        console.log(this.state.date);
         if (this.locationID === undefined) {
             return (
                 <div className={ (this.state.dateError) ? 'form-group dropdown-error' : 'form-group' }>
@@ -355,7 +360,10 @@ class EventRegistration extends React.Component {
                     return (
                         <div className={ (this.state.dateError) ? 'form-group dropdown-error' : 'form-group' }>
                             <label>Verfügare Tage<span className="label-information"> - Wählen Sie ein Datum aus.</span></label>
-                            <Dropdown options={ this.state.dates } onChange={ (event) => this.handleDateChange(event) } value={ this.state.date } placeholder="Datum auswählen" />
+                            <DatePicker
+                            todayButton={"Heutiges Datum"}
+                            selected={this.state.date}
+                            onChange={ (event) => this.handleDateChange(event) } placeholder="Datum auswählen" />
                         </div>
                     );
                 }
