@@ -10,12 +10,12 @@ var event = require('./api/event');
 var group = require('./api/group/group');
 var timetable = require('./api/timetable');
 var daytable = require('./api/daytable/daytable');
+var path = require('path');
 
 var mysql = require('mysql');
 var database_config = require('./config/database');
 const { spawn } = require('child_process');
 const { execFile } = require('child_process');
-
 
 var connection = mysql.createConnection({
     host: database_config.host,
@@ -60,11 +60,13 @@ router.get('/getpdf/:id', (req, res) => {
     const ls = execFile('Schnupperschülerbestätigung.exe', [user_id]);
     
     const child = execFile('./Schnupperschülerbestätigung/Schnupperschülerbestätigung/bin/Debug/Schnupperschülerbestätigung.exe', [user_id], (error, stdout, stderr) => {
-        console.log("start processssssss2123");
+        console.log("finish processssssss2123");
         if (error) {
             throw error;
         }
-        console.log(stdout);
+        console.log(process.env.PATH);
+        
+        res.sendFile(__dirname + "/" + stdout);
     });
 });
 
