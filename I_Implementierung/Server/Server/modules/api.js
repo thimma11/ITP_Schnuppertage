@@ -57,16 +57,15 @@ router.get('/confirm_registration/:id', (req, res) => {
 router.get('/getpdf/:id', (req, res) => {
     user_id = req.params.id;
     console.log("start process");
-    const ls = execFile('Schnupperschülerbestätigung.exe', [user_id]);
     
     const child = execFile('./Schnupperschülerbestätigung/Schnupperschülerbestätigung/bin/Debug/Schnupperschülerbestätigung.exe', [user_id], (error, stdout, stderr) => {
         console.log("finish processssssss2123");
         if (error) {
             throw error;
         }
-        console.log(process.env.PATH);
+        console.log(stdout);
         
-        res.sendFile(__dirname + "/" + stdout);
+        res.sendFile( "/" + stdout, { root: __dirname + "/../" });
     });
 });
 

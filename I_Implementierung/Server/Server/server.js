@@ -22,6 +22,7 @@ app.use(function (req, res, next) {
     // to the API (e.g. in case you use sessions)
     res.setHeader('Access-Control-Allow-Credentials', false);
 
+    console.log("OPTIONS tada");
     // Pass to next layer of middleware
     next();
 });
@@ -69,7 +70,8 @@ app.post('/authenticate', (req, res) => {
         });
     }
     else {
-        return res.status(403).send({
+        res.status(403)
+        res.json({
             success: false,
             message: 'No token provided.'
         });

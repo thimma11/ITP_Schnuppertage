@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IronPdf;
+using System.IO;
+using System.Security.AccessControl;
 
 namespace Schnupperschülerbestätigung
 {
@@ -75,6 +77,8 @@ namespace Schnupperschülerbestätigung
             PdfDocument document = renderer.RenderHtmlAsPdf(pdfString);
             string fileName = information.GetNameString() + " - " + information.Date + ".pdf";
             document.SaveAs(fileName);
+            document.Stream.Close();
+
             Console.WriteLine(fileName);
         }
 
