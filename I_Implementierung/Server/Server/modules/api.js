@@ -65,7 +65,8 @@ router.get('/getpdf/:id', (req, res) => {
         }
         console.log(stdout);
         
-        res.sendFile( "/" + stdout, { root: __dirname + "/../" });
+        //res.sendFile( "/" + stdout, { root: __dirname + "/../" });
+        res.send(stdout);
     });
 });
 
@@ -79,7 +80,8 @@ router.get('/getzip/:id', (req, res) => {
         }
         console.log(stdout);
 
-        res.sendFile( "/" + stdout, { root: __dirname + "/../" });
+        //res.sendFile( "/" + stdout, { root: __dirname + "/../" });
+        res.send(stdout);
     });
 });
 
