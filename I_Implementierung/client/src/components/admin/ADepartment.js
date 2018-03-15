@@ -379,7 +379,11 @@ class Department extends React.Component {
                 axios.get(Globals.BASE_PATH + 'daytables/lessons/' + this.state.dayName + '/' + this.state.selectedGroupID)
                 .then(response => {
                     this.setState({
-                        lessons: response.data
+                        lessons: response.data,
+                        start: '',
+                        end: '',
+                        teacher: '',
+                        subject: ''
                     });
                     this.SortDates();
                 }).catch(error => {

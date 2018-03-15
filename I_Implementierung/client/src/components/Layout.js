@@ -61,7 +61,7 @@ class Layout extends React.Component {
 
 	//#region Authentification System
 	Login(username, password) {
-		let response = axios.post(Globals.LOGIN + 'authenticate', {
+		let response = axios.get(Globals.LOGIN + 'authenticate', {
 			data: {
 				username: username,
 				password: password
@@ -71,7 +71,7 @@ class Layout extends React.Component {
 			this.role = 'ADMIN';
 			this.setState({ key: Math.random() });
 			return true;
-		}).catch(error => { return false; });
+		}).catch(error => { console.log(error); return false; });
 		return response;
 	}
 
