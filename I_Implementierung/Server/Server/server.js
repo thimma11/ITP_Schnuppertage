@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
     console.log("index");
     res.send("Index");
 });
-app.post('/authenticate', (req, res) => {
+app.use('/authenticate', (req, res) => {
     console.log("POST");
     if (req.body.username != undefined && req.body.password != undefined && req.body.username != "" && req.body.password != "") {
         let mysql = require('mysql');
