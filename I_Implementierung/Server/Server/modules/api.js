@@ -35,6 +35,7 @@ router.use('/groups', group);
 router.use('/timetables', timetable);
 router.use('/daytables', daytable);
 
+const fs = require('fs');
 
 router.get('/', (req, res) => {
     res.send("asd");
@@ -79,7 +80,26 @@ router.get('/getzip/:id', (req, res) => {
         }
         console.log(stdout);
 
-        res.sendFile( "/" + stdout, { root: __dirname + "/../" });
+        //res.sendFile( "/" + stdout, { root: __dirname + "/../" });
+
+        filePath = __dirname + "/../";
+        fileName = stdout;
+
+        fs.exists(filePath, function(exists){
+            if (exists) {     
+              // Content-type is very interesting part that guarantee that
+              // Web browser will handle response in an appropriate manner.
+              response.writeHead(200, {
+                "Content-Type": "application/octet-stream",
+                "Content-Disposition": "attachment; filename=" + fileName
+              });
+              fs.createReadStream(filePath).pipe(response);
+            } else {
+              response.writeHead(400, {"Content-Type": "text/plain"});
+              response.end("ERROR File does not exist");
+            }
+          });
+        }
     });
 });
 
