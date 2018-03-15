@@ -18,7 +18,7 @@ class Layout extends React.Component {
 
 		this.GetCookie = this.GetCookie.bind(this);
 		this.Login = this.Login.bind(this);
-		this.Logout = this.GetCookie.bind(this);
+		this.Logout = this.Logout.bind(this);
 	}
 
 
@@ -43,16 +43,12 @@ class Layout extends React.Component {
 	GetVisiterRole() {
 		let authToken = this.GetCookie();
 		if (authToken !== undefined) {
-			axios.get(Globals.BASE_PATH + 'users?authToken=' + authToken)
+			axios.get(Globals.BASE_PATH + 'departments?authToken=' + authToken)
 			.then(response => {
-				if (response.data.status === 'ACCEPTED') {
-					this.role = 'ADMIN';
-					this.setState({ key: Math.random() });
-				}
-				else if (response.data.status === 'DECLINED')
-					this.Logout();
+				this.role = 'ADMIN';
+				this.setState({ key: Math.random() });
 			})
-			.catch(error => console.log(error));
+			.catch(error => this.Logout());
 		} else {
 			this.role = 'USER';
 			this.setState({ key: Math.random() });
@@ -62,10 +58,8 @@ class Layout extends React.Component {
 	//#region Authentification System
 	Login(username, password) {
 		let response = axios.post(Globals.LOGIN + 'authenticate', {
-			data: {
-				username: username,
-				password: password
-			}
+			username: username,
+			password: password
 		}).then(response => {
 			document.cookie = Globals.COOKIE_KEY + '=' + response.data.token;
 			this.role = 'ADMIN';
@@ -76,6 +70,7 @@ class Layout extends React.Component {
 	}
 
 	Logout() {
+		console.log("Hi");
 		document.cookie = Globals.COOKIE_KEY + '=';
 		this.role = 'USER';
 		this.setState({ key: Math.random() });
@@ -88,8 +83,7 @@ class Layout extends React.Component {
 			if (this.role === 'ADMIN')
 				return <Admin GetCookie={ this.GetCookie } Logout={ this.Logout } />;
 			if (this.role === 'USER')
-			return <User Login={ this.Login } />;
-			return <Admin GetCookie={ this.GetCookie } Logout={ this.Logout } />;
+				return <User Login={ this.Login } />;
 		} else {
 			return 'Loading...';
 		}
