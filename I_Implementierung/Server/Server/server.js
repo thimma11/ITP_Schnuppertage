@@ -42,9 +42,15 @@ app.get('/', (req, res) => {
     console.log("index");
     res.send("Index");
 });
+
+
+
 app.post('/authenticate', (req, res) => {
+<<<<<<< HEAD
     console.log("POST");
     
+=======
+>>>>>>> a0fc07b9cf9e6168b280ba153d6accab5b475e34
     if (req.body.username != undefined && req.body.password != undefined && req.body.username != "" && req.body.password != "") {
         let mysql = require('mysql');
         let database_config = require('./modules/config/database');
@@ -57,6 +63,7 @@ app.post('/authenticate', (req, res) => {
         });
 
         connection.query('SELECT * FROM admin WHERE admin.USERNAME = ? AND admin.PASSWORD = ?', [req.body.username, req.body.password], function (error, results, fields) {
+            console.log("inside query");
             if (error) throw error;
             if (results) {
                 const payload = {

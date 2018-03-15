@@ -127,8 +127,13 @@ router.get('/:id/timetables', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-    connection.query(`SELECT d.ID AS id, d.Contraction AS contraction, d.Name AS name from departments d;`, function (error, results, fields) {
+    console.log("before connection");
+    connection.connect();
+    console.log("after connection");
+    connection.query('SELECT ID as id, Contraction as contraction, Name as name from departments;', function (error, results, fields) {
+        console.log("inside");
         if (error) console.log(error);
+        console.log(results);
         res.json(results);
     });
 });
