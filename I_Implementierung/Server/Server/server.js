@@ -78,7 +78,7 @@ app.post('/authenticate', (req, res) => {
         });
     }
     else {
-        res.status(403)
+        res.status(403);
         res.json({
             success: false,
             message: 'No token provided.'
@@ -100,7 +100,8 @@ app.use(function (req, res, next) {
         // verifies secret and checks exp
         jwt.verify(token, app.get('secret'), function (err, decoded) {
             if (err) {
-                return res.json({ success: false, message: 'Failed to authenticate token.' });
+                res.status(403)
+                res.json({ success: false, message: 'Failed to authenticate token.' });
             } else {
                 // if everything is good, save to request for use in other routes
                 req.decoded = decoded;
