@@ -78,6 +78,8 @@ router.get('/getzip/:id', (req, res) => {
             throw error;
         }
         console.log(stdout);
+
+        res.sendFile( "/" + stdout, { root: __dirname + "/../" });
     });
 });
 
