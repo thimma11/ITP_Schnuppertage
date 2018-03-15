@@ -10,6 +10,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 //#endregion
 
 import * as Globals from '../Globals';
+moment.locale("de");
+moment.lang("de");
 //#endregion
 
 
@@ -22,6 +24,15 @@ class EventRegistration extends React.Component {
         this.locations = undefined;
         this.locationID = undefined;
         this.dates = undefined;
+        this.departmentError = false;
+        this.locationError = false;
+        this.dateError = false;
+        this.firstnameError = false;
+        this.lastnameError = false;
+        this.phoneError = false;
+        this.emailError = false;
+        this.schoolTypeError = false;
+        this.schoolLocationError = false;
         this.state = {
             departments: undefined,
             department: '',
@@ -143,6 +154,9 @@ class EventRegistration extends React.Component {
     checkDepartment() {
         if (this.state.department === '') {
             this.setState({ departmentError: true });
+            this.departmentError = true;
+        } else {
+            this.departmentError = false;
         }
     }
 
@@ -176,13 +190,22 @@ class EventRegistration extends React.Component {
     checkLocation() {
         if (this.state.location === '') {
             this.setState({ locationError: true });
+            this.locationError = true;
+        } else {
+            this.locationError = false;
         }
     }
 
     handleDateChange(date) {
-        if (this.dates.indexOf(date) === -1) {
+        let datesArr = [];
+        this.dates.map(date_n => {
+            datesArr.push(moment(date_n._d).format("DD-MM-YYYY"));
+        });
+        console.log(moment(date._d).format("DD-MM-YYYY"));
+        console.log(datesArr);
+        if (datesArr.indexOf(moment(date._d).format("DD-MM-YYYY")) === -1) {
             this.setState({
-                date: moment(),
+                date: date,
                 dateError: false
             });
             this.initDates();
@@ -197,6 +220,9 @@ class EventRegistration extends React.Component {
     checkDate() {
         if (this.state.date === '') {
             this.setState({ dateError: true });
+            this.dateError = true;
+        } else {
+            this.dateError = false;
         }
     }
 
@@ -212,6 +238,9 @@ class EventRegistration extends React.Component {
             this.setState({
                 firstnameError: true
             });
+            this.firstnameError = true;
+        } else {
+            this.firstnameError = false;
         }
     }
 
@@ -227,6 +256,9 @@ class EventRegistration extends React.Component {
             this.setState({
                 lastnameError: true
             });
+            this.lastnameError = true;
+        } else {
+            this.lastnameError = false;
         }
     }
 
@@ -242,6 +274,9 @@ class EventRegistration extends React.Component {
             this.setState({
                 emailError: true
             });
+            this.emailError = true;
+        } else {
+            this.emailError = false;
         }
     }
 
@@ -257,14 +292,19 @@ class EventRegistration extends React.Component {
         let number;
         for (let i = 0; i < this.state.phone.length; i++) {
             number = this.state.phone[i];
-            if (number !== '+' && number !== ' ' && isNaN(parseInt(number, 10))) {
+            if ((number !== ' ' && isNaN(parseInt(number, 10)))) {
                 isNumber = false;
             }
         }
-        if (this.state.phone.indexOf('+') === -1 || this.state.phone.length > 15 || this.state.phone.length < 12 || !isNumber) {
+        if (this.state.phone.length === 0)
+            isNumber = false;
+        if (!isNumber) {
             this.setState({
                 phoneError: true
             });
+            this.phoneError = true;
+        } else {
+            this.phoneError = false;
         }
     }
 
@@ -280,12 +320,15 @@ class EventRegistration extends React.Component {
             this.setState({
                 schoolLocationError: true
             });
+            this.schoolLocationError = true;
+        } else {
+            this.schoolLocationError = false;
         }
     }
 
     handleSchoolTypeChange(event) {
         this.setState({
-            schoolType: event.target.value,
+            schoolType: event.value,
             schoolTypeError: false
         });
     }
@@ -295,6 +338,9 @@ class EventRegistration extends React.Component {
             this.setState({
                 schoolTypeError: true
             });
+            this.schoolTypeError = true;
+        } else {
+            this.schoolTypeError = false;
         }
     }
 
@@ -364,12 +410,13 @@ class EventRegistration extends React.Component {
                         <div class="alert alert-danger" role="alert"><p><b>Für die ausgewählte Abteilung gibt es am angegebenen Standort keine eingetragenen Schuppertage.</b></p></div>
                     );
                 } else {
+                    console.log(this.state.dates);
                     return (
                         <div className={ (this.state.dateError) ? 'form-group dropdown-error' : 'form-group' }>
                             <label>Verfügare Tage<span className="label-information"> - Wählen Sie ein Datum aus.</span></label>
                             <DatePicker
-                            todayButton={"Heutiges Datum"}
-                            selected={this.state.date}
+                            locale="de"
+                            selected={ this.state.date }
                             includeDates={this.state.dates}
                             onChange={ (event) => this.handleDateChange(event) } placeholder="Datum auswählen" />
                         </div>
@@ -380,6 +427,12 @@ class EventRegistration extends React.Component {
     }
 
     renderParticipantForm() {
+        let types = [
+            "Gymnasium",
+            "AHS",
+            "HS",
+            "NMS"
+        ];
         return (
             <div>
                 <div className="form-group">
@@ -395,8 +448,8 @@ class EventRegistration extends React.Component {
                     <input type="text" className={ (this.state.emailError) ? 'form-control form-error' : 'form-control' } placeholder="max.mustermann@example.net" value={ this.state.email } onChange={ (event) => this.handleEMailChange(event) } onBlur={ () => this.handleEMailLeave() }/>
                 </div>
                 <div className="form-group">
-                    <label>Telefonnummer</label>
-                    <input type="text" className={ (this.state.phoneError) ? 'form-control form-error' : 'form-control' } placeholder="+43660 7284711" value={ this.state.phone } onChange={ (event) => this.handlePhoneChange(event) } onBlur={ () => this.handlePhoneLeave() }/>
+                    <label>Telefonnummer des Erziehungsberechtigten</label>
+                    <input type="text" className={ (this.state.phoneError) ? 'form-control form-error' : 'form-control' } placeholder="0660 7284711" value={ this.state.phone } onChange={ (event) => this.handlePhoneChange(event) } onBlur={ () => this.handlePhoneLeave() }/>
                 </div>
                 <div className="form-group">
                     <label>Schulstandort</label>
@@ -404,7 +457,7 @@ class EventRegistration extends React.Component {
                 </div>
                 <div className="form-group">
                     <label>Schultyp</label>
-                    <input type="text" className={ (this.state.schoolTypeError) ? 'form-control form-error' : 'form-control' } placeholder="Gymnasium" value={ this.state.schoolType } onChange={ (event) => this.handleSchoolTypeChange(event) } onBlur={ () => this.handleSchoolTypeLeave() }/>
+                    <Dropdown options={ types } onChange={ (event) => this.handleSchoolTypeChange(event) } value={ this.state.schoolType } placeholder="Schultyp auswählen" />
                 </div>
                 <button className="btn btn-primary center-block" onClick={ () => this.checkAllValues() }>Absenden</button>
             </div>
@@ -439,8 +492,11 @@ class EventRegistration extends React.Component {
         this.checkDepartment();
         this.checkLocation();
         this.checkDate();
+        this.forceUpdate();
 
-        if (this.state.firstnameError || this.state.lastnameError || this.state.emailError || this.state.phoneError || this.state.schoolLocationError || this.state.schoolTypeError || this.state.departmentError || this.state.locationError || this.state.dateError) {
+        console.log(this.state.firstnameError);
+
+        if (this.firstnameError || this.lastnameError || this.emailError || this.phoneError || this.schoolLocationError || this.schoolTypeError || this.departmentError || this.locationError || this.dateError) {
         } else {
             this.registerParticipant();
         }

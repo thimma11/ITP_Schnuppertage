@@ -23,7 +23,8 @@ class EventCreator extends React.Component {
             locationError: false,
             maxGroups: 1,
             currentGroupSize: '',
-            groupError: false
+            groupError: false,
+            minDate: ''
         };
     }
 
@@ -31,6 +32,20 @@ class EventCreator extends React.Component {
     /* Get all display information on startup */
     componentDidMount() {
         this.InitLocations();
+        let date = new Date();
+        date.setDate(date.getDate() + 1)
+        let dd = date.getDate();
+        let mm = date.getMonth()+1;
+        let year = date.getFullYear();
+        if(dd<10){
+            dd='0'+dd
+        }
+        if(mm<10){
+            mm='0'+mm
+        }
+        this.setState({
+            minDate: year+'-'+mm+'-'+dd
+        });
     }
 
     /* Get all locations */
@@ -189,7 +204,7 @@ class EventCreator extends React.Component {
                 <div className="well">
                 <div className="form-group">
                     <label>Datum</label>
-                    <input type="text" className={ (this.state.dateError) ? 'form-control form-error' : 'form-control' } placeholder="YYYY-MM-DD" value={ this.state.date } onChange={ (event) => this.handleDateChange(event) } onBlur={ () => this.handleDateLeave() }/>
+                    <input type="date" style={{height: '35px', lineHeight: '31px', paddingTop: 0, paddingBottom: 0}} min={this.state.minDate} className={ (this.state.dateError) ? 'form-control form-error' : 'form-control' } placeholder="DD.MM.YYYY" value={ this.state.date } onChange={ (event) => this.handleDateChange(event) } onBlur={ () => this.handleDateLeave() }/>
                 </div>
                 <div className={ (this.state.locationError) ? 'form-group dropdown-error' : 'form-group' }>
                     <label>Standort<span className="label-information"> - Wählen Sie einen Standort aus.</span></label>
