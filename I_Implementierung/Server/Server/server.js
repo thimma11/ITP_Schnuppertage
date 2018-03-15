@@ -61,7 +61,6 @@ app.post('/authenticate', (req, res) => {
         });
 
         connection.query('SELECT * FROM admin WHERE admin.USERNAME = ? AND admin.PASSWORD = ?', [req.body.username, req.body.password], function (error, results, fields) {
-            console.log("inside query");
             if (error) console.log(error);
             if (results) {
                 const payload = {
