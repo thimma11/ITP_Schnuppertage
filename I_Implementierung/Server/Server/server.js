@@ -1,11 +1,14 @@
 'use strict';
 var http = require('http');
 var express = require('express');
+var cors = require('cors');
 var app = express();
 var bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken');
 
 app.set('secret', 'itpistcool');
+
+app.use(cors());
 
 app.use(function (req, res, next) {
 
@@ -16,11 +19,11 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
 
     // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type, Authorization');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type, Authorization, X-Custom-Header');
 
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', false);
+    res.setHeader('Access-Control-Allow-Credentials', true);
 
     console.log("OPTIONS tada");
     // Pass to next layer of middleware
@@ -41,6 +44,7 @@ app.get('/', (req, res) => {
 });
 app.post('/authenticate', (req, res) => {
     console.log("POST");
+    
     if (req.body.username != undefined && req.body.password != undefined && req.body.username != "" && req.body.password != "") {
         let mysql = require('mysql');
         let database_config = require('./modules/config/database');
@@ -76,6 +80,7 @@ app.post('/authenticate', (req, res) => {
             message: 'No token provided.'
         });
     }
+    
 
 });
 

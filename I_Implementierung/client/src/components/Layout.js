@@ -61,7 +61,7 @@ class Layout extends React.Component {
 
 	//#region Authentification System
 	Login(username, password) {
-		let response = axios.get(Globals.LOGIN + 'authenticate', {
+		let response = axios.post(Globals.LOGIN + 'authenticate', {
 			data: {
 				username: username,
 				password: password
