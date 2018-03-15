@@ -65,7 +65,7 @@ router.get('/getpdf/:id', (req, res) => {
         }
         console.log(stdout);
         
-        res.sendFile( "/" + stdout, { root: __dirname + "/../" });
+        res.json({ path: __dirname + "/../" + stdout });
     });
 });
 
