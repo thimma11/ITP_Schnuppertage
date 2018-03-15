@@ -37,9 +37,17 @@ class Events extends React.Component {
     }
 
     initDepartments() {
-        axios.get(Globals.BASE_PATH + 'departments')
+        let authToken = this.props.GetCookie();
+        if (this.props.GetCookie() === undefined)
+            this.props.Logout();
+
+        axios.get(Globals.BASE_PATH + 'departments?authToken=' + authToken)
         .then(response => {
+            if (response.data.success === false){
+                this.props.Logout();
+            }
             this.departments = response.data;
+            
             let departments = [];
             response.data.map(department => {
                 departments.push(department.name);
@@ -54,12 +62,15 @@ class Events extends React.Component {
     }
 
     initEvents() {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
+        let authToken = this.props.GetCookie();
+        if (this.props.GetCookie() === undefined)
             this.props.Logout();
 
         axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/events?authToken=' + authToken)
         .then(response => {
+            if (response.data.success === false){
+                this.props.Logout();
+            }
             this.setState({ events: response.data });
         });
     }
@@ -67,12 +78,18 @@ class Events extends React.Component {
     initParticipantsForEvent(eventID, eventDate) {
         this.eventID = eventID;
 
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
+        let authToken = this.props.GetCookie();
+        if (this.props.GetCookie() === undefined)
             this.props.Logout();
 
         axios.get(Globals.BASE_PATH + 'participants/events/' + eventID + "?authToken=" + authToken)
         .then(response => {
+
+            
+            if (response.data.success === false){
+                this.props.Logout();
+            }
+
             this.setState({
                 participants: response.data,
                 eventDate: eventDate
@@ -129,8 +146,15 @@ class Events extends React.Component {
     }
 
     DeleteEvent(id) {
-        axios.delete(Globals.BASE_PATH + 'events/' + id)
-        .then(() => {
+        let authToken = this.props.GetCookie();
+        if (this.props.GetCookie() === undefined)
+            this.props.Logout();
+
+        axios.delete(Globals.BASE_PATH + 'events/' + id + "?authToken=" + authToken)
+        .then((response) => {
+            if (response.data.success === false){
+                this.props.Logout();
+            }
             this.initEvents();
         }).catch(error => console.log(error))
     }
@@ -161,6 +185,7 @@ class Events extends React.Component {
                         </div>
                     );
                 }
+                console.log(this.state.events);
                 return (
                     <div>
                         <div className="table-responsive">
@@ -202,23 +227,18 @@ class Events extends React.Component {
         this.initEvents();
     }
 
-    GeneratePDF() {
-        let input = document.getElementById('#divToPrint');
-        html2canvas(input)
-        .then((canvas) => {
-        let pdf = new jsPDF();
-        pdf.text(35, 35, "hallo");
-        pdf.fromHTML("<h2 style=\"float: left;\">A</h2><h3 style=\"float: right;\">B</h3>");
-        pdf.save("download.pdf");
-      })
-    ;
-    }
-
     DeleteParticipant(partID) {
         axios.delete(Globals.BASE_PATH + '/participants/' + partID)
         .then(() => {
             this.initParticipantsForEvent(this.eventID);
         }).catch(error => console.log(error))
+    }
+
+    GetParticipantPDF(partID) {
+        axios.get(Globals.BASE_PATH + 'getpdf/' + partID)
+        .then(response => {
+            console.log(response);
+        }).catch(error => console.log(error));
     }
 
     renderEventCreator() {
@@ -257,6 +277,7 @@ class Events extends React.Component {
                                                     <td>{ participant.SCHOOL_TYP }</td>
                                                     <td>
                                                         <button className="btn btn-danger btn-sm button-space" onClick={ () => this.DeleteParticipant(participant.ID) } >Austragen</button>
+                                                        <button className="btn btn-success btn-sm" onClick={ () => this.GetParticipantPDF(participant.ID) }>PDF erzeugen</button>
                                                     </td>
                                                 </tr>
                                             );

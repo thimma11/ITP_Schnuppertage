@@ -59,7 +59,7 @@ class Admin extends React.Component {
                                 <li className={ (this.page === 'DEPARTMENTS') ? 'active' : '' } onClick={ () => this.Navigate('DEPARTMENTS') }><a href="#">Abteilungen</a></li>
                                 <li className={ (this.page === 'TEACHERS') ? 'active' : '' } onClick={ () => this.Navigate('TEACHERS') }><a href="#">Lehrer</a></li>
                                 <li className={ (this.page === 'SUBJECTS') ? 'active' : '' } onClick={ () => this.Navigate('SUBJECTS') }><a href="#">Fächer</a></li>
-                                <li onClick={ () => this.props.Logout() }><a href="#">Logout</a></li>
+                                <li onClick={ () => this.props.Logout() }><a>Logout</a></li>
                             </ul>
                         </div>
                     </div>
