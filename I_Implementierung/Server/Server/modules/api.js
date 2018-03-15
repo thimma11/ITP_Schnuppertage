@@ -68,4 +68,16 @@ router.get('/getpdf/:id', (req, res) => {
     });
 });
 
+router.get('/getzip/:id', (req, res) => {
+    id = req.params.id;
+    
+    const child = execFile('./Schnuppertagliste/Schnuppertagliste/bin/Debug/Schnuppertagliste.exe', [id], (error, stdout, stderr) => {
+        console.log("start process");
+        if (error) {
+            throw error;
+        }
+        console.log(stdout);
+    });
+});
+
 module.exports = router;
