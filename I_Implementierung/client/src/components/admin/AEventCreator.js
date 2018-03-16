@@ -50,8 +50,8 @@ class EventCreator extends React.Component {
 
     /* Get all locations */
     InitLocations() {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
+        let authToken = this.props.GetCookie();
+        if (authToken === undefined)
 			this.props.Logout();
 
         axios.get(Globals.BASE_PATH + 'departments/' + this.departmentID + '/locations?authToken=' + authToken)
@@ -60,9 +60,9 @@ class EventCreator extends React.Component {
             let locations = [];
             response.data.map(location => {
                 locations.push(location.NAME);
+                return null;
             })
             this.setState({ locations: locations });
-            console.log(this.state.locations);
         })
 		.catch(error => {
             if (error.response.status === 401)
@@ -74,8 +74,8 @@ class EventCreator extends React.Component {
 
     /* Get the max group size available for the choosen location */
     InitGroupSize() {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
+        let authToken = this.props.GetCookie();
+        if (authToken === undefined)
 			this.props.Logout();
 
         axios.get(Globals.BASE_PATH + 'groups/' + this.departmentID + '/' + this.locationID + '?count=true&authToken=' + authToken)
@@ -166,6 +166,7 @@ class EventCreator extends React.Component {
                 if (loc.NAME === location.value) {
                     this.locationID = loc.ID;
                 }
+                return null;
             });
             this.InitGroupSize();
         }

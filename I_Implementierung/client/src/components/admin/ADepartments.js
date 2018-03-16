@@ -77,6 +77,7 @@ class Departments extends React.Component {
                 department.contraction = this.state.contraction;
                 department.name = this.state.name;
             }
+            return null;
         });
         this.setState({
             departments: departments,
@@ -162,6 +163,7 @@ class Departments extends React.Component {
                 this.departmentName = department.name;
                 this.departmentContraction = department.contraction;
             }
+            return null;
         })
         this.setState({ departmentID: id });
     }

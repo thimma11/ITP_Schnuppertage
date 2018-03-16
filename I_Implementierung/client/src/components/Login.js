@@ -61,7 +61,7 @@ class Login extends React.Component {
 
         if (this.state.usernameError || this.state.passwordError) {
         } else {
-            console.log(this.props.Login(this.state.username, this.state.password));
+            this.props.Login(this.state.username, this.state.password);
         }
     }
 

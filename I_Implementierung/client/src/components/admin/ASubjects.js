@@ -24,8 +24,8 @@ class Teachers extends React.Component {
 
 
     componentDidMount() {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
+        let authToken = this.props.GetCookie();
+        if (authToken === undefined)
 			this.props.Logout();
 
         axios.get(Globals.BASE_PATH + 'subjects?authToken' + authToken)
@@ -52,6 +52,7 @@ class Teachers extends React.Component {
             if (subject.ID !== id) {
                 subjects.push(subject);
             }
+            return null;
         });
         this.setState({
             subjects: subjects

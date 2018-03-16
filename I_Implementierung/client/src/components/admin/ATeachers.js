@@ -52,12 +52,13 @@ class Teachers extends React.Component {
             if (teacher.ID !== id) {
                 teachers.push(teacher);
             }
+            return null;
         });
         this.setState({ teachers: teachers });
     }
 
     CreateTeacher() {
-        if (this.state.contraction.length === 4 && this.state.firstname.length != 0 && this.state.surname.length !== 0) {
+        if (this.state.contraction.length === 4 && this.state.firstname.length !== 0 && this.state.surname.length !== 0) {
             console.log("hi");
             axios.post(Globals.BASE_PATH + 'teachers', {
                 contraction: this.state.contraction,
@@ -324,7 +325,7 @@ class Teachers extends React.Component {
                     </div>
                 </div>
             );
-        };
+        }
     }
 
 

@@ -11,7 +11,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import * as Globals from '../Globals';
 moment.locale("de");
-moment.lang("de");
 //#endregion
 
 
@@ -41,7 +40,7 @@ class EventRegistration extends React.Component {
             location: '',
             locationError: false,
             dates: undefined,
-            date: moment(),
+            date: '',
             dateError: false,
             firstname: '',
             firstnameError: false,
@@ -109,12 +108,10 @@ class EventRegistration extends React.Component {
     initDates() {
         axios.get(Globals.BASE_PATH + 'events/dates/' + this.departmentID + '/' + this.locationID)
         .then(response => {
-            let datesArr = new Array();
+            let datesArr = [];
             response.data.forEach(function(date) {
                 datesArr.push(moment(date));
             }, this);
-
-            console.log(datesArr);
 
             this.dates = datesArr;
             this.setState({
@@ -146,6 +143,7 @@ class EventRegistration extends React.Component {
                 if (dep.name === department.value) {
                     this.departmentID = dep.id;
                 }
+                return null;
             });
             this.initLocations();
         }
@@ -182,6 +180,7 @@ class EventRegistration extends React.Component {
                 if (loc.name === location.value) {
                     this.locationID = loc.id;
                 }
+                return null;
             });
             this.initDates();
         }
@@ -200,9 +199,8 @@ class EventRegistration extends React.Component {
         let datesArr = [];
         this.dates.map(date_n => {
             datesArr.push(moment(date_n._d).format("DD-MM-YYYY"));
+            return null;
         });
-        console.log(moment(date._d).format("DD-MM-YYYY"));
-        console.log(datesArr);
         if (datesArr.indexOf(moment(date._d).format("DD-MM-YYYY")) === -1) {
             this.setState({
                 date: date,
@@ -355,7 +353,7 @@ class EventRegistration extends React.Component {
         }
         if (this.state.departments.length === 0) {
             return (
-                <div class="alert alert-danger" role="alert"><p><b>Es sind keine Abteilungen vorhanden.</b></p></div>
+                <div className="alert alert-danger" role="alert"><p><b>Es sind keine Abteilungen vorhanden.</b></p></div>
             );
         } else {
             return (
@@ -368,7 +366,6 @@ class EventRegistration extends React.Component {
     }
 
     renderLocations() {
-        console.log(this.departmentID);
         if (this.departmentID === undefined) {
             return (
                 <div className={ (this.state.locationError) ? 'form-group dropdown-error' : 'form-group' }>
@@ -380,7 +377,7 @@ class EventRegistration extends React.Component {
             if (this.state.locations !== undefined) {
                 if (this.state.locations.length === 0) {
                     return (
-                        <div class="alert alert-danger" role="alert"><p><b>Für diese Abteilung ist kein Standort eingetragen.</b></p></div>
+                        <div className="alert alert-danger" role="alert"><p><b>Für diese Abteilung ist kein Standort eingetragen.</b></p></div>
                     );
                 } else {
                     return (
@@ -395,7 +392,6 @@ class EventRegistration extends React.Component {
     }
 
     renderDates() {
-        console.log(this.state.date);
         if (this.locationID === undefined) {
             return (
                 <div className={ (this.state.dateError) ? 'form-group dropdown-error' : 'form-group' }>
@@ -407,10 +403,9 @@ class EventRegistration extends React.Component {
             if (this.state.dates !== undefined) {
                 if (this.state.dates.length === 0) {
                     return (
-                        <div class="alert alert-danger" role="alert"><p><b>Für die ausgewählte Abteilung gibt es am angegebenen Standort keine eingetragenen Schuppertage.</b></p></div>
+                        <div className="alert alert-danger" role="alert"><p><b>Für die ausgewählte Abteilung gibt es am angegebenen Standort keine eingetragenen Schuppertage.</b></p></div>
                     );
                 } else {
-                    console.log(this.state.dates);
                     return (
                         <div className={ (this.state.dateError) ? 'form-group dropdown-error' : 'form-group' }>
                             <label>Verfügare Tage<span className="label-information"> - Wählen Sie ein Datum aus.</span></label>
@@ -493,8 +488,6 @@ class EventRegistration extends React.Component {
         this.checkLocation();
         this.checkDate();
         this.forceUpdate();
-
-        console.log(this.state.firstnameError);
 
         if (this.firstnameError || this.lastnameError || this.emailError || this.phoneError || this.schoolLocationError || this.schoolTypeError || this.departmentError || this.locationError || this.dateError) {
         } else {

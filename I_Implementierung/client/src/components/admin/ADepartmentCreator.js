@@ -27,8 +27,8 @@ class DepartmentCreator extends React.Component {
         this.handleContractionLeave();
 
         if (this.state.name !== '' && this.state.contraction !== '') {
-            let authToken;
-            if (authToken = this.props.GetCookie() === undefined)
+            let authToken = this.props.GetCookie();
+            if (authToken === undefined)
                 this.props.Logout();
                 
             axios.post(Globals.BASE_PATH + 'departments?authToken=' + authToken, {

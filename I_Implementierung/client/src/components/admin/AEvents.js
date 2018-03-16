@@ -3,8 +3,8 @@
 import React from 'react';
 import axios from 'axios';
 import Dropdown from 'react-dropdown';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import fileDownload from 'react-file-download';
+import DownloadLink from "react-download-link";
 //#endregion
 
 import EventCreator from './AEventCreator';
@@ -27,7 +27,8 @@ class Events extends React.Component {
             entries: undefined,
             viewEntries: -1,
             participants: undefined,
-            eventDate: ''
+            eventDate: '',
+            link: ''
         };
     }
 
@@ -117,6 +118,7 @@ class Events extends React.Component {
                 if (dep.name === department.value) {
                     this.departmentID = dep.id;
                 }
+                return null;
             });
             this.initEvents();
         }
@@ -133,7 +135,7 @@ class Events extends React.Component {
         }
         if (this.state.departments.length === 0) {
             return (
-                <div class="alert alert-danger" role="alert"><p><b>Es sind keine Abteilungen vorhanden.</b></p></div>
+                <div className="alert alert-danger" role="alert"><p><b>Es sind keine Abteilungen vorhanden.</b></p></div>
             );
         } else {
             return (
@@ -170,7 +172,7 @@ class Events extends React.Component {
                     return (
                         <div>
                             <div className="table-responsive">
-                                <table class="table departments-table">
+                                <table className="table departments-table">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
@@ -185,11 +187,10 @@ class Events extends React.Component {
                         </div>
                     );
                 }
-                console.log(this.state.events);
                 return (
                     <div>
                         <div className="table-responsive">
-                            <table class="table departments-table">
+                            <table className="table departments-table">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -208,7 +209,8 @@ class Events extends React.Component {
                                             <td>{ event.NAME }</td>
                                             <td>
                                                 <button className="btn btn-primary btn-sm button-space" onClick={ () => this.initParticipantsForEvent(event.ID,  event.DATE.split('T')[0]) } >Teilnehmer</button>
-                                                <button className="btn btn-danger btn-sm" onClick={ () => this.DeleteEvent(event.ID) } >Löschen</button>
+                                                <button className="btn btn-danger btn-sm button-space" onClick={ () => this.DeleteEvent(event.ID) } >Löschen</button>
+                                                <button className="btn btn-success btn-sm" onClick={ () => this.GetParticipantZIP(event.ID) } >PDF</button>
                                             </td>
                                         </tr>
                                     );
@@ -237,7 +239,18 @@ class Events extends React.Component {
     GetParticipantPDF(partID) {
         axios.get(Globals.BASE_PATH + 'getpdf/' + partID)
         .then(response => {
-            console.log(response);
+            let link = document.getElementById('pdfLink');
+            link.setAttribute('download', 'down.pdf');
+            link.setAttribute('href', Globals.LOGIN + response.data);
+            link.click();
+            //fileDownload(response.data, 'down.pdf');
+        }).catch(error => console.log(error));
+    }
+
+    GetParticipantZIP(partID) {
+        axios.get(Globals.BASE_PATH + 'getzip/' + partID)
+        .then(response => {
+            fileDownload(response.data, 'Groups.zip')
         }).catch(error => console.log(error));
     }
 
@@ -252,7 +265,7 @@ class Events extends React.Component {
                             (this.state.participants.length === 0) ? <h5 className="text-center"><b>Keine Teilnehmer gefunden . . .</b></h5> :
                             <div>
                                 <div className="table-responsive">
-                                    <table class="table departments-table">
+                                    <table className="table departments-table">
                                         <thead>
                                             <tr>
                                                 <th>Vorname</th>
@@ -302,6 +315,7 @@ class Events extends React.Component {
     render() {
         return (
             <div>
+                <a href="#" style={{ display: 'none' }} target="_blank" id="pdfLink">Google Chrome</a>
                 <div className="container events">
                     <h4 className="form-header">Schnuppertage</h4>
                     <div className="well">

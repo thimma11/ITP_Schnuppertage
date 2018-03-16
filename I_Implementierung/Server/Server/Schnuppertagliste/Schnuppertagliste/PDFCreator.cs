@@ -21,17 +21,21 @@ namespace Schnuppertagliste
             PdfDocument document;
             int num = 0;
 
-            if (!Directory.Exists(e.Date + " - " + e.Department))
-                Directory.CreateDirectory(e.Date + " - " + e.Department);
+            if (!Directory.Exists(@"./" + e.Date.Replace("ä", "ae") + " - " + e.Department))
+                Directory.CreateDirectory(@"./" + e.Date.Replace("ä", "ae") + " - " + e.Department);
+
+            if (File.Exists(@"./" + e.Date.Replace("ä", "ae") + " - " + e.Department + ".zip"))
+                File.Delete(@e.Date.Replace("ä", "ae") + " - " + e.Department + ".zip");
 
             foreach (String s in strings)
             {
                 num++;
                 document = renderer.RenderHtmlAsPdf(s);
-                document.SaveAs("./" + e.Date + " - " + e.Department + "/Gruppe " + num + ".pdf");
+                document.SaveAs("./" + e.Date.Replace("ä", "ae") + " - " + e.Department + "/Gruppe " + num + ".pdf");
             }
 
-            ZipFile.CreateFromDirectory(e.Date + " - " + e.Department, e.Date + " - " + e.Department + ".zip");
+            ZipFile.CreateFromDirectory(e.Date.Replace("ä", "ae") + " - " + e.Department, e.Date.Replace("ä", "ae") + " - " + e.Department + ".zip");
+            Console.Write(e.Date.Replace("ä", "ae") + " - " + e.Department + ".zip");
         }
 
     }

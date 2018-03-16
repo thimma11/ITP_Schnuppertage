@@ -77,6 +77,7 @@ class Department extends React.Component {
             let nonLocations = [];
             this.nonLocations.map(location => {
                 nonLocations.push(location.NAME);
+                return null;
             });
             this.setState({
                 location: '',
@@ -99,6 +100,7 @@ class Department extends React.Component {
         let nonLocations = [];
         this.nonLocations.map(location => {
             nonLocations.push(location.NAME);
+            return null;
         });
         if (nonLocations.indexOf(event.value) !== -1) {
             this.setState({
@@ -226,6 +228,7 @@ class Department extends React.Component {
         let nonLocations = [];
         this.nonLocations.map(location => {
             nonLocations.push(location.NAME);
+            return null;
         });
         if (nonLocations.indexOf(this.state.location) !== -1) {
             let id;
@@ -233,6 +236,7 @@ class Department extends React.Component {
                 if (location.NAME === this.state.location) {
                     id = location.ID;
                 }
+                return null;
             });
             axios.post(Globals.BASE_PATH + 'departments/' + this.id +'/locations', {
                 location_id: id
@@ -254,6 +258,7 @@ class Department extends React.Component {
                 value: id,
                 label: 'Gruppe ' + (index + 1)
             });
+            return null;
         });
         return options;
     }
@@ -351,6 +356,7 @@ class Department extends React.Component {
             if (teacher.CONTRACTION === this.state.teacher) {
                 teacherID = teacher.ID;
             }
+            return null;
         })
         if (this.state.teacher === '' || teacherID === -1) {
             this.setState({ teacherError: true });
@@ -362,6 +368,7 @@ class Department extends React.Component {
             if (subject.Name === this.state.subject) {
                 subjectID = subject.ID;
             }
+            return null;
         })
         if (this.state.subject === '' || subjectID === -1) {
             this.setState({ subjectError: true });
@@ -396,9 +403,9 @@ class Department extends React.Component {
     }
 
     AddGroup() {
-        let authToken;
-        if (authToken = this.props.GetCookie() === undefined)
-            this.props.Logout();
+        let authToken = this.props.GetCookie();
+        if (authToken === undefined)
+			this.props.Logout();
         
         axios.post(Globals.BASE_PATH + 'groups', {
             location_id: this.state.locationID,
