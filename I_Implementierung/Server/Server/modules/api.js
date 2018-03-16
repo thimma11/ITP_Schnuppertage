@@ -91,7 +91,7 @@ router.get('/getzip/:id', (req, res) => {
         console.log(stdout);
 
         //res.sendFile( "/" + stdout, { root: __dirname + "/../" });
-
+        /*
         filePath = __dirname + "/../";
         fileName = stdout;
 
@@ -99,14 +99,25 @@ router.get('/getzip/:id', (req, res) => {
             if (exists) {     
               // Content-type is very interesting part that guarantee that
               // Web browser will handle response in an appropriate manner.
-              response.writeHead(200, {
+              res.writeHead(200, {
                 "Content-Type": "application/octet-stream",
                 "Content-Disposition": "attachment; filename=" + fileName
               });
-              fs.createReadStream(filePath).pipe(response);
+              fs.createReadStream(filePath).pipe(res);
             } else {
-              response.writeHead(400, {"Content-Type": "text/plain"});
-              response.end("ERROR File does not exist");
+              res.writeHead(400, {"Content-Type": "text/plain"});
+              res.end("ERROR File does not exist");
+            }
+        });
+        */
+
+        let filepath = path.join(__dirname, "/../" + stdout);
+        fs.exists(filepath, function(exists){
+            if (exists) {
+                fs.createReadStream(filepath).pipe(res);
+            } else {
+                res.writeHead(400, { "Content-Type": "text/plain" });
+                res.end("ERROR File does not exist");
             }
         });
     });
