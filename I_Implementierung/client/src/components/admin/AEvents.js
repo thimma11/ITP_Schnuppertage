@@ -210,7 +210,7 @@ class Events extends React.Component {
                                             <td>
                                                 <button className="btn btn-primary btn-sm button-space" onClick={ () => this.initParticipantsForEvent(event.ID,  event.DATE.split('T')[0]) } >Teilnehmer</button>
                                                 <button className="btn btn-danger btn-sm button-space" onClick={ () => this.DeleteEvent(event.ID) } >Löschen</button>
-                                                <button className="btn btn-success btn-sm" onClick={ () => this.GetParticipantZIP(event.ID) } >PDF</button>
+                                                <a target="_blank" href={Globals.BASE_PATH + 'getzip/' + event.ID}  className="btn btn-success btn-sm" download="down.zip">PDF</a>
                                             </td>
                                         </tr>
                                     );
@@ -290,7 +290,7 @@ class Events extends React.Component {
                                                     <td>{ participant.SCHOOL_TYP }</td>
                                                     <td>
                                                         <button className="btn btn-danger btn-sm button-space" onClick={ () => this.DeleteParticipant(participant.ID) } >Austragen</button>
-                                                        <button className="btn btn-success btn-sm" onClick={ () => this.GetParticipantPDF(participant.ID) }>PDF erzeugen</button>
+                                                        <a target="_blank" href={Globals.BASE_PATH + 'getpdf/' + participant.ID} className="btn btn-success btn-sm" download="down.pdf">PDF erzeugen</a>
                                                     </td>
                                                 </tr>
                                             );
