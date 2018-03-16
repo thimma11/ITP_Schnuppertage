@@ -34,8 +34,17 @@ namespace Schnuppertagliste
                 document.SaveAs("./" + e.Date.Replace("ä", "ae") + " - " + e.Department + "/Gruppe " + num + ".pdf");
             }
 
+<<<<<<< HEAD
             ZipFile.CreateFromDirectory(e.Date.Replace("ä", "ae") + " - " + e.Department, e.Date.Replace("ä", "ae") + " - " + e.Department + ".zip");
             Console.Write(e.Date.Replace("ä", "ae") + " - " + e.Department + ".zip");
+=======
+            string source = e.Date + " - " + e.Department;
+            string filename = e.Date + " - " + e.Department + ".zip";
+
+            ZipFile.CreateFromDirectory(source, filename);
+
+            Console.Write(filename);
+>>>>>>> cd7c91e397287adfa56b7be8917b8606e66ceacf
         }
 
     }

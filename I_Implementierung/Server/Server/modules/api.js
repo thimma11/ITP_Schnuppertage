@@ -35,6 +35,7 @@ router.use('/groups', group);
 router.use('/timetables', timetable);
 router.use('/daytables', daytable);
 
+const fs = require('fs');
 
 router.get('/', (req, res) => {
     res.send("asd");
@@ -59,13 +60,23 @@ router.get('/getpdf/:id', (req, res) => {
     console.log("start process");
     
     const child = execFile('./Schnupperschülerbestätigung/Schnupperschülerbestätigung/bin/Debug/Schnupperschülerbestätigung.exe', [user_id], (error, stdout, stderr) => {
-        console.log("finish processssssss2123");
         if (error) {
-            throw error;
+            console.log(error);
         }
-        console.log(stdout);
-        
-        res.sendFile( "/" + stdout, { root: __dirname + "/../" });
+        let filepath = path.join(__dirname, "/../" + stdout);
+        fs.exists(filepath, function (exists) {
+            console.log(filepath);
+            console.log(exists);
+            if (exists) {
+                fs.createReadStream(filepath).pipe(res);
+            } else {
+                res.writeHead(400, { "Content-Type": "text/plain" });
+                res.end("ERROR File does not exist");
+            }
+        });
+
+        //res.sendFile("/" + stdout, { root: __dirname + "/../" });
+        //res.json({ path: __dirname + "/../" + stdout });
     });
 });
 
@@ -73,13 +84,31 @@ router.get('/getzip/:id', (req, res) => {
     id = req.params.id;
     
     const child = execFile('./Schnuppertagliste/Schnuppertagliste/bin/Debug/Schnuppertagliste.exe', [id], (error, stdout, stderr) => {
-        console.log("start process");
         if (error) {
             throw error;
         }
+        console.log(stderr);
         console.log(stdout);
 
-        res.sendFile( "/" + stdout, { root: __dirname + "/../" });
+        //res.sendFile( "/" + stdout, { root: __dirname + "/../" });
+
+        filePath = __dirname + "/../";
+        fileName = stdout;
+
+        fs.exists(filePath, function(exists){
+            if (exists) {     
+              // Content-type is very interesting part that guarantee that
+              // Web browser will handle response in an appropriate manner.
+              response.writeHead(200, {
+                "Content-Type": "application/octet-stream",
+                "Content-Disposition": "attachment; filename=" + fileName
+              });
+              fs.createReadStream(filePath).pipe(response);
+            } else {
+              response.writeHead(400, {"Content-Type": "text/plain"});
+              response.end("ERROR File does not exist");
+            }
+        });
     });
 });
 
