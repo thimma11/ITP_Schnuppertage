@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using IronPdf;
+using System.IO;
 
 namespace Schnupperschülerbestätigung
 {
@@ -73,7 +75,10 @@ namespace Schnupperschülerbestätigung
                 "</body>";
 
             PdfDocument document = renderer.RenderHtmlAsPdf(pdfString);
-            document.SaveAs(information.GetNameString() + " - " + information.Date.Replace("ä", "ae") + ".pdf");
+            string filename = information.GetNameString() + " - " + information.Date.Replace("ä", "ae") + ".pdf";
+            document.SaveAs(filename);
+            document.Stream.Close();
+            Console.WriteLine(filename);
         }
 
     }
