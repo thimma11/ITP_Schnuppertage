@@ -63,7 +63,7 @@ router.get('/getpdf/:id', (req, res) => {
         if (error) {
             console.log(error);
         }
-        let filepath = path.join(__dirname, "../" + stdout);
+        let filepath = path.join(__dirname, "/../" + stdout);
         fs.exists(filepath, function (exists) {
             console.log(filepath);
             console.log(exists);
@@ -75,8 +75,7 @@ router.get('/getpdf/:id', (req, res) => {
             }
         });
 
-        res.json({ path: filepath });
-
+        //res.sendFile("/" + stdout, { root: __dirname + "/../" });
         //res.json({ path: __dirname + "/../" + stdout });
     });
 });

@@ -78,7 +78,7 @@ namespace Schnupperschülerbestätigung
             string filename = information.GetNameString() + " - " + information.Date.Replace("ä", "ae") + ".pdf";
             document.SaveAs(filename);
             document.Stream.Close();
-            Console.WriteLine(filename);
+            Console.Write(filename);
         }
 
     }
