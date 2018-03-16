@@ -68,6 +68,7 @@ router.get('/getpdf/:id', (req, res) => {
             console.log(filepath);
             console.log(exists);
             if (exists) {
+                res.setHeader('Content-Disposition', 'attachment; filename=\"' + stdout + '\"');
                 fs.createReadStream(filepath).pipe(res);
             } else {
                 res.writeHead(400, { "Content-Type": "text/plain" });
