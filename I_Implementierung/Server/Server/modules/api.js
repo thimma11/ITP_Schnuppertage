@@ -115,6 +115,7 @@ router.get('/getzip/:id', (req, res) => {
         let filepath = path.join(__dirname, "/../" + stdout);
         fs.exists(filepath, function(exists){
             if (exists) {
+                res.setHeader('Content-Disposition', 'attachment; filename=\"' + stdout + '\"');
                 fs.createReadStream(filepath).pipe(res);
             } else {
                 res.writeHead(400, { "Content-Type": "text/plain" });
